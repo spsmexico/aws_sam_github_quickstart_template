@@ -1,0 +1,8 @@
+{
+   "project":"{{cookiecutter.project}}",
+   "cfn_stack":"{{cookiecutter.cfn_stack}}",
+   "cfn_lint_version":"0.56.4",
+   "cfn_role":"sia-iam-role-github-backend",
+   "sam_container":"{{cookiecutter.sam_container}}",
+   "sam_bucket":"{{cookiecutter.sam_bucket}}"
+}

@@ -60,7 +60,7 @@ commitizen:
     - type: autocomplete
       name: proyecto
       choices: [
-        'sia'
+        '{{cookiecutter.project}}'
       ]
 
 

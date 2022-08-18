@@ -1,0 +1,7 @@
+{
+    "nombre_repo": "Nombre del repositorio",
+    "cfn_stack": "Nombre del stack en AWS",
+    "project": "Nombre corto del proyecto",
+    "sam_container": "public.ecr.aws/sam/build-python3.8:1.32.0",
+    "sam_bucket": "pfg-sia-sam"
+}
