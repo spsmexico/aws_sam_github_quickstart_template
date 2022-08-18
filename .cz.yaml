@@ -1,0 +1,82 @@
+#Recursos de personalización:
+#https://commitizen-tools.github.io/commitizen/customization/
+
+commitizen:
+  name: cz_customize
+  customize:
+    message_template: |
+      {{tipo_cambio}}({{proyecto}}){% if breaking_change|length %}!{% endif %}: {{message}}
+
+      {% if id_jira|length %}JIRA: {{id_jira}}{% endif %}
+      {% if detalle|length %}{{detalle}}{% endif %}
+
+      {% if breaking_change|length %}BREAKING CHANGE: {{breaking_change}}{% endif %}
+    example: 'feature: this feature enable customize through config file'
+    schema: "<type>(<scope>): <body>"
+    #schema_pattern: "(feature|bug fix):(\\s.*)"
+    #Estructura de commit SPS.
+    schema_pattern: "(build|ci|docs|feat|fix|perf|refactor|test)\\(([a-z\\-]*)\\)!?:(\\s.*)\\n\\nJIRA:\\s([1-9\\,]*)"
+    bump_pattern: "^(break|new|fix|hotfix)"
+    bump_map:
+      break: MAJOR
+      new: MINOR
+      fix: PATCH
+      hotfix: PATCH
+    change_type_order: ["BREAKING CHANGE", "feat", "fix", "refactor", "perf"]
+    info_path: cz_customize_info.txt
+    info: This is customized info
+
+    questions:
+
+    #Tipo de cambio SPS
+    - type: list
+      name: tipo_cambio
+      choices:
+      - value: build
+        name: 'build: cambios que afectan la construcción del sistema o dependencias externas (ejemplos: npm, mvn, etc.)'
+      - value: ci
+        name: 'ci: cambios a los scripts o Tuberías de configuración de CI (ejemplos: Jenkins, Code, Github actions, etc)'
+      - value: docs
+        name: 'docs: se agrega o modifica documentación (ejemplo: README.md)'
+      - value: feat
+        name: 'feat: nueva característica o funcionalidad'
+      - value: fix
+        name: 'fix: corrección de bug'
+      - value: perf
+        name: 'perf: cambio en el código que mejora el rendimiento'
+      - value: refactor
+        name: 'refactor: cambio en el código que ni corrige error ni agrega nueva funcionalidad'
+      - value: test
+        name: 'test: agrega pruebas faltantes o corrige pruebas existentes'
+
+      message: "¿Qué tipo de cambio fue?:"
+
+    #Descripción corta
+    - type: input
+      name: message
+      message: "Descripción corta:"
+
+    #Proyecto referente al commit
+    - type: autocomplete
+      name: proyecto
+      choices: [
+        'sia'
+      ]
+
+
+      message: "Nombre de proyecto (ejemplo: robot-consulta-de-disponibilidad): "
+
+    #Id de jira relacionado con el commit
+    - type: text
+      name: id_jira
+      message: "ID Jira (ejemplo: 232, 234): "
+
+    #Detalle del commit
+    - type: text
+      name: detalle
+      multiline: True
+      message: "Detalle (opcional): "
+
+    - type: text
+      name: breaking_change
+      message: "Si tu cambio es BREAKING CHANGE agrega detalle: "

@@ -1,0 +1,82 @@
+{"Actualizaciones": [{
+  "ID": {
+    "S": "int-afore-sec-custom-mtm-chklst"
+  },
+  "API": {
+    "L": []
+  },
+  "NEGOCIO": {
+    "S": "AFORE_SPS_OTRO"
+  },
+  "ARCHIVOS": {
+    "L": [
+      {
+        "M": {
+          "FECHA": {
+            "S": "2022-03-30T18:00:46"
+          },
+          "IS_RECIBIDO": {
+            "BOOL": false
+          },
+          "NOMBRE": {
+            "S": "PRI01_2VD"
+          },
+          "REGEX": {
+            "M": {
+              "FECHA": {
+                "S": "PRI01_2VD(\\d+)_SOL.PIP"
+              },
+              "TIPO": {
+                "S": "TODO"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "INTERFAZ": {
+    "S": "PRUEBA PUT ITEM TODO"
+  }
+},
+{
+  "ID": {
+    "S": "int-afore-infact24"
+  },
+  "API": {
+    "L": []
+  },
+  "NEGOCIO": {
+    "S": "AFORE_SPS"
+  },
+  "ARCHIVOS": {
+    "L": [
+      {
+        "M": {
+          "FECHA": {
+            "S": "2022-03-30T18:00:46"
+          },
+          "IS_RECIBIDO": {
+            "BOOL": false
+          },
+          "NOMBRE": {
+            "S": "PRI01_2VD"
+          },
+          "REGEX": {
+            "M": {
+              "FECHA": {
+                "S": "PRI01_2VD(\\d+)_SOL.PIP"
+              },
+              "TIPO": {
+                "S": "TODO"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "INTERFAZ": {
+    "S": "Prueba tabla global. Verificar en Oregon"
+  }
+}]}

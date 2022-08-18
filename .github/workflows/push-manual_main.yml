@@ -1,0 +1,53 @@
+name: push-manual_main
+
+
+on:
+
+  push:
+    branches:
+      - main
+      - 'fix/**'
+      - 'test/**'
+    paths-ignore:
+      - 'README.md'
+      - 'CHANGELOG.md'
+      - '.github/workflows/**'
+      - 'Dependencias_SIA.md'
+      - 'parameters-preprod.json'
+      - 'parameters-production.json'
+      - 'dynamo.py'  
+      - 'rollback-dynamo.py'
+      - 'tablas/**'
+      - 'pre-commit-config.yaml'
+      - '.flake8'
+      - 'pyproject.toml'
+      - 'isort.cfg'
+      - '.cz.yaml'
+
+  workflow_dispatch:
+    inputs:
+      dynamodb:
+        description: 'Activa la insercion de datos de la carpeta tablas DynamoDB'
+        required: false
+        default: false
+        type: boolean
+
+concurrency: develop
+
+jobs:
+
+  ############ PUSH A RAMA MAIN ##############
+  # Si se hace push a la rama main:
+  DevDeploy:
+    if: ${{ startsWith( github.ref, 'refs/heads/fix') || github.ref == 'refs/heads/main'  }}
+    uses: principalmexico-emu/SAUTO_CICD/.github/workflows/reusable_deploy.yml@main
+    with:
+      ambiente: "develop"
+      region: us-east-1
+      ref: ${{ github.sha }}
+      dynamodb: ${{github.event.inputs.dynamodb}}
+      region_dr: us-west-2
+    secrets:
+      DEV_AWS_KEY_ID: ${{ secrets.SIA_DEV_AWS_KEY_ID}}
+      DEV_AWS_KEY_SECRET: ${{ secrets.SIA_DEV_AWS_KEY_SECRET}}
+      DEV_AWS_ACCOUNT_ID: ${{ secrets.SIA_DEV_AWS_ACCOUNT_ID}}

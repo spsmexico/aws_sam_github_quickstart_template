@@ -1,0 +1,6 @@
+[flake8]
+max-line-length = 150
+max-complexity = 18
+exclude = .aws-sam, .git
+count = True
+show-source = True
