@@ -5,7 +5,8 @@
     "sam_container": "public.ecr.aws/sam/build-python3.8:1.32.0",
     "sam_bucket": "pfg-sia-sam",
     "_copy_without_render": [
-        ".cz.yaml"
+        ".cz.yaml",
+        ".github/workflows/*"
     ]
     
 }
