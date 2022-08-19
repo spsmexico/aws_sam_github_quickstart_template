@@ -91,8 +91,8 @@ def ambiente_por_extension():
     Reemplaza la extensión por el ambiente a cada elemento de cada una de las tablas de las listas de CSV y JSON.
 
     Ejemplos (antes y después):
-    sia-cat-afore-infact24.csv -> sia-cat-afore-infact24-pre
-    sia-gen-adm-permisos.json -> sia-gen-adm-permisos-pre
+    tabla-prueba.csv -> tabla-prueba-pre
+    tabla-prueba.json -> tabla-prueba-pre
     '''
 
     separacion_tablas.lista_tablas_csv = [w.replace(".csv", ambiente) for w in separacion_tablas.lista_tablas_csv]
@@ -237,7 +237,7 @@ def funcion_madre(nombre_tabla):
         # Se crea tag en tabla restaurada.
         response = dynamo.tag_resource(
         ResourceArn=borrar_tabla.ARN_tabla ,
-        Tags=[{'Key': 'Auditoria', 'Value': 'No'},{"Key": "Proyecto", "Value": "SIA"},])
+        Tags=[{'Key': 'Auditoria', 'Value': 'No'},{"Key": "Proyecto", "Value": "{{cookiecutter.project|upper}}"},])
 
         print("Restauración de tabla de origen completada.")
 

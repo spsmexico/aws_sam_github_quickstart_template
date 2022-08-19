@@ -1,4 +1,4 @@
-"""Script para cambiar región activa de SIA.
+"""Script para cambiar región activa.
 
 Este script habilita la región que reciba como secundaria y desactiva la región primaria. En el
 siguiente orden:

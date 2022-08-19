@@ -85,8 +85,8 @@ def ambiente_por_extension():
     Reemplaza la extensión por el ambiente a cada elemento de cada una de las tablas de las listas de CSV y JSON.
 
     Ejemplos (antes y después):
-    sia-cat-afore-infact24.csv -> sia-cat-afore-infact24-pre
-    sia-gen-adm-permisos.json -> sia-gen-adm-permisos-pre
+    tabla-registros-prueba.csv -> tabla-registros-prueba-pre
+    tabla-registros-prueba.json -> tabla-registros-prueba-pre
     '''
 
     separacion_tablas.lista_tablas_csv = [w.replace(".csv", ambiente) for w in separacion_tablas.lista_tablas_csv]
@@ -476,8 +476,7 @@ def funcion_madre(nombre_tabla):
                     ],
                     BillingMode="PAY_PER_REQUEST",
                     Tags=[
-                        {"Key": "Auditoria", "Value": "No"},
-                        {"Key": "Proyecto", "Value": "SIA"},
+                        {"Key": "Proyecto", "Value": "{{cookiecutter.project|upper}}"},
                     ],
                 )
 
@@ -664,7 +663,7 @@ def funcion_madre(nombre_tabla):
         # Se agregan tags a la tabla
         response = dynamo.tag_resource(
             ResourceArn=ARN_tabla,
-            Tags=[{"Key": "Auditoria", "Value": "No"},{"Key": "Proyecto", "Value": "SIA"},])
+            Tags=[{"Key": "Proyecto", "Value": "{{cookiecutter.project|upper}}"},])
                                  
     def crear_tabla_global(nombre_tabla):
         '''Crea tabla global a partir del nombre de la tabla mencionada.'''

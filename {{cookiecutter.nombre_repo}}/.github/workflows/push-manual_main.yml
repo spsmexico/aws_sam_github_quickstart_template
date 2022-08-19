@@ -12,7 +12,6 @@ on:
       - 'README.md'
       - 'CHANGELOG.md'
       - '.github/workflows/**'
-      - 'Dependencias_SIA.md'
       - 'parameters-preprod.json'
       - 'parameters-production.json'
       - 'dynamo.py'  
