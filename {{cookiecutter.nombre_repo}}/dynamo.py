@@ -1,18 +1,12 @@
 # flake8: noqa
 
-import os
-import sys
 import time
-import datetime
 import json
-from operator import contains, truediv
 from os import walk
 
 import json
 import uuid
 import boto3
-import pandas
-import numpy as np
 import argparse
 global args
 
@@ -57,7 +51,6 @@ dynamo = session.client("dynamodb")
 
 ruta_tablas = "tablas/"
 
-nombre_tabla_estructura = f"sia-gen-adm-estructura-catalogos{ambiente}"
 
 def lista_tablas():
     """Crea una lista de todos los archivos dentro de la carpeta tablas/."""
@@ -139,8 +132,6 @@ def funcion_madre(nombre_tabla):
     def crear_tabla(tablas_inexistentes, tabla_a_crear):
         """Crea la tabla si está en la lista de tablas inexistentes.
         
-        Busca su estructura en la tabla de estructura correspondiente y basado en ello toma
-        los tipos de dato para cada atributo.
         Al momento de su creación, revisa su estatus. La función termina hasta que el estatus
         de la tabla a crear sea ACTIVO.
         """

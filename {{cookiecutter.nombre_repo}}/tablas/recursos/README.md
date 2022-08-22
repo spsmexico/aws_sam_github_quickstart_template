@@ -2,7 +2,7 @@
 
 _____________________________
 
-El script considera los archivos .json y .csv de la carpeta y la ruta "tablas/" de la raíz del repositorio (no considera archivos en sub-carpetas de la carpeta "tablas").
+El script considera sólo los archivos .json de la carpeta y la ruta "tablas/" de la raíz del repositorio (no considera archivos en sub-carpetas de la carpeta "tablas").
 
 ## Tablas (Archivos .json)(Inserta/elimina):
 
