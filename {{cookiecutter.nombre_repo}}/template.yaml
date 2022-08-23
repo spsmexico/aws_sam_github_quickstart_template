@@ -5,6 +5,19 @@ Description: >
 
   Sample SAM Template for helloworld
 
+Parameters:
+  EnvName:
+    Type: String
+    Default: dev
+    Description: Selecciona el nombre ambiente que quieres desplegar
+  DBEnvName:
+    Type: String
+    Default: dev
+    Description: Valor de sufijo para tablas de base de datos
+  KeyKMSARN:
+    Description: ARN de la llave que descifra los secretos
+    Type: String
+
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
