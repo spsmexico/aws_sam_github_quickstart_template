@@ -2,8 +2,8 @@
 
 Este script habilita la región que reciba como secundaria y desactiva la región primaria. En el
 siguiente orden:
-1.- Desactiva el trail "pfg-sia-comun-cloudtrail" en la región primaria y lo habilita en la secundaria.
-2.- Desactiva todas las reglas de EventBridge que inician con "sia-" en la región primaria y las habilita en la secundaria.
+1.- Desactiva el trail "{{cookiecutter.project}}-cloudtrail" en la región primaria y lo habilita en la secundaria.
+2.- Desactiva todas las reglas de EventBridge que inician con "{{cookiecutter.project}}-" en la región primaria y las habilita en la secundaria.
 3.- Modifica la autorización del API Gateway de la región primaria para esperar un valor distinto de "audience" 
 en el token de Cognito (deja de recibir peticiones) y coloca el valor correcto para el API Gateway de la región secundaria
 (acepta peticiones).
@@ -11,7 +11,7 @@ en el token de Cognito (deja de recibir peticiones) y coloca el valor correcto p
 de Cognito) y modifica la autorización en la región secundaria para permitir peticiones usando el token de Cognito.
 5.- Modifica el dominio del Frontend en la región primaria para apuntar a la rama dr/{ambiente}/{region}-apagado que
 contiene una página estatica con la URL de la región secundaria. Modifica el dominio en la región secundaria para dejar
-de apuntar a la rama dr/{ambiente}/{region}-apagado y mostrar SIA.
+de apuntar a la rama dr/{ambiente}/{region}-apagado y mostrar {{cookiecutter.project|upper}}.
 
 El script es idempotente, esto significa que se puede ejecutar multiples veces con los mismos argumentos y siempre se obtendrá
 el mismo resultado.
@@ -134,7 +134,7 @@ def intercambiar_trail():
     ## Primario ##
     try:
         trail_primario_arn = cloudtrail_primario.list_trails()
-        trail_primario_arn = jmespath.search("Trails[?starts_with(Name,'pfg-sia-comun-cloudtrail')].TrailARN", trail_primario_arn)
+        trail_primario_arn = jmespath.search("Trails[?starts_with(Name,'{{cookiecutter.project}}-cloudtrail')].TrailARN", trail_primario_arn)
         if len(trail_primario_arn) != 1:
             logging.error(trail_primario_arn)
             raise Exception("Hay dos trails que cumplen el nombrado")
@@ -146,7 +146,7 @@ def intercambiar_trail():
 
     ## Secundario ##
     trail_secundario_arn = cloudtrail_secundario.list_trails()
-    trail_secundario_arn = jmespath.search("Trails[?starts_with(Name,'pfg-sia-comun-cloudtrail')].TrailARN", trail_secundario_arn)
+    trail_secundario_arn = jmespath.search("Trails[?starts_with(Name,'{{cookiecutter.project}}-cloudtrail')].TrailARN", trail_secundario_arn)
     if len(trail_secundario_arn) != 1:
         logging.error(trail_secundario_arn)
         raise Exception("Hay dos trails que cumplen el nombrado")
@@ -176,13 +176,13 @@ def intercambiar_reglas_eventbridge():
     ## Primario ##
     try:
         reglas = eventbridge_primario.list_rules()
-        nombres_reglas = jmespath.search("Rules[?starts_with(Name,'sia-')].Name", reglas)
+        nombres_reglas = jmespath.search("Rules[?starts_with(Name,'{{cookiecutter.project}}-')].Name", reglas)
     except:
         logging.warning(f"Ocurrió un problema al obtener variables Eventbridge de {REGION_PRIMARIA}")        
 
     ## Secundario ##
     reglas_encender = eventbridge_secundario.list_rules()
-    nombres_reglas_encender = jmespath.search("Rules[?starts_with(Name,'sia-')].Name", reglas_encender)
+    nombres_reglas_encender = jmespath.search("Rules[?starts_with(Name,'{{cookiecutter.project}}-')].Name", reglas_encender)
 
     ## Intercambio ##
     try:
@@ -191,7 +191,7 @@ def intercambiar_reglas_eventbridge():
         if len(nombres_reglas) != len(nombres_reglas_encender):
             logging.warning("El número de reglas no es igual en ambas regiones")
     
-        print(f">> Apagando {len(nombres_reglas)} reglasde EventBridge en región {REGION_PRIMARIA}")
+        print(f">> Apagando {len(nombres_reglas)} reglas de EventBridge en región {REGION_PRIMARIA}")
         for regla in nombres_reglas:
             response = eventbridge_primario.disable_rule(Name=regla, EventBusName='default')
             print(f"  - Apagando {regla}: HTTP Status {response['ResponseMetadata']['HTTPStatusCode']}")
@@ -212,7 +212,7 @@ def intercambiar_apigateway():
         response = apigateway_primario.get_apis(
             MaxResults='5',
         )
-        api_id = jmespath.search("Items[?Name == 'sam-apigateway'].ApiId", response)
+        api_id = jmespath.search("Items[?Name == '{{cookiecutter.project}}-apigateway'].ApiId", response)
         
         if len(api_id) != 1:
             logging.error(api_id)
@@ -235,7 +235,7 @@ def intercambiar_apigateway():
         MaxResults='5',
     )
     pprint.pprint(response)
-    api_id_secundario = jmespath.search("Items[?Name == 'sam-apigateway'].ApiId", response)
+    api_id_secundario = jmespath.search("Items[?Name == '{{cookiecutter.project}}-apigateway'].ApiId", response)
     if len(api_id_secundario) != 1:
         logging.error(api_id_secundario)
         raise Exception(f"Se esperaba 1 API Gateways en {REGION_SECUNDARIA}")
@@ -253,7 +253,7 @@ def intercambiar_apigateway():
     ## INTERCAMBIO ##
     logging.info(f">> Se habilita API Gateway en {REGION_SECUNDARIA}")
     try:    
-        audience = obtener_parametro(ssm_secundario, 'sia-user-pool-client-id-frontend', 'list')
+        audience = obtener_parametro(ssm_secundario, '{{cookiecutter.project}}-user-pool-client-id-frontend', 'list')
         response = apigateway_secundario.update_authorizer(
             ApiId=api_id_secundario,
             AuthorizerId=auth_secundario['AuthorizerId'],
@@ -291,7 +291,7 @@ def intercambiar_appsync():
         appsync_apis = appsync_primario.list_graphql_apis(
             maxResults=5
         )
-        api_primario = jmespath.search("graphqlApis[?starts_with(name,'sia-frontend-appsync-api-')]", appsync_apis)
+        api_primario = jmespath.search("graphqlApis[?starts_with(name,'{{cookiecutter.project}}-frontend-appsync-api-')]", appsync_apis)
         if len(api_primario) != 1:
             logging.error(api_primario)
             raise Exception("Se esperaba 1 API Gateway")
@@ -307,7 +307,7 @@ def intercambiar_appsync():
         appsync_apis_secundario = appsync_secundario.list_graphql_apis(
             maxResults=5
         )
-        api_secundario = jmespath.search("graphqlApis[?starts_with(name,'sia-frontend-appsync-api-')]", appsync_apis_secundario)
+        api_secundario = jmespath.search("graphqlApis[?starts_with(name,'{{cookiecutter.project}}-frontend-appsync-api-')]", appsync_apis_secundario)
         if len(api_secundario) != 1:
             logging.error(api_secundario)
             raise Exception("Se esperaba 1 API Gateway")
@@ -322,7 +322,7 @@ def intercambiar_appsync():
     # Si no ha sido intercambiado antes ejecutar el intercambio (idempotencia)
     logging.info(f">> Activando Appsync {REGION_SECUNDARIA}")
     try:
-        user_pool_id = obtener_parametro(ssm_secundario, "sia-user-pool-id", "string")
+        user_pool_id = obtener_parametro(ssm_secundario, "{{cookiecutter.project}}-user-pool-id", "string")
         response = appsync_secundario.update_graphql_api(
             apiId=api_secundario['apiId'],
             name=api_secundario['name'],
