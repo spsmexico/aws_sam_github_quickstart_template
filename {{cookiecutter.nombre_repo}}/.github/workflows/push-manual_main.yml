@@ -39,7 +39,7 @@ jobs:
   # Si se hace push a la rama main:
   DevDeploy:
     if: {{'${{'}} startsWith( github.ref, 'refs/heads/fix') || github.ref == 'refs/heads/main'  {{ '}}' }}
-    uses: {{cookiecutter.nombre_organizacion_repo}}/{{cookiecutter.nombre_repo}}/.github/workflows/reusable_deploy.yml@main
+    uses: {{cookiecutter.org_or_user_github}}/{{cookiecutter.nombre_repo}}/.github/workflows/reusable_deploy.yml@main
     with:
       ambiente: "develop"
       region: us-east-1

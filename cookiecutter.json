@@ -1,6 +1,6 @@
 {
     "nombre_repo": "Nombre del repositorio",
-    "nombre_organizacion_repo": "",
+    "org_or_user_github": "Usuario de GitHub u Organización del repo",
     "cfn_stack": "Nombre del stack en AWS",
     "project": "Identificador del proyecto",
     "sam_container": "public.ecr.aws/sam/build-python3.8:1.32.0",
