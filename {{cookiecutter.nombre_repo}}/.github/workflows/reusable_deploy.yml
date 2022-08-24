@@ -1,0 +1,430 @@
+name: reusable_deploy
+
+env:
+  AWS_MAX_ATTEMPTS: 15
+  SAM_CLI_POLL_DELAY: 130
+  REGION_DR_ACTIVA: false
+
+on:
+
+  workflow_call:
+
+    inputs:
+      ref:
+        description: "Commit o tag a construir y desplegar"
+        required: true
+        type: string
+      ambiente:
+        type: string
+        description: 'Ambiente al cual se despliega, por ejemplo develop o production'
+        required: true
+      region:
+        type: string
+        description: 'Region en la que se realizará el despliegue. Ejemplo: us-east-1'
+        required: true
+      carpeta_sam:
+        type: string
+        description: 'Carpeta en la que se encuentra tu proyecto de SAM (en la que se encuentra el archivo template.yaml). Ejemplo test'
+        required: false
+        default: .
+      stack:
+        type: string
+        description: 'Nombre del stack a crear. Si no se coloca un valor se usan los valores <project>-<cfn_stack> de pfg-sam.json y al final se coloca el sufijo de ambiente (puede desactivarse)'
+        required: false
+      forzar_usuario:
+        type: string
+        description: 'Se utiliza el usuario aunque este definido cfn_role en pfg-sam.json. El valor debe ser true o false'
+        required: false
+        default: 'false'
+      rama_config:
+        type: string
+        description: 'Rama de la que se obtiene el archivo pfg-sam.json. Por defecto se usa main.'
+        required: false
+        default: 'main'
+      validar_drift:
+        type: string
+        description: 'Por defecto no se valida el drift cuando se despliega usando un usuario de IAM'
+        required: false
+        default: 'false'
+      pre_script:
+        type: string
+        description: 'Script a ejecutar antes de la construcción y despliegue. Ejemplo: scripts/pre.sh. El script recibe como primer argumento el nombre del stack y como segundo argumento el ambiente (dev, pre o prod)'
+        required: false
+      post_script:
+        type: string
+        description: 'Script a ejecutar después de la construcción y despliegue. Ejemplo: scripts/post.sh. El script recibe como primer argumento el nombre del stack y como segundo argumento el ambiente (dev, pre o prod) Como tercer argumento la región, como cuarto argumento el stack DR y como quinto argumento la región de DR.'
+        required: false
+        default: scripts/switch_backend.sh
+      sufijo_ambiente:
+        type: string
+        description: 'true/false el sufijo de ambiente en el nombre del stack. Ejemplo: proceso-dev al desactivar el sufijo quedaría proceso'
+        required: false
+        default: 'true'     
+      dynamodb:
+        type: string
+        description: 'true/false Activa o desactiva la insercion de datos en Dynamo de la carpeta tablas.'
+        required: false
+        default: 'false'   
+      region_dr:
+        type: string
+        description: 'Region adicional en la que se desplegará el proyecto. Ejemplo: us-east-1'
+        required: false
+        default: us-west-2
+      cfn_role:
+        type: string
+        description: 'Se obliga a usar este rol, no importa si hay uno definido en pfg-sam.json'
+        required: false
+      validar_palabras_prohibidas: 
+        type: string
+        description: 'Activa o desactiva la validación de palabras prohibidas'
+        required: false
+        default: 'true'
+      sam_validate:
+        type: string
+        description: 'Activa o desactiva la ejecución del comando sam validate cuando el despliegue se realizá con los permisos del usuario'
+        default: 'false'
+
+    secrets: inherit
+
+
+jobs:
+
+  Deploy:
+
+    runs-on: ubuntu-20.04
+    timeout-minutes: 300
+    environment: ${{inputs.ambiente}}
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v2
+        with:
+          python-version: '3.8'
+
+      - uses: aws-actions/setup-sam@v1
+        with:
+          version: 1.37.0
+
+      # Se obtienen propiedades del proyecto
+      - name: "Cargando pfg-sam.json y parameters-{env}.json"
+        id: read_json
+        run: |
+          cd ${{inputs.carpeta_sam}}
+          git rev-parse HEAD
+          git branch
+          git config --global advice.detachedHead false
+          git checkout ${{inputs.ref}}
+          git remote update
+          git fetch
+          git checkout origin/${{inputs.rama_config}} pfg-sam.json || echo "No se pudo copiar archivos pfg-sam.json"
+          git checkout origin/${{inputs.rama_config}} parameters-*.json || echo "No se pudo copiar archivos parameters-*.json"
+          content=`cat ./pfg-sam.json`
+          # the following lines are only required for multi line json
+          content="${content//'%'/'%25'}"
+          content="${content//$'\n'/'%0A'}"
+          content="${content//$'\r'/'%0D'}"
+          # end of optional handling for multi line json
+          echo "::set-output name=pfgSamJSON::$content"
+
+      - if: ${{ inputs.ambiente == 'develop' && inputs.validar_palabras_prohibidas == 'true'}}
+        name: "Revisando palabras prohibidas"
+        run: |
+          ! grep -E '\-dev|us-east-1|us-west-2' -rn \
+          --include=*.{py,yaml} \
+          --exclude=dynamo.py \
+          --exclude=rollback-dynamo.py \
+          --exclude=api-spec.yaml \
+          --exclude=asyncapi.yaml \
+          --exclude=move-table.py \
+          --exclude=.pre-commit-config.yaml \
+          --exclude=correccion-tipo-dato.py \
+          --exclude-dir=tests \
+          --exclude-dir=.aws-sam \
+          --exclude-dir=openapi \
+          --exclude-dir=scripts \
+          .
+
+      # Las credenciales se configuran así y no en la sección de variables de ambiente
+      # para no mostrarlas en los logs.
+      # Credenciales de desarrollo
+      - if: ${{ inputs.ambiente == 'develop'}}
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: {{'${{'}} secrets.{{cookiecutter.secret_aws_key_id}} {{ '}}' }}
+          aws-secret-access-key: {{'${{'}} secrets.{{cookiecutter.secret_aws_key_secret}} {{ '}}' }}
+          aws-region: ${{inputs.region}}
+
+      # Credenciales de preproducción
+      - if: ${{ inputs.ambiente == 'preprod' }}
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.PRE_AWS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.PRE_AWS_KEY_SECRET }}
+          aws-region: ${{ inputs.region }}
+
+      # Credenciales de producción
+      - if: ${{ inputs.ambiente == 'production' }}
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.PROD_AWS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.PROD_AWS_KEY_SECRET }}
+          aws-region: ${{ inputs.region }}
+      
+      - name: "Instalando dependencias"
+        run: "pip install boto3==1.20.22 jmespath==0.10.0 loguru==0.6.0 pytz==2022.1"
+
+      # Colocar variable de ambiente
+      # SAM Validate. Según la documentación solo revisa que sea un archivo YAML correcto
+      # pero parece que también valida que el usuario tenga permisos en IAM para crear los
+      # recursos que vienen en la plantilla, solo se ejecuta si el despliegue no se hace
+      # con un rol de CloudFormation y lo hace directamente el usuario dueño de las credenciales
+      # configuradas en el paso anterior.
+      - if: ${{ (fromJson(steps.read_json.outputs.pfgSamJSON).cfn_role == '' || inputs.forzar_usuario == 'true' ) && inputs.sam_validate == 'true'}}
+        name: "SAM Validate"
+        run: |
+          cd ${{inputs.carpeta_sam}}
+          sam validate
+
+      # Se obtienen los secretos segun el ambiente.
+      - name: "Colocar variables de ambiente"
+        run: |
+          if [[ ${{inputs.ambiente}} = "develop" ]]; then \
+            echo "samEnv=dev" >> $GITHUB_ENV; \
+            echo "roleARN=arn:aws:iam::{{'${{'}} secrets.{{cookiecutter.secret_aws_account_id}} {{ '}}' }}:role/${{fromJson(steps.read_json.outputs.pfgSamJSON).cfn_role}}" >> $GITHUB_ENV; \
+            echo "Region ${{inputs.region}}"; \
+            echo "awsAccountID={{'${{'}} secrets.{{cookiecutter.secret_aws_account_id}} {{ '}}' }}" >> $GITHUB_ENV; \
+          elif [[ ${{inputs.ambiente}} = "preprod" || $GITHUB_REF = "*-pre" ]]; then \
+            echo "samEnv=pre" >> $GITHUB_ENV; \
+            echo "roleARN=arn:aws:iam::${{secrets.PRE_AWS_ACCOUNT_ID}}:role/${{fromJson(steps.read_json.outputs.pfgSamJSON).cfn_role}}" >> $GITHUB_ENV; \
+            echo "Region ${{inputs.region}}"; \
+            echo "awsAccountID=${{secrets.PRE_AWS_ACCOUNT_ID}}" >> $GITHUB_ENV; \
+          elif [[ ${{inputs.ambiente}} = "production" || $GITHUB_REF != "*-pre" ]]; then \
+            echo "samEnv=prod" >> $GITHUB_ENV; \
+            echo "roleARN=arn:aws:iam::${{secrets.PROD_AWS_ACCOUNT_ID}}:role/${{fromJson(steps.read_json.outputs.pfgSamJSON).cfn_role}}" >> $GITHUB_ENV; \
+            echo "Region ${{inputs.region}}"; \
+            echo "awsAccountID=${{secrets.PROD_AWS_ACCOUNT_ID}}" >> $GITHUB_ENV; \
+            echo "Region DR ${{inputs.region_dr}}"
+          fi
+
+          CFN_ROLE="${{inputs.cfn_role}}"
+          if [[ -n $CFN_ROLE ]]; then echo "roleARN=$CFN_ROLE" >> $GITHUB_ENV; fi
+
+          cd ${{inputs.carpeta_sam}}
+          cat pfg-sam.json
+          cat parameters-${{inputs.ambiente}}.json
+
+      - if: ${{ inputs.stack == '' }}
+        name: "Formar nombre de stack con pfg-sam.json"
+        run: |
+          if [[ ${{inputs.sufijo_ambiente}} = "true" ]]; then SUFIJO="-${{env.samEnv}}"; fi
+          STACK_NAME="${{fromJson(steps.read_json.outputs.pfgSamJSON).project}}-${{fromJson(steps.read_json.outputs.pfgSamJSON).cfn_stack}}"
+          echo "fullStackName=$STACK_NAME$SUFIJO" >> $GITHUB_ENV
+          echo "${{env.fullStackName}}"
+
+          REGION_DR="${{inputs.region_dr}}"
+          if [[ -n $REGION_DR ]]; then SUFIJO="-dr"; fi
+          if [[ ${{inputs.sufijo_ambiente}} = "false" ]]; then SUFIJO=""; fi
+          echo "fullStackNameDR=$STACK_NAME$SUFIJO" >> $GITHUB_ENV
+          echo "${{env.fullStackName}}"
+
+      - if: ${{ inputs.stack != '' }}
+        name: "Formar nombre de stack con input (stack)"
+        run: |
+          if [[ ${{inputs.sufijo_ambiente}} = "true" ]]; then SUFIJO="-${{env.samEnv}}"; fi
+          STACK_NAME="${{fromJson(steps.read_json.outputs.pfgSamJSON).project}}-${{inputs.stack}}"
+          echo "fullStackName=${STACK_NAME}$SUFIJO" >> $GITHUB_ENV;
+
+          REGION_DR="${{inputs.region_dr}}"
+          if [[ -n $REGION_DR ]]; then SUFIJO="-dr"; fi
+          if [[ ${{inputs.sufijo_ambiente}} = "false" ]]; then SUFIJO=""; fi
+          echo "fullStackNameDR={$STACK_NAME}$SUFIJO" >> $GITHUB_ENV
+          echo $STACK_NAME$SUFIJO
+
+      # Ejecución de script personalizado antes del despliegue
+      - if: ${{ inputs.pre_script != '' }}
+        name: Ejecución de script pre despliegue
+        run: |
+          cd ${{inputs.carpeta_sam}}
+          chmod +x ${{inputs.pre_script}}
+          ./${{inputs.pre_script}} ${{env.fullStackName}} ${{env.samEnv}} ${{inputs.ref}} ${{inputs.region}} ${{env.awsAccountID}} ${{inputs.region_dr}}
+
+      # Linter Cloudformation
+      - if: ${{ inputs.ambiente == 'develop'}}
+        name: "CFN Lint"
+        run: |
+          pip install cfn-lint==${{fromJson(steps.read_json.outputs.pfgSamJSON).cfn_lint_version}}
+          cd ${{inputs.carpeta_sam}}
+          cfn-lint template.yaml
+
+      # Crear bucket si no existe
+      - name: "Crear bucket si no existe"
+        run: |
+          aws s3api head-bucket --bucket "${{fromJson(steps.read_json.outputs.pfgSamJSON).sam_bucket}}-${{env.samEnv}}-${{inputs.region}}" 2>/dev/null || aws s3 mb s3://${{fromJson(steps.read_json.outputs.pfgSamJSON).sam_bucket}}-${{env.samEnv}}-${{inputs.region}}
+          echo "Habilitando versionamiento"
+          aws s3api put-bucket-versioning --bucket "${{fromJson(steps.read_json.outputs.pfgSamJSON).sam_bucket}}-${{env.samEnv}}-${{inputs.region}}" --versioning-configuration Status=Enabled || echo "No se pudo realizar la operación"
+          REGION_DR="${{inputs.region_dr}}"
+          if [[ -n $REGION_DR ]]; then echo bucket dr; fi
+          if [[ -n $REGION_DR ]]; then aws s3api head-bucket --region ${{inputs.region_dr}} --bucket "${{fromJson(steps.read_json.outputs.pfgSamJSON).sam_bucket}}-${{env.samEnv}}-dr-${{inputs.region_dr}}" 2>/dev/null || aws s3 mb s3://${{fromJson(steps.read_json.outputs.pfgSamJSON).sam_bucket}}-${{env.samEnv}}-dr-${{inputs.region_dr}} --region ${{inputs.region_dr}}; fi
+          if [[ -n $REGION_DR ]]; then aws s3api put-bucket-versioning --region ${{inputs.region_dr}} --bucket "${{fromJson(steps.read_json.outputs.pfgSamJSON).sam_bucket}}-${{env.samEnv}}-dr-${{inputs.region_dr}}" --versioning-configuration Status=Enabled;  fi
+
+
+      - name: "Instalar herramienta de reintentos"
+        run: |
+          wget -q https://github.com/joshdk/retry/releases/download/v1.2.0/retry-linux-amd64.tar.gz
+          tar -xf retry-linux-amd64.tar.gz
+          sudo install retry /usr/bin/retry
+
+
+      - if: ${{inputs.dynamodb == 'true'}}
+        name: Inserciones DynamoDB
+        run: |
+          
+          pip install boto3
+          pip install pandas
+          python3 dynamo.py -a ${{env.samEnv}} -r ${{inputs.region}}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}   
+
+      # Construye
+      - name: "Construir SAM"
+        if: ${{fromJson(steps.read_json.outputs.pfgSamJSON).sam_container == ''}}
+        run: |
+          cd ${{inputs.carpeta_sam}}
+          retry --task-time=5m -max-time 20m -attempts=5 -sleep=5s -jitter=15s sam build
+
+      # Construye usando Docker
+      - name: "Construir SAM con Docker"
+        if: ${{fromJson(steps.read_json.outputs.pfgSamJSON).sam_container != ''}}
+        run: |
+          cd ${{inputs.carpeta_sam}}
+          retry --task-time=5m -max-time 20m -attempts=5 -sleep=5s -jitter=15s sam build --use-container --build-image ${{fromJson(steps.read_json.outputs.pfgSamJSON).sam_container}}
+
+      # Aplicar cambios en la aplicación no muestra error si el stack no cambia
+      # Si no hay un rol para CloudFormation
+      - if: ${{ fromJson(steps.read_json.outputs.pfgSamJSON).cfn_role == '' || inputs.forzar_usuario == 'true' }}
+        name: "Desplegar con permisos de usuario de Github"
+        run: |
+          cd ${{inputs.carpeta_sam}}
+          SAM_PARAMETERS=$( cat parameters-${{inputs.ambiente}}.json | jq -r '[ .[] | "\(.ParameterKey)=\(.ParameterValue)" ] | join(" ")' )
+          STACKREF=$(git rev-parse HEAD)
+          STACKVER="${STACKREF:0:8}" ; echo "${STACKVER}"
+          echo "Desplegando región primaria"
+          retry --task-time=12m -max-time 45m -attempts=5 -sleep=2m -jitter=15m \
+          sam deploy \
+          --no-confirm-changeset \
+          --no-fail-on-empty-changeset \
+          --stack-name "${{env.fullStackName}}" \
+          --s3-bucket "${{fromJson(steps.read_json.outputs.pfgSamJSON).sam_bucket}}-${{env.samEnv}}-${{inputs.region}}" \
+          --s3-prefix "${{env.fullStackName}}" \
+          --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND \
+          --tags "version=${{ inputs.ref }} dr=false hash=${STACKREF} repo=${{ github.repository }}" \
+          --resolve-image-repos \
+          --parameter-overrides EnvName=${{env.samEnv}} DBEnvName=${{env.samEnv}} $SAM_PARAMETERS
+
+      - if: ${{ (fromJson(steps.read_json.outputs.pfgSamJSON).cfn_role == '' || inputs.forzar_usuario == 'true') && inputs.region_dr != '' }}
+        name: "Desplegar DR con permisos de usuario de Github"
+        run: |
+          cd ${{inputs.carpeta_sam}}
+          SAM_PARAMETERS=$( cat parameters-${{env.samEnv}}-dr.json | jq -r '[ .[] | "\(.ParameterKey)=\(.ParameterValue)" ] | join(" ")' )
+          STACKREF=$(git rev-parse HEAD)
+          STACKVER="${STACKREF:0:8}" ; echo "${STACKVER}"
+          retry --task-time=12m -max-time 45m -attempts=5 -sleep=2m -jitter=15m \
+          sam deploy \
+          --no-confirm-changeset \
+          --no-fail-on-empty-changeset \
+          --stack-name "${{env.fullStackNameDR}}" \
+          --s3-bucket "${{fromJson(steps.read_json.outputs.pfgSamJSON).sam_bucket}}-${{env.samEnv}}-dr-${{inputs.region_dr}}" \
+          --s3-prefix "${{env.fullStackNameDR}}" \
+          --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND \
+          --tags "version=${{ inputs.ref }} dr=true hash=${STACKREF} repo=${{ github.repository }}" \
+          --region ${{inputs.region_dr}} \
+          --resolve-image-repos \
+          --parameter-overrides EnvName=${{env.samEnv}}-dr DBEnvName=${{env.samEnv}} $SAM_PARAMETERS
+
+      # Si hay un rol para CloudFormation
+      - if: ${{ fromJson(steps.read_json.outputs.pfgSamJSON).cfn_role != '' && inputs.forzar_usuario != 'true'}}
+        name: "Desplegar con rol de servicio para CloudFormation"
+        run: |
+          cd ${{inputs.carpeta_sam}}
+          SAM_PARAMETERS=$( cat parameters-${{inputs.ambiente}}.json | jq -r '[ .[] | "\(.ParameterKey)=\(.ParameterValue)" ] | join(" ")' )
+          STACKREF=$(git rev-parse HEAD)
+          STACKVER="${STACKREF:0:8}" ; echo "${STACKVER}"
+          retry --task-time=12m -max-time 45m -attempts=5 -sleep=2m -jitter=15m \
+          sam deploy \
+          --role-arn ${{env.roleARN}} \
+          --no-confirm-changeset \
+          --no-fail-on-empty-changeset \
+          --stack-name "${{env.fullStackName}}" \
+          --s3-bucket "${{fromJson(steps.read_json.outputs.pfgSamJSON).sam_bucket}}-${{env.samEnv}}-${{inputs.region}}" \
+          --s3-prefix "${{env.fullStackName}}" \
+          --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND \
+          --tags "version=${{ inputs.ref }} dr=false hash=${STACKREF} repo=${{ github.repository }}" \
+          --resolve-image-repos \
+          --parameter-overrides "EnvName=${{env.samEnv}} DBEnvName=${{env.samEnv}} $SAM_PARAMETERS"
+
+
+      # Si hay un rol para CloudFormation
+      - if: ${{ fromJson(steps.read_json.outputs.pfgSamJSON).cfn_role != '' && inputs.forzar_usuario != 'true' && inputs.region_dr != ''}}
+        name: "Desplegar DR con rol de servicio para CloudFormation"
+        run: |
+          cd ${{inputs.carpeta_sam}}
+          SAM_PARAMETERS=$( cat parameters-${{env.samEnv}}-dr.json | jq -r '[ .[] | "\(.ParameterKey)=\(.ParameterValue)" ] | join(" ")' )
+          STACKREF=$(git rev-parse HEAD)
+          STACKVER="${STACKREF:0:8}" ; echo "${STACKVER}"
+          retry --task-time=12m -max-time 45m -attempts=5 -sleep=2m -jitter=15m \
+          sam deploy \
+          --role-arn ${{env.roleARN}} \
+          --no-confirm-changeset \
+          --no-fail-on-empty-changeset \
+          --stack-name "${{env.fullStackNameDR}}" \
+          --s3-bucket "${{fromJson(steps.read_json.outputs.pfgSamJSON).sam_bucket}}-${{env.samEnv}}-dr-${{inputs.region_dr}}" \
+          --s3-prefix "${{env.fullStackNameDR}}" \
+          --capabilities CAPABILITY_IAM CAPABILITY_NAMED_IAM CAPABILITY_AUTO_EXPAND \
+          --tags "version=${{ inputs.ref }} dr=true hash=${STACKREF} repo=${{ github.repository }}" \
+          --region ${{inputs.region_dr}} \
+          --resolve-image-repos \
+          --parameter-overrides "EnvName=${{env.samEnv}}-dr DBEnvName=${{env.samEnv}} $SAM_PARAMETERS"
+
+      
+      # Scripts Posteriores al despliegue
+      - if: ${{ inputs.post_script != '' }}
+        name: Scripts Post-Despliegue
+        run: |
+          cd ${{inputs.carpeta_sam}}
+          chmod +x ${{inputs.post_script}}
+          ./${{inputs.post_script}} ${{env.fullStackName}} ${{env.samEnv}} ${{inputs.ref}} ${{inputs.region}} ${{env.awsAccountID}} ${{inputs.region_dr}} 
+    
+      # Validar drift
+      - if: ${{ inputs.validar_drift == 'true' && ( (fromJson(steps.read_json.outputs.pfgSamJSON).cfn_role == '' || inputs.cfn_role == '') ) || (inputs.forzar_usuario == 'true'&& inputs.validar_drift == 'true') }}
+        name: "Validar drift de stack de Cloudformation"
+        timeout-minutes: 3
+        run: |
+          # Como mejor agregar validación WHILE mientras esté el stack en "UPDATE_IN_PROGRESS" \
+          # debido a que no se puede hacer la detección cuando está actualizándose el stack.
+
+          # Se  ejecuta AWS para detectar la desviación/drift del stack. Este genera un ID.
+          DRIFT=$(aws cloudformation detect-stack-drift --stack-name "${{env.fullStackName}}" | jq '.StackDriftDetectionId')
+
+          #Hacemos ejecutable el script de la detección de desviación.
+          chmod u+x ./drift_detection.sh
+
+          #Se ejecuta script en la misma terminal del contenedor del workflow.
+          . ./drift_detection.sh -s "${{env.fullStackName}}"
+      
+
+      - if: ${{ inputs.region_dr != ''}}
+        name: "Validación de tags de stacks de Cloudformation"
+        run: |
+          retry --task-time=15m -max-time 30m -attempts=4 -sleep=5s -jitter=5m python scripts/tags-stacks.py -p ${{inputs.region}} -s ${{inputs.region_dr}} -st ${{env.fullStackName}} -stdr ${{env.fullStackNameDR}}
+                
+      - name: "Notificación de error"
+        if: ${{ failure() }}
+        run: |
+          curl -H 'Content-Type: application/json' \
+          --retry 4 \
+          --retry-delay 1 \
+          -d '{"text": "'"$PWD"' - '"$GITHUB_EVENT_NAME"' - ${{job.status}} - '"$GITHUB_REF"' - '"$GITHUB_BASE_REF"' "}' \
+          https://mxspsolutions.webhook.office.com/webhookb2/a84b113f-9d27-4138-84ae-e3e4ab4830f2@ac5349df-152e-486f-9b39-fe3c4a25efe0/IncomingWebhook/e2f3db57ac59459a938f44c822548b89/10ed5eda-9b70-4598-858a-e5ae6599fa66
