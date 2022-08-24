@@ -42,20 +42,28 @@ Resources:
         HelloWorld:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            ApiId: !Ref ApiGatewayApi
+            RestApiId: !Ref ApiGatewayApi
             Path: /hello
             Method: get
-
-Outputs:
-  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
-  # Find out more about other implicit resources you can reference within SAM
-  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
-  HelloWorldApi:
-    Description: "API Gateway endpoint URL for Prod stage for Hello World function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
-  HelloWorldFunction:
-    Description: "Hello World Lambda Function ARN"
-    Value: !GetAtt HelloWorldFunction.Arn
-  HelloWorldFunctionIamRole:
-    Description: "Implicit IAM Role created for Hello World function"
-    Value: !GetAtt HelloWorldFunctionRole.Arn
+      Environment:
+        Variables:
+          TABLA_EJEMPLO: !Sub {{cookiecutter.project}}-tabla-ejemplo-${DBEnvName}      
+      Policies: # https://aws.amazon.com/es/premiumsupport/knowledge-center/lambda-sam-template-permissions/
+      # Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+        - AmazonS3ReadOnlyAccess # Managed Policy
+        - SSMParameterReadPolicy: # SAM Policy https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-policy-templates.html
+            ParameterName: !Sub sia-utileria-parametro-${EnvName}
+        - DynamoDBCrudPolicy:
+            TableName: !Sub sia-catalogo-ejemplo-${DBEnvName}
+        - Statement: # Inline policy
+            - Sid: KMSDescifrar
+              Effect: Allow
+              Action:
+                - 'kms:Decrypt'
+              Resource: !Ref KeyKMSARN
+        - Statement: # Inline policy
+            - Sid: KMSCifrar
+              Effect: Allow
+              Action:
+                - 'kms:Encrypt'
+              Resource: !Ref KeyKMSARN
