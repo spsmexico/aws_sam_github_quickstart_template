@@ -156,7 +156,7 @@ jobs:
           aws-access-key-id: {{'${{'}} secrets.{{cookiecutter.secret_aws_key_id}} {{ '}}' }}
           aws-secret-access-key: {{'${{'}} secrets.{{cookiecutter.secret_aws_key_secret}} {{ '}}' }}
           aws-region: {{'${{'}}inputs.region}}
-        secrets: inherit
+        
       # Credenciales de preproducción
       - if: {{'${{'}} inputs.ambiente == 'preprod' {{ '}}' }}
         uses: aws-actions/configure-aws-credentials@v1
@@ -164,7 +164,7 @@ jobs:
           aws-access-key-id: {{'${{'}} secrets.PRE_AWS_KEY_ID {{ '}}' }}
           aws-secret-access-key: {{'${{'}} secrets.PRE_AWS_KEY_SECRET {{ '}}' }}
           aws-region: {{'${{'}} inputs.region {{ '}}' }}
-        secrets: inherit
+        
       # Credenciales de producción
       - if: {{'${{'}} inputs.ambiente == 'production' {{ '}}' }}
         uses: aws-actions/configure-aws-credentials@v1
@@ -172,7 +172,7 @@ jobs:
           aws-access-key-id: {{'${{'}} secrets.PROD_AWS_KEY_ID {{ '}}' }}
           aws-secret-access-key: {{'${{'}} secrets.PROD_AWS_KEY_SECRET {{ '}}' }}
           aws-region: {{'${{'}} inputs.region {{ '}}' }}
-        secrets: inherit
+        
       - name: "Instalando dependencias"
         run: "pip install boto3==1.20.22 jmespath==0.10.0 loguru==0.6.0 pytz==2022.1"
 
@@ -215,8 +215,8 @@ jobs:
           cd {{'${{'}}inputs.carpeta_sam{{ '}}' }}
           cat pfg-sam.json
           cat parameters-{{'${{'}}inputs.ambiente{{ '}}' }}.json
-        secrets: inherit
         
+
       - if: {{'${{'}} inputs.stack == '' {{ '}}' }}
         name: "Formar nombre de stack con pfg-sam.json"
         run: |

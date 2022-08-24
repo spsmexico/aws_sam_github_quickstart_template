@@ -46,7 +46,4 @@ jobs:
       ref: {{'${{'}} github.sha {{ '}}' }}
       dynamodb: {{'${{'}} github.event.inputs.dynamodb {{ '}}' }}
       region_dr: us-west-2
-    secrets:
-      DEV_AWS_KEY_ID: {{'${{'}} secrets.{{cookiecutter.secret_aws_key_id}} {{ '}}' }}
-      DEV_AWS_KEY_SECRET: {{'${{'}} secrets.{{cookiecutter.secret_aws_key_secret}} {{ '}}' }}
-      DEV_AWS_ACCOUNT_ID: {{'${{'}} secrets.{{cookiecutter.secret_aws_account_id}} {{ '}}' }}
+    secrets: inherit
