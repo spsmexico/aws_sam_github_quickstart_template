@@ -32,7 +32,4 @@ jobs:
       ref: "{{'${{'}}github.event.inputs.version{{ '}}' }}"
       region: us-east-1
       dynamodb: {{'${{'}}github.event.inputs.dynamodb{{ '}}' }}
-    secrets:
-      PROD_AWS_KEY_ID: {{'${{'}} secrets.AWS_KEY{{ '}}' }}
-      PROD_AWS_KEY_SECRET: {{'${{'}} secrets.AWS_SECRET{{ '}}' }}
-      PROD_AWS_ACCOUNT_ID: {{'${{'}} secrets.AWS_ID{{ '}}' }}
+    secrets: inherit

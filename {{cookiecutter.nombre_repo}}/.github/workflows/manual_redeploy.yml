@@ -1,0 +1,62 @@
+name: manual_redeploy
+
+
+on:
+  
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Número de release o pre-release a redesplegar.
+        required: true
+        type: string
+      ambiente:
+        description: Ambiente al cual se va a redesplegar.
+        required: true
+        type: choice
+        options:
+          - develop
+          - preprod
+          - production
+      dynamodb:
+        description: 'Activa la insercion de datos de la carpeta tablas DynamoDB ⚠️ CUIDADO: Validar que la inserción en tablas no afecta a otros procesos.'
+        required: false
+        default: false
+        type: boolean
+  
+jobs:
+
+  RedeployDev:
+    concurrency: develop
+    if: {{'${{'}}github.event.inputs.ambiente == 'develop'{{ '}}' }}
+    uses: principalmexico-emu/SAUTO_CICD/.github/workflows/reusable_deploy.yml@main
+    with:
+      ambiente: "develop"
+      ref: {{'${{'}}github.event.inputs.version{{ '}}' }}
+      region: us-east-1
+      region_dr: us-west-2
+      dynamodb: {{'${{'}}github.event.inputs.dynamodb{{ '}}' }}
+    secrets: inherit
+
+  RedeployPre:
+    concurrency: preprod
+    if: {{'${{'}}github.event.inputs.ambiente == 'preprod'{{ '}}' }}
+    uses: {{cookiecutter.org_or_user_github}}/{{cookiecutter.nombre_repo}}/.github/workflows/reusable_deploy.yml@main
+    with:
+      ambiente: "preprod"
+      ref: {{'${{'}}github.event.inputs.version{{ '}}' }}
+      region: us-east-1
+      region_dr: us-west-2
+      dynamodb: {{'${{'}}github.event.inputs.dynamodb{{ '}}' }}
+    secrets: inherit
+
+  RedeployProd:
+    concurrency: production
+    if: {{'${{'}}github.event.inputs.ambiente == 'production'{{ '}}' }}
+    uses: principalmexico-emu/SAUTO_CICD/.github/workflows/reusable_deploy.yml@main
+    with:
+      ambiente: "production"
+      ref: {{'${{'}}github.event.inputs.version{{ '}}' }}
+      region: us-east-1
+      region_dr: us-west-2
+      dynamodb: {{'${{'}}github.event.inputs.dynamodb{{ '}}' }}
+    secrets: inherit
