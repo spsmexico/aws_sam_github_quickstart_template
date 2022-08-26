@@ -20,7 +20,7 @@ jobs:
 
   CreateRelease:
     permissions: write-all
-    uses: principalmexico-emu/SAUTO_CICD/.github/workflows/reusable_create-release.yml@main
+    uses: {{cookiecutter.org_or_user_github}}/{{cookiecutter.nombre_repo}}/.github/workflows/reusable_create-release.yml@main
     with:
       version: "{{'${{'}}github.event.inputs.version{{ '}}' }}"
 

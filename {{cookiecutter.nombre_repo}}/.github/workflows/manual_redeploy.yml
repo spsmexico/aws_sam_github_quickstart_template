@@ -28,7 +28,7 @@ jobs:
   RedeployDev:
     concurrency: develop
     if: {{'${{'}}github.event.inputs.ambiente == 'develop'{{ '}}' }}
-    uses: principalmexico-emu/SAUTO_CICD/.github/workflows/reusable_deploy.yml@main
+    uses: {{cookiecutter.org_or_user_github}}/{{cookiecutter.nombre_repo}}/.github/workflows/reusable_deploy.yml@main
     with:
       ambiente: "develop"
       ref: {{'${{'}}github.event.inputs.version{{ '}}' }}
@@ -52,7 +52,7 @@ jobs:
   RedeployProd:
     concurrency: production
     if: {{'${{'}}github.event.inputs.ambiente == 'production'{{ '}}' }}
-    uses: principalmexico-emu/SAUTO_CICD/.github/workflows/reusable_deploy.yml@main
+    uses: {{cookiecutter.org_or_user_github}}/{{cookiecutter.nombre_repo}}/.github/workflows/reusable_deploy.yml@main
     with:
       ambiente: "production"
       ref: {{'${{'}}github.event.inputs.version{{ '}}' }}
