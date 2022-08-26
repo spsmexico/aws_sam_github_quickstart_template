@@ -1,0 +1,38 @@
+name: manual_release
+
+
+on:
+
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Número de versión del pre-release a liberar.
+        required: true
+        type: string
+      dynamodb:
+        description: 'Desmarcar la casilla para desactivar la insercion a DynamoDB'
+        required: false
+        default: true
+        type: boolean
+concurrency: production
+
+jobs:
+
+  CreateRelease:
+    permissions: write-all
+    uses: principalmexico-emu/SAUTO_CICD/.github/workflows/reusable_create-release.yml@main
+    with:
+      version: "{{'${{'}}github.event.inputs.version{{ '}}' }}"
+
+  Release:
+    needs: CreateRelease
+    uses: {{cookiecutter.org_or_user_github}}/{{cookiecutter.nombre_repo}}/.github/workflows/reusable_deploy.yml@main
+    with:
+      ambiente: "production"
+      ref: "{{'${{'}}github.event.inputs.version{{ '}}' }}"
+      region: us-east-1
+      dynamodb: {{'${{'}}github.event.inputs.dynamodb{{ '}}' }}
+    secrets:
+      PROD_AWS_KEY_ID: {{'${{'}} secrets.AWS_KEY{{ '}}' }}
+      PROD_AWS_KEY_SECRET: {{'${{'}} secrets.AWS_SECRET{{ '}}' }}
+      PROD_AWS_ACCOUNT_ID: {{'${{'}} secrets.AWS_ID{{ '}}' }}
