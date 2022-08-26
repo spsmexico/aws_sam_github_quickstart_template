@@ -14,7 +14,7 @@ Parameters:
     Type: String
     Default: dev
     Description: Valor de sufijo para tablas de base de datos
-  KeyKMSARN:
+  ParametersKMSARN:
     Description: ARN de la llave que descifra los secretos
     Type: String
 
@@ -60,10 +60,10 @@ Resources:
               Effect: Allow
               Action:
                 - 'kms:Decrypt'
-              Resource: !Ref KeyKMSARN
+              Resource: !Ref ParametersKMSARN
         - Statement: # Inline policy
             - Sid: KMSCifrar
               Effect: Allow
               Action:
                 - 'kms:Encrypt'
-              Resource: !Ref KeyKMSARN
+              Resource: !Ref ParametersKMSARN

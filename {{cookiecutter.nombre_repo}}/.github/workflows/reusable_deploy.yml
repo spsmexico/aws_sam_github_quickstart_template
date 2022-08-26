@@ -35,7 +35,7 @@ on:
         type: string
         description: 'Se utiliza el usuario aunque este definido cfn_role en pfg-sam.json. El valor debe ser true o false'
         required: false
-        default: 'false'
+        default: 'true'
       rama_config:
         type: string
         description: 'Rama de la que se obtiene el archivo pfg-sam.json. Por defecto se usa main.'
