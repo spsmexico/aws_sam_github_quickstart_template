@@ -1,10 +1,10 @@
 [
   {
-    "ParameterKey": "KeyKMSARN",
-    "ParameterValue": "arn:aws:kms:us-east-1:335672086802:key/628159b9-3024-452f-87c6-de6555b22648"
+    "ParameterKey": "DynamoKMSARN",
+    "ParameterValue": "{{cookiecutter.ARN_DYNAMODB_KMS}}"
   },
   {
-    "ParameterKey": "KeyKMSARNMulti",
-    "ParameterValue": "arn:aws:kms:us-east-1:335672086802:key/mrk-de5a64805f7447efb9614dfdf31eaba6"
+    "ParameterKey": "ParametersKMSARN",
+    "ParameterValue": "{{cookiecutter.ARN_SSM_KMS}}"
   }
 ]
