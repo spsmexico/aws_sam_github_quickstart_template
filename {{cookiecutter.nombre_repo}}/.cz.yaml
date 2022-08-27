@@ -5,12 +5,12 @@ commitizen:
   name: cz_customize
   customize:
     message_template: |
-      {{'${{'}}tipo_cambio{{ '}}' }}"({{'${{'}}proyecto{{ '}}' }}"){% if breaking_change|length %}!{% endif %}: {{'${{'}}message{{ '}}' }}"
+      {{tipo_cambio}}({{proyecto}}){% if breaking_change|length %}!{% endif %}: {{message}}
 
-      {% if id_jira|length %}JIRA: {{'${{'}}id_jira{{ '}}' }}"{% endif %}
-      {% if detalle|length %}{{'${{'}}detalle{{ '}}' }}"{% endif %}
+      {% if id_jira|length %}JIRA: {{id_jira}}{% endif %}
+      {% if detalle|length %}{{detalle}}{% endif %}
 
-      {% if breaking_change|length %}BREAKING CHANGE: {{'${{'}}breaking_change{{ '}}' }}"{% endif %}
+      {% if breaking_change|length %}BREAKING CHANGE: {{breaking_change}}{% endif %}
     example: 'feature: this feature enable customize through config file'
     schema: "<type>(<scope>): <body>"
     #schema_pattern: "(feature|bug fix):(\\s.*)"

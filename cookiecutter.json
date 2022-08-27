@@ -11,6 +11,9 @@
     "sam_bucket": "Nombre del bucket para SAM",
     "secret_aws_key_id": "DEV_AWS_KEY_ID",
     "secret_aws_key_secret": "DEV_AWS_KEY_SECRET",
-    "secret_aws_account_id": "DEV_AWS_ACCOUNT_ID"
+    "secret_aws_account_id": "DEV_AWS_ACCOUNT_ID",
+    "_copy_without_render": [
+        ".cz.yaml"
+    ]
     
 }
