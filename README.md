@@ -1,12 +1,16 @@
 # Cookiecutter Github SAM API
 
+**Diagrama:**
+
+DIAGRAMA DE API EJEMPLO
+
 **Descripción:** Este proyecto es una plantilla que permite generar un proyecto "serverles" básico, que sirva como punto inicial a proyectos pequeños de un solo repositorio.
 
 Si requieres crear un proyecto más complejo (multiples repositorios y/o más de 3 desarrolladores) o tú proyecto ya tiene demasidadas lambdas contacta al equipo de CI/CD. 
 
 **Tipo:** API
 
-**Recuperación de desastres**:
+**[Recuperación de desastres](https://aws.amazon.com/blogs/architecture/disaster-recovery-dr-architecture-on-aws-part-iii-pilot-light-and-warm-standby/)**:
 - Categoría: Activo/Pasivo (Active/pasive)
 - Estrategia: Espera caliente (Warm standby) 
 
@@ -82,15 +86,16 @@ SAM también tiene soporte para agregar a tu proyecto Step Functions y orquestar
 
 ### Cursos
 
-Si quieres aprender a crear aplicaciones con herramientas "serverless" de AWS puedes tomar alguno de estos cursos:
-- [AWS Workshop: Building Serverless Apps with SAM](https://catalog.us-east-1.prod.workshops.aws/workshops/d21ec850-bab5-4276-af98-a91664f8b161)
-  - Es una introducción rápida al framework de SAM, si tienes prisa con este workshop aprenderas lo  minimo necesaro para construir aplicaciones con SAM.
+Si quieres aprender a crear aplicaciones con herramientas "serverless" de AWS puedes tomar alguno de estos cursos (en negritas están los recomendados):
 - [**Coursera: Building Modern Python Applications on AWS**](https://www.coursera.org/learn/building-modern-python-applications-on-aws?specialization=aws-python-serverless-development)
-  - Este curso da una introducción a los servicios más usados al construir aplicaciones serverless (Lambda, API Gateway, DynamoDB, Cognito y S3), a las herramientas que estaras utilizando en el día a día (AWS CLI, Boto3 Cloud Shell y Postman) y a utilizar una metodología orientada a APIs (API Driven Development). Es el curso que se recomienda tomar antes de iniciar tu primer proyecto, el curso se puede tomar de forma gratuita. Para realizar las prácticas, cuestionarios y obtener un certificado de completado se debe realizar un pago.
+  - Este curso da una introducción a los servicios más usados al construir aplicaciones serverless (Lambda, API Gateway, DynamoDB, Cognito y S3), a las herramientas que estaras utilizando en el día a día (AWS CLI, Boto3 Cloud Shell y Postman) y a utilizar una metodología orientada a APIs (API Driven Development). Es el curso que se recomienda tomar antes de iniciar tu primer proyecto. El curso se puede tomar de forma gratuita, pero para realizar las prácticas, cuestionarios y obtener un certificado de completado se debe realizar un pago.
   - Existen versiones del curso para otros lenguajes: [Building Modern Java Applications on AWS](https://www.coursera.org/learn/building-modern-java-applications-on-aws?specialization=aws-java-serverless-development) y [Building Modern Node.js Applications on AWS](https://www.coursera.org/learn/building-modern-node-applications-on-aws?specialization=aws-nodejs-serverless-development)
+- [**AWS Workshop: Building Serverless Apps with SAM**](https://catalog.us-east-1.prod.workshops.aws/workshops/d21ec850-bab5-4276-af98-a91664f8b161)
+  - Es una introducción rápida al framework de SAM, si tienes prisa con este workshop aprenderas lo  minimo necesaro para construir aplicaciones con SAM.
 - [Serverless land: Learn](https://serverlessland.com/learn)
   - Serverless land es un sitio creado y mantenido por el equipo de AWS, en la sección de _learn_ hay algunos cursos si se quiere profundizar más en el uso de estas herramientas.
-- [Coursera: ](https://www.coursera.org/learn/aws-fundamentals-building-serverless-applications#syllabus)
+- [Coursera: AWS Fundamentals Building Serverless Applications](https://www.coursera.org/learn/aws-fundamentals-building-serverless-applications#syllabus)
+  - Construye un chatbot utilizando herramientas serverless. El curso se puede tomar de forma gratuita, pero para realizar las prácticas, cuestionarios y obtener un certificado de completado se debe realizar un pago.
 
 ### AWS IDE Toolkits
 
@@ -112,7 +117,7 @@ Estas referencias pueden ser utilies cuando estas desarrollando una aplicación 
 - [Fragmentos de código y consultas comunes](https://serverlessland.com/snippets)
 
 
-## Github y Github Actions (Breve con ligas a tutoriales y documentación de Github)
+## Github y Github Actions (Breve explicación con ligas a tutoriales y documentación de Github)
 
 
 ### Ramas (Explicación de trunk based development)
