@@ -1,14 +1,24 @@
 # Cookiecutter Github SAM API
 
+Este proyecto es una plantilla que permite generar un proyecto "serverless" básico, que sirva como punto inicial a proyectos pequeños de un solo repositorio.
+
+> Si requieres crear un proyecto más complejo: multiples repositorios, más de 3 desarrolladores o la plantilla ya tiene demasidadas lambdas contacta al equipo de CI/CD.
+
 **Diagrama:**
 
-DIAGRAMA DE API EJEMPLO
-
-**Descripción:** Este proyecto es una plantilla que permite generar un proyecto "serverless" básico, que sirva como punto inicial a proyectos pequeños de un solo repositorio.
-
-Si requieres crear un proyecto más complejo (multiples repositorios y/o más de 3 desarrolladores) o tú proyecto ya tiene demasidadas lambdas contacta al equipo de CI/CD. 
+![API Diagram](assets/api_diagram.png)
 
 **Tipo:** API
+
+**Descripción:** 
+Esta API le permite a un zoológico llevar el control de sus animales.
+- Permite obtener información sobre un animal
+- Permite listar todos los animales que tienen
+- Permite configurar el número de animales que devuelve por pagina si no se especifica en la petición.
+- Permite agregar un nuevo animal y valida con un servicio externo si es una especie amenazada
+- Permite borrar un animal
+
+Si quieres pulir tus habilidades en AWS [puedes contribuir agregando más funcionalidades](#contribuciones).
 
 **[Recuperación de desastres](https://aws.amazon.com/blogs/architecture/disaster-recovery-dr-architecture-on-aws-part-iii-pilot-light-and-warm-standby/)**:
 - Categoría: Activo/Pasivo (Active/pasive)
@@ -35,6 +45,15 @@ Si requieres crear un proyecto más complejo (multiples repositorios y/o más de
 
 ------------------------------------------------------------------------------------------------------------
 
+## Índice
+1. [AWS y Serverless](#aws-y-serverless)
+  - [CloudFormation](#cloudformation)
+  - [SAM](#sam)
+2. [Github y Github Actions](#github-y-github-actions)
+3. [Cookiecutter y Cruft](#cookiecutter-y-cruft)
+4. [Contribuciones](#contribuciones)
+
+
 ## AWS y Serverless
 AWS tiene varios servicios administrados que se cobran por uso, los más comunes: colas de mensajes, bus de eventos, administración de APIs, orquestación de servicios y envío de notificaciones. No es necesario instalar un producto en un servidor y mantenerlo actualizado, AWS se encarga de estas tareas y así nos concentramos en elegir la mejor herramienta para nuestro caso de uso.
 
@@ -53,16 +72,18 @@ Es posible habilitar y configurar todos estos servicios de distintas maneras:
 
 Todas son útiles en distintos escenarios pero AWS ha creado otro servicio que permite tener estas definiciones en archivos de texto (YAML o JSON) que pueden ser agregados a un repositorio de código como este y utilizarlo para crear y modificar recursos en AWS. De esta manera se puede tener una trazabilidad sobre los cambios que se han realizado en un sistema, colaborar y realizar modificaciones modificando esta definición (infraestructura como código).
 
-IMAGEN PARA ILUSTRAR CLOUDFORMATION
-
+![Crear stack](assets/create-stack-diagram.png)
 _¿Cómo funciona CloudFormation?: https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/cfn-whatis-howdoesitwork.html_
 
 
 ### SAM
 
+#### SAM template specification 
+
 Las plantillas de CloudFormation pueden crecer rápidamente y definir todos los recursos de una aplicación puede ser una tarea repetitiva y tardada, para solucionar esto AWS ha creado un framework que permite definir la mayoría de recursos de una aplicación "serverless" de una forma simple y con menos líneas. 
 
-DIAGRAMA MOSTRANDO SAM Y CLOUDFORMATION
+![SAM a Cloudformation](assets/sam-to-cloudformation.png)
+_Especificación de plantilas SAM: https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-specification.html_
 
 Estas definiciones cortas soportan la mayoría de servicios utilizados en una aplicación "serverless" como:
 
@@ -83,6 +104,70 @@ Permite crear tablas de DynamoDB.
 
 -   [AWS::Serverless::StateMachine](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-statemachine.html)
 SAM también tiene soporte para agregar a tu proyecto Step Functions y orquestar distintas lambdas o incluso otros servicios de AWS.
+
+#### SAM command line interface
+
+
+SAM también ofrece un CLI que permite inicializar proyectos basados en plantillas, construir y desplegar una plantilla de SAM, crear eventos de pruebas, ejecutar localmente el proyecto y obtener logs los componentes luego de desplegados en AWS.
+
+![SAM CLI](assets/aws-sam-cli.png)
+_Inciando con el CLI de SAM_: https://www.sqlshack.com/getting-started-with-the-aws-sam-cli/
+
+- Inicializar proyecto de SAM:
+
+```bash
+sam init
+```
+
+- Construir aplicación:
+
+Usando Docker (No requiere que tengas Python instalado)
+
+```bash
+sam build --use-container
+```
+
+Usando Docker y una imagen en especifico (No requiere que tengas Python instalado)
+
+```bash
+sam build --use-container --build-image public.ecr.aws/sam/build-python3.8:1.32.0
+```
+
+- Generar un evento de ejemplo:
+
+Si necesitas ver un ejemplo de la estructura del evento que recibe tu lambda puede utilizar estos comandos.
+
+- Para SQS
+  
+  ```bash
+  sam local generate-event sqs receive-message
+  ```
+
+- API Gateway:
+
+```bash
+sam local generate-event apigateway aws-proxy --method GET --path document --body "{"test": "1", "tests2": "2"}"
+```
+
+Para visualizar la lista de servicios de los que se pueden generar eventos favor de visitar: [sam local generate-event - AWS Serverless Application Model](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-local-generate-event.html)
+
+- Desplegar API en ambiente local (localhost:3000):
+
+```bash
+sam local start-api
+```
+
+- Invocar lambda local:
+
+Si necesitas validar el funcionamiento de tu lambda puede pasarle un evento en formato json si necesidad de desplegar. (Requiere Docker instalado)
+
+```bash
+sam local invoke -e events/event.json
+```
+
+Para mayor información de comandos de CLI de SAM: [AWS SAM CLI command reference - AWS Serverless Application Model](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-command-reference.html)
+
+
 
 ### Cursos
 
@@ -117,7 +202,8 @@ Estas referencias pueden ser útiles cuando estás desarrollando una aplicación
 - [Fragmentos de código y consultas comunes](https://serverlessland.com/snippets)
 
 
-## Github y Github Actions (Breve explicación con ligas a tutoriales y documentación de Github)
+## Github y Github Actions
+(Breve explicación con ligas a tutoriales y documentación de Github)
 
 
 ### Ramas (Explicación de trunk based development)
@@ -133,7 +219,7 @@ Agregar nota: Si el proyecto crece y se crean multiples repositorios, se debe cr
 
 ### Referencias
 
-## Cookiecutter
+## Cookiecutter y Cruft
 
 Crea un proyecto (Crear proyecto a partir de plantilla de cookiecutter y agregar las credenciales como secretos en Github)
 ## Prerequisitos:
@@ -374,3 +460,18 @@ Aquí se deja por default este valor, salvo se haya especificado uno diferente e
 
 ## Post inicialización del proyecto
 Al terminar de generar el proyecto, por medio de un script se vincula el repo generado con el [repo remoto que creamos en GitHub](#creación-de-repositorio). Por lo tanto ya es posible comenzar a trabajar en él. Pero antes, se recomienda agregar alguna modificación en el archivo template.yaml para desplegar el proyecto Hello world por primera vez y evitar que se tengan problemas relacionados con un primer despliegue fallido.
+
+## Contribuciones
+
+Lista de deseos:
+- código: Agregar soporte para poetry o pdm
+- ci/cd: Agregar soporte para utilizar OIDC en los workflows
+- docs: crear especificación de OpenAPI
+- código: Agregar soporte para scopes en API Gateway
+- código: Agregar reintentos al consumir el API de RapidAPI
+- código: Agrgar replicación de parametros
+- código: implementar request-id para mejor trazabilidad
+- docs: agregar ejemplos de consultas con logs insights (trace-id, lambda request-id, filtrar por tipo de petición, filtrar por código http)
+- código: Agregar filtros al listar animales
+- feature: validar uso de configmanager como alternativa a solo usar parameterstore
+- docs: cambiar diagrama de api para leerlo de izquierda a derecha
