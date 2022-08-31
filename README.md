@@ -212,7 +212,7 @@ Estas serán configuradas en los secretos de GitHub, al igual que el número de 
 
 ## Creación de llaves KMS
 -------------------
-Como prerequisito es importante crear 2 llaves KMS "[multiregión](https://docs.aws.amazon.com/kms/latest/developerguide/multi-region-keys-overview.html)", una para SSM y otra para DynamoDB.
+Como prerequisito es importante crear 2 llaves KMS simétricas "[multiregión](https://docs.aws.amazon.com/kms/latest/developerguide/multi-region-keys-overview.html)", una para SSM y otra para DynamoDB.
 La región de creación de la llave será la región principal. Y la secundaría será la destinada para DR.
 
 El nombrado debe seguir el siguiente estándar:
@@ -233,7 +233,7 @@ Ambiente = dev
 
 #### Nombre de la nueva llave a crear: proyectonuevo-dynamodb-dev
 
-NOTA: Cuando iniciemos la creación de nuestra plantilla quickstart Cookiecutter nos solicitará los ARN's 
+NOTA: Cuando [inicialicemos el proyecto con cookiecutter](#inicializar-proyecto) nos solicitará los ARN's 
 de ambas llaves. Por lo que es importante tenerlas a la mano cuando se inicialice el proyecto.
 
 
@@ -369,5 +369,3 @@ Aquí se deja por default este valor, salvo se haya especificado uno diferente e
 #### *PROD_secret_aws_account_id*: PROD_AWS_ACCOUNT_ID. 
 Aquí se deja por default este valor, salvo se haya especificado uno diferente en la [configuración de secretos por ambiente](#configurar-secretos-por-ambiente)
 
-
-Happy develop!
