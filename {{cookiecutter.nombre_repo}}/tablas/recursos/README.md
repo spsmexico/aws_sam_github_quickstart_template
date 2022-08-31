@@ -27,7 +27,7 @@ Para lanzar la ejecución en el ambiente de Develop es necesario empujar los cam
 
 Posteriormente, lanzar el workflow "push-manual_main",  marcamos la casilla de "Activa la inserción de datos de la carpeta tablas DynamoDB" y ejecutamos el workflow.
 
-#### ... Preproducción y Producción?
+#### ...  Producción?
 
 Las inserciones se encuentran activadas por defecto. Pero en caso de que no queramos realizar inserciones las podemos desactivar al lanzar el workflow de "manual_pre-release" desmarcando la casilla de "Desmarcar la casilla para desactivar la inserción a DynamoDB".
 
@@ -44,7 +44,7 @@ Diagrama "Overview":
 
 El workflow de rollback permite restaurar las tablas hacia el punto previo al despliegue. 
 
-Este workflow es posible ejecutarlo en los 3 diferentes ambientes: Develop, Preprod y Prod. 
+Este workflow es posible ejecutarlo en todos los ambientes.
 
 Para ello en la sección de "Actions" de tu repositorio encontrarás del lado izquierdo el workflow llamado "manual_rollback-dynamodb". Sólo será necesario elegir el ambiente destino y ejecutarlo.
 

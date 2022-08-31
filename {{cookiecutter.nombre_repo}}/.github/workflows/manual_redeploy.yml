@@ -15,7 +15,6 @@ on:
         type: choice
         options:
           - develop
-          - preprod
           - production
       dynamodb:
         description: 'Activa la insercion de datos de la carpeta tablas DynamoDB ⚠️ CUIDADO: Validar que la inserción en tablas no afecta a otros procesos.'

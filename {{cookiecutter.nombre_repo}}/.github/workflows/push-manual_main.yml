@@ -12,7 +12,6 @@ on:
       - 'README.md'
       - 'CHANGELOG.md'
       - '.github/workflows/**'
-      - 'parameters-preprod.json'
       - 'parameters-production.json'
       - 'dynamo.py'  
       - 'rollback-dynamo.py'
