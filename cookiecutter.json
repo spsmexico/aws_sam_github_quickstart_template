@@ -9,9 +9,12 @@
     "ARN_DYNAMODB_KMS_DR": "Llave multiregion para DynamoDB. DR.",    
     "sam_container": "public.ecr.aws/sam/build-python3.8:1.32.0",
     "sam_bucket": "Nombre del bucket para SAM",
-    "secret_aws_key_id": "DEV_AWS_KEY_ID",
-    "secret_aws_key_secret": "DEV_AWS_KEY_SECRET",
-    "secret_aws_account_id": "DEV_AWS_ACCOUNT_ID",
+    "DEV_secret_aws_key_id": "DEV_AWS_KEY_ID",
+    "DEV_secret_aws_key_secret": "DEV_AWS_KEY_SECRET",
+    "DEV_secret_aws_account_id": "DEV_AWS_ACCOUNT_ID",
+    "PROD_secret_aws_key_id": "PROD_AWS_KEY_ID",
+    "PROD_secret_aws_key_secret": "PROD_AWS_KEY_SECRET",
+    "PROD_secret_aws_account_id": "PROD_AWS_ACCOUNT_ID",    
     "_copy_without_render": [
         ".cz.yaml"
     ]

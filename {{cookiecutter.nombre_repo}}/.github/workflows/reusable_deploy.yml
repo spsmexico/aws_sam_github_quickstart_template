@@ -153,8 +153,8 @@ jobs:
       - if: {{'${{'}} inputs.ambiente == 'develop'{{ '}}' }}
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: {{'${{'}} secrets.{{cookiecutter.secret_aws_key_id}} {{ '}}' }}
-          aws-secret-access-key: {{'${{'}} secrets.{{cookiecutter.secret_aws_key_secret}} {{ '}}' }}
+          aws-access-key-id: {{'${{'}} secrets.{{cookiecutter.DEV_secret_aws_key_id}} {{ '}}' }}
+          aws-secret-access-key: {{'${{'}} secrets.{{cookiecutter.DEV_secret_aws_key_secret}} {{ '}}' }}
           aws-region: {{'${{'}}inputs.region}}
         
       # Credenciales de preproducción
@@ -169,8 +169,8 @@ jobs:
       - if: {{'${{'}} inputs.ambiente == 'production' {{ '}}' }}
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: {{'${{'}} secrets.PROD_AWS_KEY_ID {{ '}}' }}
-          aws-secret-access-key: {{'${{'}} secrets.PROD_AWS_KEY_SECRET {{ '}}' }}
+          aws-access-key-id: {{'${{'}} secrets.{{cookiecutter.PROD_secret_aws_key_id}} {{ '}}' }}
+          aws-secret-access-key: {{'${{'}} secrets.{{cookiecutter.PROD_secret_aws_key_secret}} {{ '}}' }}
           aws-region: {{'${{'}} inputs.region {{ '}}' }}
         
       - name: "Instalando dependencias"
@@ -193,9 +193,9 @@ jobs:
         run: |
           if [[ {{'${{'}}inputs.ambiente{{ '}}' }} = "develop" ]]; then \
             echo "samEnv=dev" >> $GITHUB_ENV; \
-            echo "roleARN=arn:aws:iam::{{'${{'}} secrets.{{cookiecutter.secret_aws_account_id}} {{ '}}' }}:role/{{'${{'}}fromJson(steps.read_json.outputs.pfgSamJSON).cfn_role{{ '}}' }}" >> $GITHUB_ENV; \
+            echo "roleARN=arn:aws:iam::{{'${{'}} secrets.{{cookiecutter.DEV_secret_aws_account_id}} {{ '}}' }}:role/{{'${{'}}fromJson(steps.read_json.outputs.pfgSamJSON).cfn_role{{ '}}' }}" >> $GITHUB_ENV; \
             echo "Region {{'${{'}}inputs.region{{ '}}' }}"; \
-            echo "awsAccountID={{'${{'}} secrets.{{cookiecutter.secret_aws_account_id}} {{ '}}' }}" >> $GITHUB_ENV; \
+            echo "awsAccountID={{'${{'}} secrets.{{cookiecutter.DEV_secret_aws_account_id}} {{ '}}' }}" >> $GITHUB_ENV; \
           elif [[ {{'${{'}}inputs.ambiente}} = "preprod" || $GITHUB_REF = "*-pre" ]]; then \
             echo "samEnv=pre" >> $GITHUB_ENV; \
             echo "roleARN=arn:aws:iam::{{'${{'}}secrets.PRE_AWS_ACCOUNT_ID{{ '}}' }}:role/{{'${{'}}fromJson(steps.read_json.outputs.pfgSamJSON).cfn_role{{ '}}' }}" >> $GITHUB_ENV; \
@@ -203,9 +203,9 @@ jobs:
             echo "awsAccountID={{'${{'}}secrets.PRE_AWS_ACCOUNT_ID{{ '}}' }}" >> $GITHUB_ENV; \
           elif [[ {{'${{'}}inputs.ambiente{{ '}}' }} = "production" || $GITHUB_REF != "*-pre" ]]; then \
             echo "samEnv=prod" >> $GITHUB_ENV; \
-            echo "roleARN=arn:aws:iam::{{'${{'}}secrets.PROD_AWS_ACCOUNT_ID{{ '}}' }}:role/{{'${{'}}fromJson(steps.read_json.outputs.pfgSamJSON).cfn_role{{ '}}' }}" >> $GITHUB_ENV; \
+            echo "roleARN=arn:aws:iam::{{'${{'}}secrets.{{cookiecutter.PROD_secret_aws_account_id}}{{ '}}' }}:role/{{'${{'}}fromJson(steps.read_json.outputs.pfgSamJSON).cfn_role{{ '}}' }}" >> $GITHUB_ENV; \
             echo "Region {{'${{'}}inputs.region{{ '}}' }}"; \
-            echo "awsAccountID={{'${{'}}secrets.PROD_AWS_ACCOUNT_ID{{ '}}' }}" >> $GITHUB_ENV; \
+            echo "awsAccountID={{'${{'}}secrets.{{cookiecutter.PROD_secret_aws_account_id}}{{ '}}' }}" >> $GITHUB_ENV; \
             echo "Region DR {{'${{'}}inputs.region_dr{{ '}}' }}"
           fi
 
