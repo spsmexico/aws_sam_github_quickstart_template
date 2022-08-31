@@ -37,18 +37,6 @@ jobs:
       dynamodb: {{'${{'}}github.event.inputs.dynamodb{{ '}}' }}
     secrets: inherit
 
-  RedeployPre:
-    concurrency: preprod
-    if: {{'${{'}}github.event.inputs.ambiente == 'preprod'{{ '}}' }}
-    uses: {{cookiecutter.org_or_user_github}}/{{cookiecutter.nombre_repo}}/.github/workflows/reusable_deploy.yml@main
-    with:
-      ambiente: "preprod"
-      ref: {{'${{'}}github.event.inputs.version{{ '}}' }}
-      region: us-east-1
-      region_dr: us-west-2
-      dynamodb: {{'${{'}}github.event.inputs.dynamodb{{ '}}' }}
-    secrets: inherit
-
   RedeployProd:
     concurrency: production
     if: {{'${{'}}github.event.inputs.ambiente == 'production'{{ '}}' }}

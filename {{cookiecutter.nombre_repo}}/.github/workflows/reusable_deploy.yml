@@ -157,14 +157,6 @@ jobs:
           aws-secret-access-key: {{'${{'}} secrets.{{cookiecutter.DEV_secret_aws_key_secret}} {{ '}}' }}
           aws-region: {{'${{'}}inputs.region}}
         
-      # Credenciales de preproducción
-      - if: {{'${{'}} inputs.ambiente == 'preprod' {{ '}}' }}
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: {{'${{'}} secrets.PRE_AWS_KEY_ID {{ '}}' }}
-          aws-secret-access-key: {{'${{'}} secrets.PRE_AWS_KEY_SECRET {{ '}}' }}
-          aws-region: {{'${{'}} inputs.region {{ '}}' }}
-        
       # Credenciales de producción
       - if: {{'${{'}} inputs.ambiente == 'production' {{ '}}' }}
         uses: aws-actions/configure-aws-credentials@v1
