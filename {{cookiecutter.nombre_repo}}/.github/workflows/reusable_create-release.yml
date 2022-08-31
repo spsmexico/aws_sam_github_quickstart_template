@@ -22,7 +22,40 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
+
+      - uses: actions/checkout@v2
+        with:
+          ref: {{'${{'}} github.head_ref {{ '}}' }}
+          fetch-depth: 0
+          
+      - if: {{'${{'}} ! startsWith(inputs.version, 'fix/') {{ '}}' }}
+        name: "Validar número de versión"
+        run: |
+          echo "Version {{'${{'}}inputs.version{{ '}}' }}"
+          [[ "{{'${{'}}inputs.version{{ '}}' }}" =~ ^([0-9]|[1-9][0-9]*)\.([0-9]|[1-9][0-9]*)\.([0-9]|[1-9][0-9]*)$ ]] && echo "Correcto" || exit 1
+          echo "Validando si ya existe un release"
+          ! git ls-remote --exit-code --heads origin releases/{{'${{'}}inputs.version{{ '}}' }}
       
+      - name: Configurar Git
+        run: |
+          git config --global user.name 'Github'
+          git config --global user.email 'workflow@noreply.github.com'
+          git branch --show-current
+
+      # Si el tag es nuevo lo crea
+      # Si ya existe el tag, lo elimina del repositorio (local y remoto) y lo crea de nuevo en el ultimo commit de main
+      - if: {{'${{'}} ! startsWith(inputs.version, 'fix') {{ '}}' }}
+        name: "Crear tag de release"
+        run: |
+          
+          echo "VER={{'${{'}}inputs.version{{ '}}' }}" >> $GITHUB_ENV
+                  
+          ############ Si es versión normal.
+          if [[ ! "{{'${{'}}inputs.version{{ '}}' }}" =~ ^([0-9]|[1-9][0-9]*)\.([0-9]|[1-9][0-9]*)\.([0-9]|[1-9][0-9]*)$ ]]; \
+          then exit 1; fi
+          git tag --force {{'${{'}}inputs.version{{ '}}' }} 
+          git push origin {{'${{'}}inputs.version{{ '}}' }} --force 
+
       - name: "Validar número de versión"
         run: |
           echo "Version {{'${{'}}inputs.version{{ '}}' }}"
