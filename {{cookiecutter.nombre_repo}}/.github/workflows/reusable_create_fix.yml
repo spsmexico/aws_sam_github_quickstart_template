@@ -1,0 +1,59 @@
+#V1.0.0true$
+name: reusable_create_fix
+
+on:
+
+  workflow_call:
+
+    inputs:
+      ref:
+        description: "Commit o tag a construir y desplegar"
+        required: true
+        type: string
+      fix:
+        description: "Número de versión de hotfix a corregir"
+        required: true
+        type: string        
+
+jobs:
+
+  CrearRamaHotfix:
+
+    runs-on: ubuntu-20.04
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      
+      - name: Creando rama para hotfix
+        run: |
+          # Configurando usuario de Github...
+          git config --global user.name 'Github'
+          git config --global user.email 'workflow@noreply.github.com'
+          git branch --show-current
+
+          # Creando rama para hotfix...
+          git checkout {{'${{'}}inputs.ref{{ '}}' }}
+          git checkout -b fix/{{'${{'}}inputs.fix{{ '}}' }}
+
+          # Copiando los workflows actualizados...
+          git checkout main .github/workflows/manual_deploy_dev.yml
+          git checkout main .github/workflows/manual_hotfix.yml
+          git checkout main .github/workflows/manual_redeploy.yml
+          git checkout main .github/workflows/manual_release.yml
+          git checkout main .github/workflows/push-manual_main.yml
+          git checkout main .github/workflows/reusable_create-release.yml || echo "Sin cambios"
+          git checkout main .github/workflows/reusable_deploy.yml || echo "Sin cambios"  
+          git checkout main .github/workflows/reusable_create_fix.yml || echo "Sin cambios"                    
+          git checkout main pfg-sam.json
+          git checkout main parameters-develop.json
+          git checkout main parameters-dev-dr.json
+          git checkout main parameters-prod-dr.json
+          git checkout main parameters-production.json
+          git checkout main dynamo.py
+          git checkout main rollback-dynamo.py
+          git commit -m "ci(github): Se agregan workflows actualizados" || echo "Sin cambios"
+          git diff HEAD^ HEAD
+          git push origin fix/{{'${{'}}inputs.fix{{ '}}' }}
