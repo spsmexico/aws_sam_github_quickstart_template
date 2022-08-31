@@ -185,6 +185,8 @@ Contar con las siguientes herramientas instaladas:
 [1. Configuración de llaves AWS](#configuración-de-llaves-aws) \
 [2. Creación de llaves KMS](#creación-de-llaves-kms) \
 [3. Creación de repositorio y ambientes](#creación-de-repositorio) \
+[4. Inicialización del proyecto](#inicializar-proyecto) \
+[5. Post-inicialización del proyecto](#post-inicialización-del-proyecto) \
 ---
 
 ## Configuración de llaves AWS
@@ -241,7 +243,7 @@ de ambas llaves. Por lo que es importante tenerlas a la mano cuando se inicialic
 -------------------
 Se debe crear un repositorio nuevo. El repositorio debe ser creado vacío, para que se pueda inicializar correctamente el proyecto.
 
-### Creación de ambientes
+## Creación de ambientes
 Es necesario crear 2 [ambientes](https://docs.github.com/en/github-ae@latest/actions/deployment/targeting-different-environments/using-environments-for-deployment) en el repositorio para poder inicializar el proyecto, *develop* y *production*
 #### Ambiente develop:
 Para ello nos dirigiremos a "Settings" > "Environments" > "New environment":
@@ -269,7 +271,7 @@ Esta vez se nombrará como *production*:
 Por último, agregaremos a los equipos o personas que pueden aprobar despliegues en este ambiente:
 
 ![](assets/production_reviewers.PNG)
-### Configurar secretos por ambiente
+## Configurar secretos por ambiente
 
 #### Nota: Los nombres de los secretos a mostrar son los valores default, se recomienda que permanezcan así. Pero en caso de ser necesario agregarles un sufijo o utilizar otro nombrado al [inicializar el proyecto](#inicializar-proyecto) se deberán especificar.
 
