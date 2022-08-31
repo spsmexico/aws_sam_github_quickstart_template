@@ -147,7 +147,26 @@ Contar con las siguientes herramientas instaladas:
 ```mermaid
   graph TD;
 
-      1_GitHub-->crear_repositorio;
+
+      AWS-->1_IAM;
+      1_IAM-->crear_usuario;
+      crear_usuario-->marcar_acceso_programatico;
+      marcar_acceso_programatico-->agregar_politicas_requeridas;
+      agregar_politicas_requeridas-->agregar_tags_del_proyecto;
+      agregar_tags_del_proyecto-->copiar_access_key;
+      agregar_tags_del_proyecto-->copiar_secret_key;
+      
+      AWS-->2_KMS;
+      2_KMS-->crear_llave_simetrica_multiregion_SSM;
+      crear_llave_simetrica_multiregion_SSM-->copiar_ARN;
+      2_KMS-->crear_llave_simetrica_multiregion_DynamoDB;
+      crear_llave_simetrica_multiregion_DynamoDB-->copiar_ARN;
+      crear_llave_simetrica_multiregion_SSM-->configurar_regionalidad_en_region_dr;
+      crear_llave_simetrica_multiregion_DynamoDB-->configurar_regionalidad_en_region_dr;
+      configurar_regionalidad_en_region_dr-->copiar_ARN;
+      copiar_ARN-->ingresarlos_al_inicializar_cookiecutter;    
+
+      3_GitHub-->crear_repositorio;
       crear_repositorio-->crear_ambientes;
       crear_ambientes-->configurar_secretos_ambiente;
       copiar_access_key-->agregar_secreto_de_access_key;
@@ -155,39 +174,39 @@ Contar con las siguientes herramientas instaladas:
       configurar_secretos_ambiente-->agregar_secreto_de_access_key;
       configurar_secretos_ambiente-->agregar_secreto_de_secret_key;
       configurar_secretos_ambiente-->agregar_account_id;
-        
-      AWS-->2_IAM;
-      2_IAM-->crear_usuario;
-      crear_usuario-->marcar_acceso_programatico;
-      marcar_acceso_programatico-->agregar_politicas_requeridas;
-      agregar_politicas_requeridas-->agregar_tags_del_proyecto;
-      agregar_tags_del_proyecto-->copiar_access_key;
-      agregar_tags_del_proyecto-->copiar_secret_key;
-      
-
-      AWS-->3_KMS;
-      3_KMS-->crear_llave_simetrica_multiregion_SSM;
-      crear_llave_simetrica_multiregion_SSM-->copiar_ARN;
-      3_KMS-->crear_llave_simetrica_multiregion_DynamoDB;
-      crear_llave_simetrica_multiregion_DynamoDB-->copiar_ARN;
-      crear_llave_simetrica_multiregion_SSM-->configurar_regionalidad_en_region_dr;
-      crear_llave_simetrica_multiregion_DynamoDB-->configurar_regionalidad_en_region_dr;
-      configurar_regionalidad_en_region_dr-->copiar_ARN;
-      copiar_ARN-->ingresarlos_al_inicializar_cookiecutter;      
+                
 ```
 #### - Los pasos 1 y 2 deberán ser realizados en las cuentas AWS de cada ambiente (develop, prod)
 ## Pasos
 
 ---
-[1. Creación de repositorio](#creación-de-repositorio) \
+[1. Configuración de llaves AWS](#configuración-de-llaves-aws) \
 [2. Creación de llaves KMS](#creación-de-llaves-kms) \
-[3. Configuración de llaves AWS](#configuración-de-llaves-aws) \
-
+[3. Creación de repositorio y ambientes](#creación-de-repositorio) \
 ---
 
-## Creación de repositorio
+## Configuración de llaves AWS
 -------------------
-Se debe crear un repositorio nuevo. El repositorio debe ser creado vacío, para que se pueda inicializar correctamente el proyecto.
+Para poder realizar los despliegues a una cuenta AWS. Es importante generar un usuario en las cuentas
+destino para que esto se pueda lograr. Es muy importante que el usuario cuente con acceso programático. 
+Para mayor información visitar: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_console
+
+
+### Creando usuario:
+#### Crear usuario con acceso programático:
+![](assets/programatic_access.PNG)
+
+#### Agregar las políticas necesarias:
+En este punto es indispensable que el usuario que desplegará, cuente con acceso a Cloudformation y los servicios que estará
+desplegando:
+![](assets/policies.PNG)
+
+#### Agregar tag relacionado al proyecto:
+![](assets/tags_usuario.PNG)
+#### Se salvaguardarán las credenciales generadas:
+Estas serán configuradas en los secretos de GitHub, al igual que el número de cuenta de AWS.
+![](assets/keys.PNG)
+
 
 ## Creación de llaves KMS
 -------------------
@@ -215,27 +234,81 @@ Ambiente = dev
 NOTA: Cuando iniciemos la creación de nuestra plantilla quickstart Cookiecutter nos solicitará los ARN's 
 de ambas llaves. Por lo que es importante tenerlas a la mano cuando se inicialice el proyecto.
 
-## Configuración de llaves AWS
+
+## Creación de repositorio
 -------------------
-Para poder realizar los despliegues a una cuenta AWS. Es importante generar un usuario en las cuentas
-destino para que esto se pueda lograr. Es muy importante que el usuario cuente con acceso programático. 
-Para mayor información visitar: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_console
+Se debe crear un repositorio nuevo. El repositorio debe ser creado vacío, para que se pueda inicializar correctamente el proyecto.
+
+### Creación de ambientes
+Es necesario crear 2 [ambientes](https://docs.github.com/en/github-ae@latest/actions/deployment/targeting-different-environments/using-environments-for-deployment) en el repositorio para poder inicializar el proyecto, *develop* y *production*
+#### Ambiente develop:
+Para ello nos dirigiremos a "Settings" > "Environments" > "New environment":
+
+![](assets/environments.PNG)
+
+Agregaremos el ambiente "develop" y daremos clic en "Configure environment":
+
+![](assets/develop_environment.PNG)
+
+Posteriormente, daremos clic em "Save protection rules".:
+
+![](assets/develop_protectionrules.PNG)
 
 
-### Creando usuario:
-#### Crear usuario con acceso programático:
-![](assets/programatic_access.PNG)
+#### Ambiente production:
+Sería el mismo paso que seguimos en el ambiente *develop*:
 
-#### Agregar las políticas necesarias:
-En este punto es indispensable que el usuario que desplegará, cuente con acceso a Cloudformation y los servicios que estará
-desplegando:
-![](assets/policies.PNG)
+![](assets/environments.PNG)
 
-#### Agregar tag relacionado al proyecto:
-![](assets/tags_usuario.PNG)
-#### Se salvaguardarán las credenciales generadas:
-Estas serán configuradas en los secretos de GitHub, al igual que el número de cuenta de AWS.
-![](assets/keys.PNG)
+Esta vez se nombrará como *production*:
+
+![](assets/production_environment.PNG)
+
+Por último, agregaremos a los equipos o personas que pueden aprobar despliegues en este ambiente:
+
+![](assets/production_reviewers.PNG)
+### Configurar secretos por ambiente
+
+#### Nota: Los nombres de los secretos a mostrar son los valores default, se recomienda que permanezcan así. Pero en caso de ser necesario agregarles un sufijo o utilizar otro nombrado al [inicializar el proyecto](#inicializar-proyecto) se deberán especificar.
+
+Una vez creados los ambientes:
+
+![](assets/environments_creados.PNG)
+
+Seleccionaremos el ambiente *develop*, y en la parte inferior daremos clic en "add secret":
+![](assets/add_secret.PNG)
+
+Y conforme a las llaves de acceso [obtenidas en la configuración de llaves ](#configuración-de-llaves-aws) de cada usuario, las agregaremos a los secretos junto con su respectivo número de cuenta de la siguiente manera:
+
+Número de cuenta AWS del ambiente *develop*:
+
+![](assets/dev_account_id.PNG)
+
+Llave de acceso de usuario para despliegue en ambiente *develop*:
+
+![](assets/dev_key_id.PNG)
+
+Llave secreta para usuario de despliegue ambiente *develop*:
+
+![](assets/dev_secret_key.PNG)
+
+Acto seguido procederemos a dirigirnos al ambiente *production*:
+![](assets/environments_creados.PNG)
+
+Y comenzaremos a agregar los secretos de este ambiente.
+
+Número de cuenta AWS del ambiente *production*:
+
+![](assets/prod_account_id.PNG)
+
+Llave de acceso de usuario para despliegue en ambiente *production*:
+
+![](assets/prod_key_id.PNG)
+
+Llave secreta para usuario de despliegue ambiente *production*:
+
+![](assets/prod_secret_key.PNG)
+
 
 ## Inicializar proyecto
 Una vez concluidos los pasos anteriores podemos proseguir a inicializar el proyecto, nos moveremos hacia la carpeta donde se alojará el repositorio y ejecutaremos el siguiente comando:
@@ -243,3 +316,56 @@ Una vez concluidos los pasos anteriores podemos proseguir a inicializar el proye
 ```
 cookiecutter https://github.com/rortega-sps/aws_sam_github_quickstart_template
 ```
+Ingresaremos los valores que nos pide la plantilla.
+Algunas opciones cuentan con valores default.
+
+A continuación se describen cada una de las opciones:
+
+### *nombre_repo*: Nombre del repositorio de GitHub.
+
+### *org_or_user_github*: Usuario de GitHub u Organización a la que pertenece el repositorio.
+
+### *cfn_stack*: Nombre del stack en AWS. 
+Es importante que no incluya el identificador o sufijo del proyecto.
+
+### *project*: Identificador del proyecto. 
+Pueden ser las iniciales de la empresa o nombre del proyecto. Se utilizará como sufijo para los recursos del proyecto.
+
+### *ARN_SSM_KMS*: Llave multiregion para Parameter Store. 
+Es una de las llaves que creamos para la región principal en [Creación de llaves KMS](#creación-de-llaves-kms)
+
+### *ARN_DYNAMODB_KMS*: Llave multiregion para DynamoDB. 
+Es una de las llaves que creamos para la región principal en [Creación de llaves KMS](#creación-de-llaves-kms)
+
+### *ARN_SSM_KMS_DR*: Llave multiregion para Parameter Store. DR. 
+Es una de las llaves que creamos para la región DR en [Creación de llaves KMS](#creación-de-llaves-kms)
+
+### *ARN_DYNAMODB_KMS_DR*: Llave multiregion para DynamoDB. DR. 
+Es una de las llaves que creamos para la región DR en [Creación de llaves KMS](#creación-de-llaves-kms)
+
+### *sam_container*: public.ecr.aws/sam/build-python3.8:1.32.0. 
+Es el contenedor que construye la aplicación, en esta caso está como default uno de Python. Pero de ser requerido usar una lambda de otro lenguaje se puede especificar en esta opción.
+
+### *sam_bucket*: Nombre del bucket para SAM. 
+Es el bucket que necesita SAM para realizar los despliegues.
+
+### *DEV_secret_aws_key_id*: DEV_AWS_KEY_ID. 
+Aquí se deja por default este valor, salvo se haya especificado uno diferente en la [configuración de secretos por ambiente](#configurar-secretos-por-ambiente)
+
+### *DEV_secret_aws_key_secret*: DEV_AWS_KEY_SECRET. 
+Aquí se deja por default este valor, salvo se haya especificado uno diferente en la [configuración de secretos por ambiente](#configurar-secretos-por-ambiente)
+
+### *DEV_secret_aws_account_id*: DEV_AWS_ACCOUNT_ID. 
+Aquí se deja por default este valor, salvo se haya especificado uno diferente en la [configuración de secretos por ambiente](#configurar-secretos-por-ambiente)
+
+### *PROD_secret_aws_key_id*: PROD_AWS_KEY_ID. 
+Aquí se deja por default este valor, salvo se haya especificado uno diferente en la [configuración de secretos por ambiente](#configurar-secretos-por-ambiente)
+
+### *PROD_secret_aws_key_secret*: PROD_AWS_KEY_SECRET. 
+Aquí se deja por default este valor, salvo se haya especificado uno diferente en la [configuración de secretos por ambiente](#configurar-secretos-por-ambiente)
+
+#### *PROD_secret_aws_account_id*: PROD_AWS_ACCOUNT_ID. 
+Aquí se deja por default este valor, salvo se haya especificado uno diferente en la [configuración de secretos por ambiente](#configurar-secretos-por-ambiente)
+
+
+Happy develop!
