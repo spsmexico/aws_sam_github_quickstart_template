@@ -84,7 +84,8 @@ jobs:
           git checkout main .github/workflows/manual_release.yml || echo "Sin cambios"
           git checkout main .github/workflows/push-manual_main.yml || echo "Sin cambios"
           git checkout main .github/workflows/reusable_create-release.yml || echo "Sin cambios"
-          git checkout main .github/workflows/reusable_deploy.yml || echo "Sin cambios"          
+          git checkout main .github/workflows/reusable_deploy.yml || echo "Sin cambios"  
+          git checkout main .github/workflows/reusable_create_fix.yml || echo "Sin cambios"          
           git checkout main pfg-sam.json || echo "Sin cambios"
           git commit -m "ci(github): Se agregan workflows actualizados" || echo "Sin cambios"
           git diff HEAD^ HEAD
