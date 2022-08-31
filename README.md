@@ -186,9 +186,11 @@ Contar con las siguientes herramientas instaladas:
 ---
 
 ## Creación de repositorio
-Se debe crear un repositorio nuevo. El repositorio debe ser creado vacío, para que se pueda inicializar correctamente el proyecto.
 -------------------
+Se debe crear un repositorio nuevo. El repositorio debe ser creado vacío, para que se pueda inicializar correctamente el proyecto.
+
 ## Creación de llaves KMS
+-------------------
 Como prerequisito es importante crear 2 llaves KMS "[multiregión](https://docs.aws.amazon.com/kms/latest/developerguide/multi-region-keys-overview.html)", una para SSM y otra para DynamoDB.
 La región de creación de la llave será la región principal. Y la secundaría será la destinada para DR.
 
@@ -213,9 +215,8 @@ Ambiente = dev
 NOTA: Cuando iniciemos la creación de nuestra plantilla quickstart Cookiecutter nos solicitará los ARN's 
 de ambas llaves. Por lo que es importante tenerlas a la mano cuando se inicialice el proyecto.
 
--------------------
 ## Configuración de llaves AWS
-
+-------------------
 Para poder realizar los despliegues a una cuenta AWS. Es importante generar un usuario en las cuentas
 destino para que esto se pueda lograr. Es muy importante que el usuario cuente con acceso programático. 
 Para mayor información visitar: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_console
