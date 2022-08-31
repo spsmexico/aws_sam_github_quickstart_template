@@ -369,3 +369,6 @@ Aquí se deja por default este valor, salvo se haya especificado uno diferente e
 #### *PROD_secret_aws_account_id*: PROD_AWS_ACCOUNT_ID. 
 Aquí se deja por default este valor, salvo se haya especificado uno diferente en la [configuración de secretos por ambiente](#configurar-secretos-por-ambiente)
 
+
+## Post inicialización del proyecto
+Al terminar de generar el proyecto, por medio de un script se vincula el repo generado con el [repo remoto que creamos en GitHub](#creación-de-repositorio). Por lo tanto ya es posible comenzar a trabajar en él. Pero antes, se recomienda agregar alguna modificación en el archivo template.yaml para desplegar el proyecto Hello world por primera vez y evitar que se tengan problemas relacionados con un primer despliegue fallido.
