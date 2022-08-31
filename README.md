@@ -4,7 +4,7 @@
 
 DIAGRAMA DE API EJEMPLO
 
-**Descripción:** Este proyecto es una plantilla que permite generar un proyecto "serverles" básico, que sirva como punto inicial a proyectos pequeños de un solo repositorio.
+**Descripción:** Este proyecto es una plantilla que permite generar un proyecto "serverless" básico, que sirva como punto inicial a proyectos pequeños de un solo repositorio.
 
 Si requieres crear un proyecto más complejo (multiples repositorios y/o más de 3 desarrolladores) o tú proyecto ya tiene demasidadas lambdas contacta al equipo de CI/CD. 
 
@@ -36,9 +36,9 @@ Si requieres crear un proyecto más complejo (multiples repositorios y/o más de
 ------------------------------------------------------------------------------------------------------------
 
 ## AWS y Serverless
-AWS tiene varios servicios administrados que se cobran por uso, los más comunes: colas de mensajes, bus de eventos, administración de APIs, orquestación de servicios y envio de notificacione. No es necesario instalar un producto en un servidor y mantenerlo actualizado, AWS se encarga de estas tareas y así nos concentramos en elegir la mejor herramienta para nuestro caso de uso.
+AWS tiene varios servicios administrados que se cobran por uso, los más comunes: colas de mensajes, bus de eventos, administración de APIs, orquestación de servicios y envío de notificaciones. No es necesario instalar un producto en un servidor y mantenerlo actualizado, AWS se encarga de estas tareas y así nos concentramos en elegir la mejor herramienta para nuestro caso de uso.
 
-También permite ejecutar código sin necesidad de un servidor dedicado: al recibir un evento que cumple ciertas condiciones AWS crea una instancia que ejecuta nuestro código, según la demanda puede crear más instancias. El cobró es por el tiempo que duro la ejecución del código y el número de instancias creadas. 
+También permite ejecutar código sin necesidad de un servidor dedicado: al recibir un evento que cumple ciertas condiciones AWS crea una instancia que ejecuta nuestro código, según la demanda puede crear más instancias. El cobro es por el tiempo que duró la ejecución del código y el número de instancias creadas. 
 
 Se pueden diseñar soluciones completas utilizando estas herramientas y a este tipo de aplicaciones se les conoce como "serverless" (sin servidor). 
 
@@ -51,7 +51,7 @@ Es posible habilitar y configurar todos estos servicios de distintas maneras:
 - [APIs](https://docs.aws.amazon.com/)
 - [SDKs](https://aws.amazon.com/developer/tools/)
 
-Todas son utiles en distintos escenarios pero AWS ha creado otro servico que permite tener estas definiciones en archivos de texto (YAML o JSON) que pueden ser agregados a un repositorio de código como este y utilizarlo para crear y modificar recursos en AWS. De esta manera se puede tener una trazabilidad sobre los cambios que se han realizado en un sistema, colaborar y realizar modificaciones modificando esta definición (infraestructura como código).
+Todas son útiles en distintos escenarios pero AWS ha creado otro servicio que permite tener estas definiciones en archivos de texto (YAML o JSON) que pueden ser agregados a un repositorio de código como este y utilizarlo para crear y modificar recursos en AWS. De esta manera se puede tener una trazabilidad sobre los cambios que se han realizado en un sistema, colaborar y realizar modificaciones modificando esta definición (infraestructura como código).
 
 IMAGEN PARA ILUSTRAR CLOUDFORMATION
 
@@ -60,7 +60,7 @@ _¿Cómo funciona CloudFormation?: https://docs.aws.amazon.com/AWSCloudFormation
 
 ### SAM
 
-Las plantillas de CloudFormation pueden crecer rápidamente y definir todos los recursos de una aplicación puede ser una tarea repetitiva y tardada, para solucionar esto AWS ha creado un framework que permite definir la mayoría de recursos de una aplicación "serverless" de una forma simple y con menos lineas. 
+Las plantillas de CloudFormation pueden crecer rápidamente y definir todos los recursos de una aplicación puede ser una tarea repetitiva y tardada, para solucionar esto AWS ha creado un framework que permite definir la mayoría de recursos de una aplicación "serverless" de una forma simple y con menos líneas. 
 
 DIAGRAMA MOSTRANDO SAM Y CLOUDFORMATION
 
@@ -107,7 +107,7 @@ Utilizar alguna de estas extensiones en tu IDE favorito te facilitará el desarr
 
 ### Referencias
 
-Estas referencias pueden ser utilies cuando estas desarrollando una aplicación con SAM:
+Estas referencias pueden ser útiles cuando estás desarrollando una aplicación con SAM:
 
 - [Lista de recursos que agrega SAM a CLoudFormation (Más simples describir)](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-specification-resources-and-properties.html)
 - [Lista de recursos en CloudFormation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html)
@@ -136,16 +136,66 @@ Agregar nota: Si el proyecto crece y se crean multiples repositorios, se debe cr
 ## Cookiecutter
 
 Crea un proyecto (Crear proyecto a partir de plantilla de cookiecutter y agregar las credenciales como secretos en Github)
+## Prerequisitos:
+Contar con las siguientes herramientas instaladas:
+   - [Python](https://www.python.org/downloads/release/python-3913/)
+   - [Cookiecutter](https://cookiecutter.readthedocs.io/en/stable/installation.html)
+   - [Git](https://git-scm.com/downloads)
+   - 
+## Overview:
 
-### Prerequisitos:
-1. Creación de llaves KMS
-Como prerequisito es importante crear 2 llaves KMS "multiregión", una para SSM y otra para DynamoDB.
+```mermaid
+  graph TD;
+
+      1_GitHub-->crear_repositorio;
+      crear_repositorio-->crear_ambientes;
+      crear_ambientes-->configurar_secretos_ambiente;
+      copiar_access_key-->agregar_secreto_de_access_key;
+      copiar_secret_key-->agregar_secreto_de_secret_key;
+      configurar_secretos_ambiente-->agregar_secreto_de_access_key;
+      configurar_secretos_ambiente-->agregar_secreto_de_secret_key;
+      configurar_secretos_ambiente-->agregar_account_id;
+        
+      AWS-->2_IAM;
+      2_IAM-->crear_usuario;
+      crear_usuario-->marcar_acceso_programatico;
+      marcar_acceso_programatico-->agregar_politicas_requeridas;
+      agregar_politicas_requeridas-->agregar_tags_del_proyecto;
+      agregar_tags_del_proyecto-->copiar_access_key;
+      agregar_tags_del_proyecto-->copiar_secret_key;
+      
+
+      AWS-->3_KMS;
+      3_KMS-->crear_llave_simetrica_multiregion_SSM;
+      crear_llave_simetrica_multiregion_SSM-->copiar_ARN;
+      3_KMS-->crear_llave_simetrica_multiregion_DynamoDB;
+      crear_llave_simetrica_multiregion_DynamoDB-->copiar_ARN;
+      crear_llave_simetrica_multiregion_SSM-->configurar_regionalidad_en_region_dr;
+      crear_llave_simetrica_multiregion_DynamoDB-->configurar_regionalidad_en_region_dr;
+      configurar_regionalidad_en_region_dr-->copiar_ARN;
+      copiar_ARN-->ingresarlos_al_inicializar_cookiecutter;      
+```
+#### - Los pasos 1 y 2 deberán ser realizados en las cuentas AWS de cada ambiente (develop, prod)
+## Pasos
+
+---
+[1. Creación de repositorio](#creación-de-repositorio) \
+[2. Creación de llaves KMS](#creación-de-llaves-kms) \
+[3. Configuración de llaves AWS](#configuración-de-llaves-aws) \
+
+---
+
+## Creación de repositorio
+Se debe crear un repositorio nuevo. El repositorio debe ser creado vacío, para que se pueda inicializar correctamente el proyecto.
+-------------------
+## Creación de llaves KMS
+Como prerequisito es importante crear 2 llaves KMS "[multiregión](https://docs.aws.amazon.com/kms/latest/developerguide/multi-region-keys-overview.html)", una para SSM y otra para DynamoDB.
 La región de creación de la llave será la región principal. Y la secundaría será la destinada para DR.
 
 El nombrado debe seguir el siguiente estándar:
 identificador_del_proyecto-servicio_de_aws-ambiente
 
-Ejemplo de llave SSM:\
+Ejemplo de llave SSM:
 
 Identificador = proyectonuevo\
 Servicio = ssm\
@@ -161,6 +211,34 @@ Ambiente = dev
 #### Nombre de la nueva llave a crear: proyectonuevo-dynamodb-dev
 
 NOTA: Cuando iniciemos la creación de nuestra plantilla quickstart Cookiecutter nos solicitará los ARN's 
-de ambas llaves.
+de ambas llaves. Por lo que es importante tenerlas a la mano cuando se inicialice el proyecto.
+
+-------------------
+## Configuración de llaves AWS
+
+Para poder realizar los despliegues a una cuenta AWS. Es importante generar un usuario en las cuentas
+destino para que esto se pueda lograr. Es muy importante que el usuario cuente con acceso programático. 
+Para mayor información visitar: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_console
 
 
+### Creando usuario:
+#### Crear usuario con acceso programático:
+![](assets/programatic_access.PNG)
+
+#### Agregar las políticas necesarias:
+En este punto es indispensable que el usuario que desplegará, cuente con acceso a Cloudformation y los servicios que estará
+desplegando:
+![](assets/policies.PNG)
+
+#### Agregar tag relacionado al proyecto:
+![](assets/tags_usuario.PNG)
+#### Se salvaguardarán las credenciales generadas:
+Estas serán configuradas en los secretos de GitHub, al igual que el número de cuenta de AWS.
+![](assets/keys.PNG)
+
+## Inicializar proyecto
+Una vez concluidos los pasos anteriores podemos proseguir a inicializar el proyecto, nos moveremos hacia la carpeta donde se alojará el repositorio y ejecutaremos el siguiente comando:
+
+```
+cookiecutter https://github.com/rortega-sps/aws_sam_github_quickstart_template
+```
