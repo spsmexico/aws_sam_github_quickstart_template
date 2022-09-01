@@ -27,8 +27,8 @@ jobs:
     permissions: write-all
     uses: {{cookiecutter.org_or_user_github}}/{{cookiecutter.nombre_repo}}/.github/workflows/reusable_create_fix.yml@main
     with:
-      ref: {{'${{'}}github.event.inputs.version{{'${{'}}
-      fix: {{'${{'}}github.event.inputs.version_fix{{'${{'}}
+      ref: {{'${{'}}github.event.inputs.version{{ '}}' }}
+      fix: {{'${{'}}github.event.inputs.version_fix{{ '}}' }}
 
   DevDeploy:
     needs: Hotfix
@@ -36,8 +36,8 @@ jobs:
     with:
       ambiente: "develop"
       region: us-east-1
-      ref: fix/{{'${{'}}github.event.inputs.version_fix{{'${{'}}
-      rama_config: "fix/{{'${{'}}github.event.inputs.version_fix{{'${{'}}"
+      ref: fix/{{'${{'}}github.event.inputs.version_fix{{ '}}' }}
+      rama_config: "fix/{{'${{'}}github.event.inputs.version_fix{{ '}}' }}"
       region_dr: us-west-2
-      dynamodb: {{'${{'}}github.event.inputs.dynamodb{{'${{'}}
+      dynamodb: {{'${{'}}github.event.inputs.dynamodb{{ '}}' }}
     secrets: inherit
