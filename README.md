@@ -321,8 +321,9 @@ Ambiente = dev
 
 #### Nombre de la nueva llave a crear: proyectonuevo-dynamodb-dev
 
-NOTA: Cuando [inicialicemos el proyecto con cookiecutter](#inicializar-proyecto) nos solicitará los ARN's 
-de ambas llaves. Por lo que es importante tenerlas a la mano cuando se inicialice el proyecto.
+NOTA: Este proceso debe realizarse en ambas cuentas (desarrollo y producción).
+Cuando [inicialicemos el proyecto con cookiecutter](#inicializar-proyecto) nos solicitará los ARN's 
+de las llaves llaves. Por lo que es importante tenerlas a la mano cuando se inicialice el proyecto.
 
 
 ## Creación de repositorio
@@ -421,17 +422,29 @@ Es importante que no incluya el identificador o sufijo del proyecto.
 ### *project*: Identificador del proyecto. 
 Pueden ser las iniciales de la empresa o nombre del proyecto. Se utilizará como sufijo para los recursos del proyecto.
 
-### *ARN_SSM_KMS*: Llave multiregion para Parameter Store. 
-Es una de las llaves que creamos para la región principal en [Creación de llaves KMS](#creación-de-llaves-kms)
+### *DEV_ARN_SSM_KMS*: Llave multiregion para Parameter Store. DEV 
+Es una de las llaves que creamos para la región principal en [Creación de llaves KMS](#creación-de-llaves-kms) para el ambiente de Desarrollo.
 
-### *ARN_DYNAMODB_KMS*: Llave multiregion para DynamoDB. 
-Es una de las llaves que creamos para la región principal en [Creación de llaves KMS](#creación-de-llaves-kms)
+### *DEV_ARN_DYNAMODB_KMS*: Llave multiregion para DynamoDB. DEV
+Es una de las llaves que creamos para la región principal en [Creación de llaves KMS](#creación-de-llaves-kms) para el ambiente de Desarrollo.
 
-### *ARN_SSM_KMS_DR*: Llave multiregion para Parameter Store. DR. 
-Es una de las llaves que creamos para la región DR en [Creación de llaves KMS](#creación-de-llaves-kms)
+### *DEV_ARN_SSM_KMS_DR*: Llave multiregion para Parameter Store. DR. DEV
+Es una de las llaves que creamos para la región DR en [Creación de llaves KMS](#creación-de-llaves-kms) para el ambiente de Desarrollo.
 
-### *ARN_DYNAMODB_KMS_DR*: Llave multiregion para DynamoDB. DR. 
-Es una de las llaves que creamos para la región DR en [Creación de llaves KMS](#creación-de-llaves-kms)
+### *DEV_ARN_DYNAMODB_KMS_DR*: Llave multiregion para DynamoDB. DR. DEV
+Es una de las llaves que creamos para la región DR en [Creación de llaves KMS](#creación-de-llaves-kms) para el ambiente de Desarrollo.
+
+### *PROD_ARN_SSM_KMS*: Llave multiregion para Parameter Store. PROD
+Es una de las llaves que creamos para la región principal en [Creación de llaves KMS](#creación-de-llaves-kms) para el ambiente de Producción.
+
+### *PROD_ARN_DYNAMODB_KMS*: Llave multiregion para DynamoDB. PROD
+Es una de las llaves que creamos para la región principal en [Creación de llaves KMS](#creación-de-llaves-kms) para el ambiente de Producción.
+
+### *PROD_ARN_SSM_KMS_DR*: Llave multiregion para Parameter Store. DR. PROD
+Es una de las llaves que creamos para la región DR en [Creación de llaves KMS](#creación-de-llaves-kms) para el ambiente de Producción.
+
+### *PROD_ARN_DYNAMODB_KMS_DR*: Llave multiregion para DynamoDB. DR. PROD
+Es una de las llaves que creamos para la región DR en [Creación de llaves KMS](#creación-de-llaves-kms) para el ambiente de Producción.
 
 ### *sam_container*: public.ecr.aws/sam/build-python3.8:1.32.0. 
 Es el contenedor que construye la aplicación, en esta caso está como default uno de Python. Pero de ser requerido usar una lambda de otro lenguaje se puede especificar en esta opción.
