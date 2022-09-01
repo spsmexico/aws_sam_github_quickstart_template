@@ -1,10 +1,10 @@
 [
     {
-        "ParameterKey": "KeyKMSARN",
-        "ParameterValue": ""
+      "ParameterKey": "DynamoKMSARN",
+      "ParameterValue": "{{cookiecutter.PROD_ARN_DYNAMODB_KMS_DR}}"
     },
     {
-        "ParameterKey": "KeyKMSARNMulti",
-        "ParameterValue": ""
+      "ParameterKey": "ParametersKMSARN",
+      "ParameterValue": "{{cookiecutter.PROD_ARN_SSM_KMS_DR}}"
     }
-]
+  ]
