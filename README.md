@@ -203,12 +203,46 @@ Estas referencias pueden ser útiles cuando estás desarrollando una aplicación
 
 
 ## Github y Github Actions
-(Breve explicación con ligas a tutoriales y documentación de Github)
 
+Github inicio como una plataforma para subir repositorios de código basados en Git, con el tiempo ha ido agregando más funcionalidades al punto de volverse una plataforma para administrar todo el ciclo de vida de una aplicación:
+- Control de versiones (Github Repositories)
+- Colaboración (Pull request y Forks)
+- Marcar liberaciones (Releases)
+- Repositorio de artefactos (Github Packages)
+- Administración de proyectos (Github Proyects)
+- Automatización de la construcción y despliegue (Github Actions)
+- Automatización de tareas dentro de Github (Github Actions)
+- Escaneo de vulnerabilidas
+- Estadisticas de uso
 
 ### Ramas (Explicación de trunk based development)
 
-### Referencias
+Todo repositorio de código debe tener definidas algunas reglas para trabajar y colaborar. Trunk base development es la estrategia que mejor nos ha funcionado pues reduce la cantidad de conflicto al reducir la cantidad de "merges" o "pull requests":
+
+![Trunk based development](assets/trunkbased.png)
+_Trunk based development:_ https://trunkbaseddevelopment.com/
+
+#### main
+
+La rama _main_ es la rama principal (trunk en el diagrama) todo el código se sube directamente ahí, si se agrego un nuevo desarrollador que aún no está familiarizado con el código se puede solicitar que introduzca sus cambios mediante "pull request" para que sean revisados por su mentor o guía en el proyecto, eventualmente podrá introducir cambios directamente en _main_.
+
+#### releases/x.x.x
+
+Una vez que se libera el código a producción se genera una rama de release, estas ramas están protegidas (ya no se pueden modificar) y deben utilizar [versionado semántico](https://semver.org/lang/es/) para indicar la versión.
+
+_Ejemplo: releases/1.0.0_
+
+#### fix/x.x.x
+
+> Recuerda que las ramas releases/x.x.x están protegidas.
+
+En caso de que ocurra un bug en producción, hay dos posibles caminos:
+
+1. Si en main no se han introducido nuevos cambios al código, el fix se deberá realizar directamente en main y al generar un nuevo release se incrementará la versión parche.
+  - _Ejemplo: 1.0.0 -> 1.0.1_
+2. Si el código en main ya cambio porque se está trabajando en una nueva funcionalidad, este código aún no está listo para enviarse a producción así que no podemos realizar el fix sobre main. En estos casos se crea una rama fix con la versión de parche incrementada a partir de la rama release que queremos corregir. Una vez arreglado el código se despliega en producción y se crea una nueva rama releases.
+  - _Ejemplo: releases/1.0.0 -> fix/releases/1.0.1 -> releases/1.0.1_
+
 
 ### Github Workflows (Como los workflows en el repo permiten seguir la estrategia de ramas y desplegar con algunos clics)
 
