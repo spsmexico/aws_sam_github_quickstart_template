@@ -246,6 +246,7 @@ En caso de que ocurra un bug en producción, hay dos posibles caminos:
 
 ### Github Workflows (Como los workflows en el repo permiten seguir la estrategia de ramas y desplegar con algunos clics)
 
+![workflows](assets/trunk-based-3.gif)
 
 Workflow reusables (Como los workflows hacen llamados a los workflows reusables para completar tareas y liga a la administración de workflows)
 
