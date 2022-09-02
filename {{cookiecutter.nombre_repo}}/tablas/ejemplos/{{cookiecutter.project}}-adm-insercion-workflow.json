@@ -6,7 +6,7 @@
     "L": []
   },
   "NEGOCIO": {
-    "S": "AFORE_SPS_OTRO"
+    "S": "NEGOCIO2"
   },
   "ARCHIVOS": {
     "L": [
@@ -19,12 +19,12 @@
             "BOOL": false
           },
           "NOMBRE": {
-            "S": "PRI01_2VD"
+            "S": "NOMBRE_ARCHIVO"
           },
           "REGEX": {
             "M": {
               "FECHA": {
-                "S": "PRI01_2VD(\\d+)_SOL.PIP"
+                "S": "DUMMY"
               },
               "TIPO": {
                 "S": "TODO"
@@ -41,13 +41,13 @@
 },
 {
   "ID": {
-    "S": "int-afore-infact24"
+    "S": "SEGUNDOID"
   },
   "API": {
     "L": []
   },
   "NEGOCIO": {
-    "S": "AFORE_SPS"
+    "S": "SPS"
   },
   "ARCHIVOS": {
     "L": [
@@ -65,7 +65,7 @@
           "REGEX": {
             "M": {
               "FECHA": {
-                "S": "PRI01_2VD(\\d+)_SOL.PIP"
+                "S": "NOMBRE_ARCHIVO"
               },
               "TIPO": {
                 "S": "TODO"
@@ -79,4 +79,5 @@
   "INTERFAZ": {
     "S": "Prueba tabla global. Verificar en Oregon"
   }
-}]}
+}],
+"Eliminaciones": []}
