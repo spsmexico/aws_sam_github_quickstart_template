@@ -326,6 +326,40 @@ En este punto es indispensable que el usuario que desplegará, cuente con acceso
 desplegando:
 ![](assets/policies.PNG)
 
+##### Permisos sugeridos
+Estos permisos se sugieren habilitar para poder realizar su despliegue. Salvo que haya alguno que sobre o alguno que falte deberá ser agregado/eliminado:
+
+![](assets/politicas_despliegue.PNG)
+
+La siguiente política puede insertarse directamente al usuario para poder desplegar:
+
+```
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "iam:UntagRole",
+                "iam:TagRole",
+                "iam:UpdateRoleDescription",
+                "iam:CreateRole",
+                "iam:DeleteRole",
+                "iam:AttachRolePolicy",
+                "iam:PutRolePolicy",
+                "iam:TagPolicy",
+                "iam:CreatePolicy",
+                "iam:DetachRolePolicy",
+                "iam:DeleteRolePolicy",
+                "iam:UntagPolicy",
+                "iam:UpdateRole"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+```
 #### Agregar tag relacionado al proyecto:
 ![](assets/tags_usuario.PNG)
 #### Se salvaguardarán las credenciales generadas:
