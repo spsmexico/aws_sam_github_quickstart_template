@@ -326,7 +326,7 @@ En este punto es indispensable que el usuario que desplegará, cuente con acceso
 desplegando:
 ![](assets/policies.PNG)
 
-##### Permisos sugeridos
+#### Permisos sugeridos:
 Estos permisos se sugieren habilitar para poder realizar su despliegue. Salvo que haya alguno que sobre o alguno que falte deberá ser agregado/eliminado:
 
 ![](assets/politicas_despliegue.PNG)
