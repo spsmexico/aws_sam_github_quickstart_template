@@ -270,9 +270,9 @@ Contar con las siguientes herramientas instaladas:
 
 
       AWS-->1_IAM;
-      1_IAM-->crear_usuario;
+      1_IAM-->crear_identity_provider;
       1_IAM-->copiar_account_id;
-      crear_usuario-->marcar_acceso_programatico;
+      crear_identity_provider-->marcar_acceso_programatico;
       marcar_acceso_programatico-->agregar_politicas_requeridas;
       agregar_politicas_requeridas-->agregar_tags_del_proyecto;
       agregar_tags_del_proyecto-->copiar_access_key;
@@ -303,26 +303,43 @@ Contar con las siguientes herramientas instaladas:
 ## Pasos
 
 ---
-[1. Configuración de llaves AWS](#configuración-de-llaves-aws) \
+[1. Generación de rol de despliegue](#generación-de-rol-de-despliegue) \
 [2. Creación de llaves KMS](#creación-de-llaves-kms) \
 [3. Creación de repositorio y ambientes](#creación-de-repositorio) \
 [4. Inicialización del proyecto](#inicializar-proyecto) \
 [5. Post-inicialización del proyecto](#post-inicialización-del-proyecto) \
 ---
 
-## Configuración de llaves AWS
+## Generación de rol de despliegue
 -------------------
-Para poder realizar los despliegues a una cuenta AWS. Es importante generar un usuario en las cuentas
-destino para que esto se pueda lograr. Es muy importante que el usuario cuente con acceso programático. 
-Para mayor información visitar: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_console
+Para poder realizar los despliegues a una cuenta AWS, es importante generar un rol en lugar de un usuario en las cuentas
+AWS destino. Esto para ejercer [mejores prácticas de seguridad en AWS](https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html).
 
 
-### Creando usuario:
-#### Crear usuario con acceso programático:
-![](assets/programatic_access.PNG)
+### Creando identity provider:
+Para crear un identity provider es necesario ingresar a IAM daremos clic en la opción de la barra lateral izquierda "identity providers" y daremos clic en el botón azul de "Add provider".
+![](assets/create-identity-provider.PNG)
+
+En provider URL ingresaremos: https://token.actions.githubusercontent.com
+En "Audience" ingresaremos: sts.amazonaws.com
+
+Posteriormente daremos clic en "get thumbprint"
+
+![](assets/get-thumbprint.PNG)
+### Agregar provider
+
+y para terminar daremos clic en "Add provider"
+
+![](assets/add-provider.PNG)
+
+### Creando rol
+Al terminar, nos iremos en la sección de IAM > Roles y daremos clic en "Create role", en el tipo de entidad confiable daremos clic en "Web identity" y seleccionaremos el identity provider y audience que acabamos de crear en el paso anterior y daremos clic en "Next":
+
+![](assets/select-trusted-entity.PNG)
+
 
 #### Agregar las políticas necesarias:
-En este punto es indispensable que el usuario que desplegará, cuente con acceso a Cloudformation y los servicios que estará
+En este punto es indispensable que el rol que desplegará, cuente con acceso a Cloudformation y los servicios que estará
 desplegando:
 ![](assets/policies.PNG)
 
@@ -331,7 +348,7 @@ Estos permisos se sugieren habilitar para poder realizar su despliegue. Salvo qu
 
 ![](assets/politicas_despliegue.PNG)
 
-La siguiente política puede insertarse directamente al usuario para poder desplegar:
+La siguiente política puede insertarse directamente al rol para poder desplegar:
 
 ```
 {
@@ -362,10 +379,40 @@ La siguiente política puede insertarse directamente al usuario para poder despl
 ```
 #### Agregar tag relacionado al proyecto:
 ![](assets/tags_usuario.PNG)
-#### Se salvaguardarán las credenciales generadas:
-Estas serán configuradas en los secretos de GitHub, al igual que el número de cuenta de AWS.
-![](assets/keys.PNG)
 
+Una vez que el rol haya sido creado, abriremos el rol que creamos y daremos clic en "Edit trust policy":
+
+En este bloque agregaremos lo siguiente sustituyendo los siguientes valores: 
+
+```
+{
+   "Version": "2012-10-17",
+   "Statement": [
+       {
+           "Effect": "Allow",
+           "Principal": {
+               "Federated": "arn:aws:iam::<NUMERO_CUENTA_AWS>:oidc-provider/token.actions.githubusercontent.com"
+           },
+           "Action": "sts:AssumeRoleWithWebIdentity",
+           "Condition": {
+               "StringEquals": {
+                   "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
+               },
+               "StringLike": {
+                   "token.actions.githubusercontent.com:sub": "repo:<ORGANIZACION_GITHUB>/<NOMBRE_REPOSITORIO>:*"
+               }
+           }
+       }
+   ]
+}
+```
+NUMERO_CUENTA_AWS = Número de cuenta de la cuenta AWS donde se estará desplegando, en este caso podemos obtenerla en la parte superior derecha de la consola AWS.
+ORGANIZACION_GITHUB = Organización o usuario de GitHub a la que pertenece el repositorio. 
+NOMBRE_REPOSITORIO = Nombre del repositorio.
+
+Por último daremos clic en "Update Policy".
+
+Recursos: https://www.automat-it.com/post/using-github-actions-with-aws-iam-roles
 
 ## Creación de llaves KMS
 -------------------
