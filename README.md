@@ -272,11 +272,9 @@ Contar con las siguientes herramientas instaladas:
       AWS-->1_IAM;
       1_IAM-->crear_identity_provider;
       1_IAM-->copiar_account_id;
-      crear_identity_provider-->marcar_acceso_programatico;
-      marcar_acceso_programatico-->agregar_politicas_requeridas;
+      crear_identity_provider-->agregar_politicas_requeridas;
       agregar_politicas_requeridas-->agregar_tags_del_proyecto;
-      agregar_tags_del_proyecto-->copiar_access_key;
-      agregar_tags_del_proyecto-->copiar_secret_key;
+      agregar_tags_del_proyecto-->copiar_account_id;
       copiar_account_id-->agregar_account_id;
 
       AWS-->2_KMS;
@@ -292,10 +290,6 @@ Contar con las siguientes herramientas instaladas:
       3_GitHub-->crear_repositorio;
       crear_repositorio-->crear_ambientes;
       crear_ambientes-->configurar_secretos_ambiente;
-      copiar_access_key-->agregar_secreto_de_access_key;
-      copiar_secret_key-->agregar_secreto_de_secret_key;
-      agregar_secreto_de_access_key-->configurar_secretos_ambiente;
-      agregar_secreto_de_secret_key-->configurar_secretos_ambiente;
       agregar_account_id-->configurar_secretos_ambiente;
                 
 ```
@@ -326,7 +320,6 @@ En "Audience" ingresaremos: sts.amazonaws.com
 Posteriormente daremos clic en "get thumbprint"
 
 ![](assets/get-thumbprint.PNG)
-### Agregar provider
 
 y para terminar daremos clic en "Add provider"
 
@@ -378,6 +371,7 @@ La siguiente política puede insertarse directamente al rol para poder desplegar
 }
 ```
 #### Agregar tag relacionado al proyecto:
+Por acá estaremos agregando el tag "Proyecto" con el nombre del proyecto para el que se utilizará este rol:
 ![](assets/tags_usuario.PNG)
 
 Una vez que el rol haya sido creado, abriremos el rol que creamos y daremos clic en "Edit trust policy":
@@ -407,7 +401,9 @@ En este bloque agregaremos lo siguiente sustituyendo los siguientes valores:
 }
 ```
 NUMERO_CUENTA_AWS = Número de cuenta de la cuenta AWS donde se estará desplegando, en este caso podemos obtenerla en la parte superior derecha de la consola AWS.
+
 ORGANIZACION_GITHUB = Organización o usuario de GitHub a la que pertenece el repositorio. 
+
 NOMBRE_REPOSITORIO = Nombre del repositorio.
 
 Por último daremos clic en "Update Policy".
