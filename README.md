@@ -262,7 +262,6 @@ Contar con las siguientes herramientas instaladas:
    - [Python](https://www.python.org/downloads/release/python-3913/)
    - [Cookiecutter](https://cookiecutter.readthedocs.io/en/stable/installation.html)
    - [Git](https://git-scm.com/downloads)
-   - 
 ## Overview:
 
 ```mermaid
@@ -271,7 +270,6 @@ Contar con las siguientes herramientas instaladas:
 
       AWS-->1_IAM;
       1_IAM-->crear_identity_provider;
-      1_IAM-->copiar_account_id;
       crear_identity_provider-->agregar_politicas_requeridas;
       agregar_politicas_requeridas-->agregar_tags_del_proyecto;
       agregar_tags_del_proyecto-->copiar_account_id;
@@ -487,14 +485,6 @@ Número de cuenta AWS del ambiente *develop*:
 
 ![](assets/dev_account_id.PNG)
 
-Llave de acceso de usuario para despliegue en ambiente *develop*:
-
-![](assets/dev_key_id.PNG)
-
-Llave secreta para usuario de despliegue ambiente *develop*:
-
-![](assets/dev_secret_key.PNG)
-
 Acto seguido procederemos a dirigirnos al ambiente *production*:
 ![](assets/environments_creados.PNG)
 
@@ -503,15 +493,6 @@ Y comenzaremos a agregar los secretos de este ambiente.
 Número de cuenta AWS del ambiente *production*:
 
 ![](assets/prod_account_id.PNG)
-
-Llave de acceso de usuario para despliegue en ambiente *production*:
-
-![](assets/prod_key_id.PNG)
-
-Llave secreta para usuario de despliegue ambiente *production*:
-
-![](assets/prod_secret_key.PNG)
-
 
 ## Inicializar proyecto
 Una vez concluidos los pasos anteriores podemos proseguir a inicializar el proyecto, nos moveremos hacia la carpeta donde se alojará el repositorio y ejecutaremos el siguiente comando:
@@ -564,20 +545,9 @@ Es el contenedor que construye la aplicación, en esta caso está como default u
 ### *sam_bucket*: Nombre del bucket para SAM. 
 Es el bucket que necesita SAM para realizar los despliegues.
 
-### *DEV_secret_aws_key_id*: DEV_AWS_KEY_ID. 
-Aquí se deja por default este valor, salvo se haya especificado uno diferente en la [configuración de secretos por ambiente](#configurar-secretos-por-ambiente)
-
-### *DEV_secret_aws_key_secret*: DEV_AWS_KEY_SECRET. 
-Aquí se deja por default este valor, salvo se haya especificado uno diferente en la [configuración de secretos por ambiente](#configurar-secretos-por-ambiente)
-
 ### *DEV_secret_aws_account_id*: DEV_AWS_ACCOUNT_ID. 
 Aquí se deja por default este valor, salvo se haya especificado uno diferente en la [configuración de secretos por ambiente](#configurar-secretos-por-ambiente)
 
-### *PROD_secret_aws_key_id*: PROD_AWS_KEY_ID. 
-Aquí se deja por default este valor, salvo se haya especificado uno diferente en la [configuración de secretos por ambiente](#configurar-secretos-por-ambiente)
-
-### *PROD_secret_aws_key_secret*: PROD_AWS_KEY_SECRET. 
-Aquí se deja por default este valor, salvo se haya especificado uno diferente en la [configuración de secretos por ambiente](#configurar-secretos-por-ambiente)
 
 #### *PROD_secret_aws_account_id*: PROD_AWS_ACCOUNT_ID. 
 Aquí se deja por default este valor, salvo se haya especificado uno diferente en la [configuración de secretos por ambiente](#configurar-secretos-por-ambiente)
