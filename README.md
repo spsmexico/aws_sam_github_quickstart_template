@@ -308,7 +308,7 @@ Contar con las siguientes herramientas instaladas:
 Para poder realizar los despliegues a una cuenta AWS, es importante generar un rol en lugar de un usuario en las cuentas
 AWS destino. Esto para ejercer [mejores prácticas de seguridad en AWS](https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html).
 
-
+Nota: este paso debe realizarse en las cuentas de AWS de todos los ambientes.
 ### Creando identity provider:
 Para crear un identity provider es necesario ingresar a IAM daremos clic en la opción de la barra lateral izquierda "identity providers" y daremos clic en el botón azul de "Add provider".
 ![](assets/create-identity-provider.PNG)
@@ -325,7 +325,8 @@ y para terminar daremos clic en "Add provider"
 ![](assets/add-provider.PNG)
 
 ### Creando rol
-Al terminar, nos iremos en la sección de IAM > Roles y daremos clic en "Create role", en el tipo de entidad confiable daremos clic en "Web identity" y seleccionaremos el identity provider y audience que acabamos de crear en el paso anterior y daremos clic en "Next":
+En esta sección se sugiere nombrar el rol con *identificador-del-proyecto*-github-actions-role (sin agregarle el sufijo de ambiente. 
+Para crear el rol, nos iremos en la sección de IAM > Roles y daremos clic en "Create role", en el tipo de entidad confiable daremos clic en "Web identity" y seleccionaremos el identity provider y audience que acabamos de crear en el paso anterior y daremos clic en "Next":
 
 ![](assets/select-trusted-entity.PNG)
 
