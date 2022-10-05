@@ -270,7 +270,8 @@ Contar con las siguientes herramientas instaladas:
 
       AWS-->1_IAM;
       1_IAM-->crear_identity_provider;
-      crear_identity_provider-->agregar_politicas_requeridas;
+      crear_identity_provider-->crear_rol_despliegue;
+      crear_rol_despliegue-->agregar_politicas_requeridas;
       agregar_politicas_requeridas-->agregar_tags_del_proyecto;
       agregar_tags_del_proyecto-->copiar_account_id;
       copiar_account_id-->agregar_account_id;
