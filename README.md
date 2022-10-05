@@ -262,7 +262,6 @@ Contar con las siguientes herramientas instaladas:
    - [Python](https://www.python.org/downloads/release/python-3913/)
    - [Cookiecutter](https://cookiecutter.readthedocs.io/en/stable/installation.html)
    - [Git](https://git-scm.com/downloads)
-   - 
 ## Overview:
 
 ```mermaid
@@ -270,13 +269,11 @@ Contar con las siguientes herramientas instaladas:
 
 
       AWS-->1_IAM;
-      1_IAM-->crear_usuario;
-      1_IAM-->copiar_account_id;
-      crear_usuario-->marcar_acceso_programatico;
-      marcar_acceso_programatico-->agregar_politicas_requeridas;
+      1_IAM-->crear_identity_provider;
+      crear_identity_provider-->crear_rol_despliegue;
+      crear_rol_despliegue-->agregar_politicas_requeridas;
       agregar_politicas_requeridas-->agregar_tags_del_proyecto;
-      agregar_tags_del_proyecto-->copiar_access_key;
-      agregar_tags_del_proyecto-->copiar_secret_key;
+      agregar_tags_del_proyecto-->copiar_account_id;
       copiar_account_id-->agregar_account_id;
 
       AWS-->2_KMS;
@@ -292,10 +289,6 @@ Contar con las siguientes herramientas instaladas:
       3_GitHub-->crear_repositorio;
       crear_repositorio-->crear_ambientes;
       crear_ambientes-->configurar_secretos_ambiente;
-      copiar_access_key-->agregar_secreto_de_access_key;
-      copiar_secret_key-->agregar_secreto_de_secret_key;
-      agregar_secreto_de_access_key-->configurar_secretos_ambiente;
-      agregar_secreto_de_secret_key-->configurar_secretos_ambiente;
       agregar_account_id-->configurar_secretos_ambiente;
                 
 ```
@@ -303,26 +296,43 @@ Contar con las siguientes herramientas instaladas:
 ## Pasos
 
 ---
-[1. Configuración de llaves AWS](#configuración-de-llaves-aws) \
+[1. Generación de rol de despliegue](#generación-de-rol-de-despliegue) \
 [2. Creación de llaves KMS](#creación-de-llaves-kms) \
 [3. Creación de repositorio y ambientes](#creación-de-repositorio) \
 [4. Inicialización del proyecto](#inicializar-proyecto) \
 [5. Post-inicialización del proyecto](#post-inicialización-del-proyecto) \
 ---
 
-## Configuración de llaves AWS
+## Generación de rol de despliegue
 -------------------
-Para poder realizar los despliegues a una cuenta AWS. Es importante generar un usuario en las cuentas
-destino para que esto se pueda lograr. Es muy importante que el usuario cuente con acceso programático. 
-Para mayor información visitar: https://docs.aws.amazon.com/IAM/latest/UserGuide/id_users_create.html#id_users_create_console
+Para poder realizar los despliegues a una cuenta AWS, es importante generar un rol en lugar de un usuario en las cuentas
+AWS destino. Esto para ejercer [mejores prácticas de seguridad en AWS](https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html).
 
+Nota: este paso debe realizarse en las cuentas de AWS de todos los ambientes.
+### Creando identity provider:
+Para crear un identity provider es necesario ingresar a IAM daremos clic en la opción de la barra lateral izquierda "identity providers" y daremos clic en el botón azul de "Add provider".
+![](assets/create-identity-provider.PNG)
 
-### Creando usuario:
-#### Crear usuario con acceso programático:
-![](assets/programatic_access.PNG)
+En provider URL ingresaremos: https://token.actions.githubusercontent.com
+En "Audience" ingresaremos: sts.amazonaws.com
+
+Posteriormente daremos clic en "get thumbprint"
+
+![](assets/get-thumbprint.PNG)
+
+y para terminar daremos clic en "Add provider"
+
+![](assets/add-provider.PNG)
+
+### Creando rol
+En esta sección se sugiere nombrar el rol con *identificador-del-proyecto*-github-actions-role (sin agregarle el sufijo de ambiente. 
+Para crear el rol, nos iremos en la sección de IAM > Roles y daremos clic en "Create role", en el tipo de entidad confiable daremos clic en "Web identity" y seleccionaremos el identity provider y audience que acabamos de crear en el paso anterior y daremos clic en "Next":
+
+![](assets/select-trusted-entity.PNG)
+
 
 #### Agregar las políticas necesarias:
-En este punto es indispensable que el usuario que desplegará, cuente con acceso a Cloudformation y los servicios que estará
+En este punto es indispensable que el rol que desplegará, cuente con acceso a Cloudformation y los servicios que estará
 desplegando:
 ![](assets/policies.PNG)
 
@@ -331,7 +341,7 @@ Estos permisos se sugieren habilitar para poder realizar su despliegue. Salvo qu
 
 ![](assets/politicas_despliegue.PNG)
 
-La siguiente política puede insertarse directamente al usuario para poder desplegar:
+La siguiente política puede insertarse directamente al rol para poder desplegar:
 
 ```
 {
@@ -361,11 +371,44 @@ La siguiente política puede insertarse directamente al usuario para poder despl
 }
 ```
 #### Agregar tag relacionado al proyecto:
+Por acá estaremos agregando el tag "Proyecto" con el nombre del proyecto para el que se utilizará este rol:
 ![](assets/tags_usuario.PNG)
-#### Se salvaguardarán las credenciales generadas:
-Estas serán configuradas en los secretos de GitHub, al igual que el número de cuenta de AWS.
-![](assets/keys.PNG)
 
+Una vez que el rol haya sido creado, abriremos el rol que creamos y daremos clic en "Edit trust policy":
+
+En este bloque agregaremos lo siguiente sustituyendo los siguientes valores: 
+
+```
+{
+   "Version": "2012-10-17",
+   "Statement": [
+       {
+           "Effect": "Allow",
+           "Principal": {
+               "Federated": "arn:aws:iam::<NUMERO_CUENTA_AWS>:oidc-provider/token.actions.githubusercontent.com"
+           },
+           "Action": "sts:AssumeRoleWithWebIdentity",
+           "Condition": {
+               "StringEquals": {
+                   "token.actions.githubusercontent.com:aud": "sts.amazonaws.com"
+               },
+               "StringLike": {
+                   "token.actions.githubusercontent.com:sub": "repo:<ORGANIZACION_GITHUB>/<NOMBRE_REPOSITORIO>:*"
+               }
+           }
+       }
+   ]
+}
+```
+NUMERO_CUENTA_AWS = Número de cuenta de la cuenta AWS donde se estará desplegando, en este caso podemos obtenerla en la parte superior derecha de la consola AWS.
+
+ORGANIZACION_GITHUB = Organización o usuario de GitHub a la que pertenece el repositorio. 
+
+NOMBRE_REPOSITORIO = Nombre del repositorio.
+
+Por último daremos clic en "Update Policy".
+
+Recursos: https://www.automat-it.com/post/using-github-actions-with-aws-iam-roles
 
 ## Creación de llaves KMS
 -------------------
@@ -444,14 +487,6 @@ Número de cuenta AWS del ambiente *develop*:
 
 ![](assets/dev_account_id.PNG)
 
-Llave de acceso de usuario para despliegue en ambiente *develop*:
-
-![](assets/dev_key_id.PNG)
-
-Llave secreta para usuario de despliegue ambiente *develop*:
-
-![](assets/dev_secret_key.PNG)
-
 Acto seguido procederemos a dirigirnos al ambiente *production*:
 ![](assets/environments_creados.PNG)
 
@@ -460,15 +495,6 @@ Y comenzaremos a agregar los secretos de este ambiente.
 Número de cuenta AWS del ambiente *production*:
 
 ![](assets/prod_account_id.PNG)
-
-Llave de acceso de usuario para despliegue en ambiente *production*:
-
-![](assets/prod_key_id.PNG)
-
-Llave secreta para usuario de despliegue ambiente *production*:
-
-![](assets/prod_secret_key.PNG)
-
 
 ## Inicializar proyecto
 Una vez concluidos los pasos anteriores podemos proseguir a inicializar el proyecto, nos moveremos hacia la carpeta donde se alojará el repositorio y ejecutaremos el siguiente comando:
@@ -521,24 +547,18 @@ Es el contenedor que construye la aplicación, en esta caso está como default u
 ### *sam_bucket*: Nombre del bucket para SAM. 
 Es el bucket que necesita SAM para realizar los despliegues.
 
-### *DEV_secret_aws_key_id*: DEV_AWS_KEY_ID. 
-Aquí se deja por default este valor, salvo se haya especificado uno diferente en la [configuración de secretos por ambiente](#configurar-secretos-por-ambiente)
-
-### *DEV_secret_aws_key_secret*: DEV_AWS_KEY_SECRET. 
-Aquí se deja por default este valor, salvo se haya especificado uno diferente en la [configuración de secretos por ambiente](#configurar-secretos-por-ambiente)
-
 ### *DEV_secret_aws_account_id*: DEV_AWS_ACCOUNT_ID. 
 Aquí se deja por default este valor, salvo se haya especificado uno diferente en la [configuración de secretos por ambiente](#configurar-secretos-por-ambiente)
 
-### *PROD_secret_aws_key_id*: PROD_AWS_KEY_ID. 
+
+### *PROD_secret_aws_account_id*: PROD_AWS_ACCOUNT_ID. 
 Aquí se deja por default este valor, salvo se haya especificado uno diferente en la [configuración de secretos por ambiente](#configurar-secretos-por-ambiente)
 
-### *PROD_secret_aws_key_secret*: PROD_AWS_KEY_SECRET. 
-Aquí se deja por default este valor, salvo se haya especificado uno diferente en la [configuración de secretos por ambiente](#configurar-secretos-por-ambiente)
+### *DEV_ROLE_DEPLOY*: Nombre del rol de despliegue en el ambiente de desarrollo. 
+Es el nombre del rol que creamos en la sección de [creando rol](#creando-rol) para el ambiente de desarrollo.
 
-#### *PROD_secret_aws_account_id*: PROD_AWS_ACCOUNT_ID. 
-Aquí se deja por default este valor, salvo se haya especificado uno diferente en la [configuración de secretos por ambiente](#configurar-secretos-por-ambiente)
-
+### *PROD_ROLE_DEPLOY*: Nombre del rol de despliegue en el ambiente de producción. 
+Es el nombre del rol que creamos en la sección de [creando rol](#creando-rol) para el ambiente de producción.
 
 ## Post inicialización del proyecto
 Al terminar de generar el proyecto, por medio de un script se vincula el repo generado con el [repo remoto que creamos en GitHub](#creación-de-repositorio). Por lo tanto ya es posible comenzar a trabajar en él. Pero antes, se recomienda agregar alguna modificación en el archivo template.yaml para desplegar el proyecto Hello world por primera vez y evitar que se tengan problemas relacionados con un primer despliegue fallido.
