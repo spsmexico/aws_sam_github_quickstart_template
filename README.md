@@ -256,7 +256,7 @@ Agregar nota: Si el proyecto crece y se crean multiples repositorios, se debe cr
 
 ## Cookiecutter y Cruft
 
-Crea un proyecto (Crear proyecto a partir de plantilla de cookiecutter y agregar las credenciales como secretos en Github)
+Crea un proyecto (Crear proyecto a partir de plantilla de cookiecutter y agregar los número de cuenta de los ambientes como secretos en Github)
 ## Prerequisitos:
 Contar con las siguientes herramientas instaladas:
    - [Python](https://www.python.org/downloads/release/python-3913/)
@@ -481,7 +481,7 @@ Una vez creados los ambientes:
 Seleccionaremos el ambiente *develop*, y en la parte inferior daremos clic en "add secret":
 ![](assets/add_secret.PNG)
 
-Y conforme a las llaves de acceso [obtenidas en la configuración de llaves ](#configuración-de-llaves-aws) de cada usuario, las agregaremos a los secretos junto con su respectivo número de cuenta de la siguiente manera:
+Agregaremos los números de cuenta en los secretos del repositorio de GitHub. Esto será para ambos ambientes:
 
 Número de cuenta AWS del ambiente *develop*:
 
@@ -490,7 +490,6 @@ Número de cuenta AWS del ambiente *develop*:
 Acto seguido procederemos a dirigirnos al ambiente *production*:
 ![](assets/environments_creados.PNG)
 
-Y comenzaremos a agregar los secretos de este ambiente.
 
 Número de cuenta AWS del ambiente *production*:
 
