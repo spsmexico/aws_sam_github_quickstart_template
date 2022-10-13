@@ -32,4 +32,5 @@ jobs:
       ref: "{{'${{'}}github.event.inputs.version{{ '}}' }}"
       region: us-east-1
       dynamodb: {{'${{'}}github.event.inputs.dynamodb{{ '}}' }}
+      region_dr: us-west-2
     secrets: inherit
