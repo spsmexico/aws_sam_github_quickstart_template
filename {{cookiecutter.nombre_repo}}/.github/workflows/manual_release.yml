@@ -34,3 +34,6 @@ jobs:
       dynamodb: {{'${{'}}github.event.inputs.dynamodb{{ '}}' }}
       region_dr: us-west-2
     secrets: inherit
+permissions:
+  id-token: write
+  contents: read

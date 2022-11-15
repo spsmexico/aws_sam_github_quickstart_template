@@ -21,3 +21,6 @@ jobs:
       region: us-east-1
       ref: {{'${{'}}github.event.inputs.rama{{ '}}' }}
     secrets: inherit
+permissions:
+  id-token: write
+  contents: read    
