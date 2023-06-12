@@ -499,7 +499,7 @@ Número de cuenta AWS del ambiente *production*:
 Una vez concluidos los pasos anteriores podemos proseguir a inicializar el proyecto, nos moveremos hacia la carpeta donde se alojará el repositorio y ejecutaremos el siguiente comando:
 
 ```
-cookiecutter https://github.com/rortega-sps/aws_sam_github_quickstart_template
+cookiecutter https://github.com/spsdevops/aws_sam_github_quickstart_template
 ```
 Ingresaremos los valores que nos pide la plantilla.
 Algunas opciones cuentan con valores default.
