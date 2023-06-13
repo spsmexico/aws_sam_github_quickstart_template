@@ -3,6 +3,8 @@
     "org_or_user_github": "Usuario de GitHub u Organizacion del repo",
     "cfn_stack": "Nombre del stack en AWS",
     "project": "Identificador del proyecto",
+    "region_primaria": "Region primaria en la que se desplegara.",
+    "region_secundaria": "Region secundaria en la que se desplegara.",
     "DEV_ARN_SSM_KMS": "Llave multiregion para Parameter Store. DEV",
     "DEV_ARN_DYNAMODB_KMS": "Llave multiregion para DynamoDB. DEV",
     "DEV_ARN_SSM_KMS_DR": "Llave multiregion para Parameter Store. DR. DEV",

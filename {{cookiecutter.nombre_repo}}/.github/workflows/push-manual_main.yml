@@ -41,10 +41,10 @@ jobs:
     uses: {{cookiecutter.org_or_user_github}}/{{cookiecutter.nombre_repo}}/.github/workflows/reusable_deploy.yml@main
     with:
       ambiente: "develop"
-      region: us-east-1
+      region: {{cookiecutter.region_primaria}}
       ref: {{'${{'}} github.sha {{ '}}' }}
       dynamodb: {{'${{'}} github.event.inputs.dynamodb {{ '}}' }}
-      region_dr: us-west-2
+      region_dr: {{cookiecutter.region_secundaria}}
     secrets: inherit
 permissions:
   id-token: write

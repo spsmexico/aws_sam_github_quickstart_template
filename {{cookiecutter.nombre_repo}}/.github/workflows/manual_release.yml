@@ -30,7 +30,7 @@ jobs:
     with:
       ambiente: "production"
       ref: "{{'${{'}}github.event.inputs.version{{ '}}' }}"
-      region: us-east-1
+      region: {{cookiecutter.region_primaria}}
       dynamodb: {{'${{'}}github.event.inputs.dynamodb{{ '}}' }}
       region_dr: us-west-2
     secrets: inherit
