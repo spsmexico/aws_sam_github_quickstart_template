@@ -32,7 +32,7 @@ jobs:
       ref: "{{'${{'}}github.event.inputs.version{{ '}}' }}"
       region: {{cookiecutter.region_primaria}}
       dynamodb: {{'${{'}}github.event.inputs.dynamodb{{ '}}' }}
-      region_dr: us-west-2
+      region_dr: {{cookiecutter.region_secundaria}}
     secrets: inherit
 permissions:
   id-token: write

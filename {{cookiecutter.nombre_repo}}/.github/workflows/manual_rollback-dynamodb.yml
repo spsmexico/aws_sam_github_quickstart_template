@@ -23,7 +23,7 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::{{'${{'}}secrets.{{cookiecutter.DEV_secret_aws_account_id}}{{ '}}' }}:role/{{cookiecutter.DEV_ROLE_DEPLOY}}
           role-session-name: {{cookiecutter.DEV_ROLE_DEPLOY}}
-          aws-region: us-east-1
+          aws-region: {{cookiecutter.region_primaria}}
 
       - uses: actions/checkout@v2
       # Imprimir variables
@@ -37,7 +37,7 @@ jobs:
       - name: "Rollback tablas Dynamo"
         run: |
           pip install boto3
-          python3 rollback-dynamo.py -a dev -r us-east-1 -rdr us-west-2
+          python3 rollback-dynamo.py -a dev -r {{cookiecutter.region_primaria}} -rdr {{cookiecutter.region_secundaria}}
 
   ################ PRODUCTION #######################
   ProdRollbackDynamoDB:
@@ -51,7 +51,7 @@ jobs:
         with:
           role-to-assume: arn:aws:iam::{{'${{'}}secrets.{{cookiecutter.PROD_secret_aws_account_id}}{{ '}}' }}:role/{{cookiecutter.PROD_ROLE_DEPLOY}}
           role-session-name: {{cookiecutter.PROD_ROLE_DEPLOY}}
-          aws-region: us-east-1
+          aws-region: {{cookiecutter.region_primaria}}
 
       - uses: actions/checkout@v2
       # Imprimir variables
@@ -65,7 +65,7 @@ jobs:
       - name: "Rollback tablas Dynamo"
         run: |
           pip install boto3
-          python3 rollback-dynamo.py -a prod -r us-east-1 -rdr us-west-2
+          python3 rollback-dynamo.py -a prod -r {{cookiecutter.region_primaria}} -rdr {{cookiecutter.region_secundaria}}
 permissions:
   id-token: write
   contents: read
