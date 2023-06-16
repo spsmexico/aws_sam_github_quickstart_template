@@ -276,7 +276,7 @@ def funcion_madre(nombre_tabla):
                 ReplicaUpdates=[
                         {
                             'Create': {
-                                'RegionName': 'us-west-2',
+                                'RegionName': '{{cookiecutter.region_secundaria}}',
                             },
                         },
                     ]

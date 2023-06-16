@@ -18,7 +18,7 @@ jobs:
     uses: {{cookiecutter.org_or_user_github}}/{{cookiecutter.nombre_repo}}/.github/workflows/reusable_deploy.yml@main
     with:
       ambiente: "develop"
-      region: us-east-1
+      region: {{cookiecutter.region_primaria}}
       ref: {{'${{'}}github.event.inputs.rama{{ '}}' }}
     secrets: inherit
 permissions:

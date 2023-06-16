@@ -20,7 +20,7 @@ on:
         required: true
       region:
         type: string
-        description: 'Region en la que se realizará el despliegue. Ejemplo: us-east-1'
+        description: 'Region en la que se realizará el despliegue. Ejemplo: {{cookiecutter.region_primaria}}'
         required: true
       carpeta_sam:
         type: string
@@ -67,9 +67,9 @@ on:
         default: 'false'   
       region_dr:
         type: string
-        description: 'Region adicional en la que se desplegará el proyecto. Ejemplo: us-east-1'
+        description: 'Region adicional en la que se desplegará el proyecto. Ejemplo: {{cookiecutter.region_primaria}}'
         required: false
-        default: us-west-2
+        default: {{cookiecutter.region_secundaria}}
       cfn_role:
         type: string
         description: 'Se obliga a usar este rol, no importa si hay uno definido en pfg-sam.json'
@@ -134,7 +134,7 @@ jobs:
       - if: {{'${{'}} inputs.ambiente == 'develop' && inputs.validar_palabras_prohibidas == 'true'{{ '}}' }}
         name: "Revisando palabras prohibidas"
         run: |
-          ! grep -E '\-dev|us-east-1|us-west-2' -rn \
+          ! grep -E '\-dev|{{cookiecutter.region_primaria}}|{{cookiecutter.region_secundaria}}' -rn \
           --include=*.{py,yaml} \
           --exclude=dynamo.py \
           --exclude=rollback-dynamo.py \

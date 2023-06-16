@@ -499,7 +499,7 @@ Número de cuenta AWS del ambiente *production*:
 Una vez concluidos los pasos anteriores podemos proseguir a inicializar el proyecto, nos moveremos hacia la carpeta donde se alojará el repositorio y ejecutaremos el siguiente comando:
 
 ```
-cookiecutter https://github.com/rortega-sps/aws_sam_github_quickstart_template
+cookiecutter https://github.com/spsdevops/aws_sam_github_quickstart_template
 ```
 Ingresaremos los valores que nos pide la plantilla.
 Algunas opciones cuentan con valores default.
@@ -516,6 +516,11 @@ Es importante que no incluya el identificador o sufijo del proyecto.
 ### *project*: Identificador del proyecto. 
 Pueden ser las iniciales de la empresa o nombre del proyecto. Se utilizará como sufijo para los recursos del proyecto.
 
+### *region_primaria*: Región primaria en la que se desplegarán los recursos del proyecto. 
+Ejemplo: us-east-1
+
+### *region_secundaria*: Región secundaria en la que se desplegarán los recursos del proyecto. 
+Ejemplo: us-west-2
 ### *DEV_ARN_SSM_KMS*: Llave multiregion para Parameter Store. DEV 
 Es una de las llaves que creamos para la región principal en [Creación de llaves KMS](#creación-de-llaves-kms) para el ambiente de Desarrollo.
 

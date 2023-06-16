@@ -2,7 +2,7 @@ from http import client
 import boto3
 import jmespath
 from loguru import logger
-REGION = 'us-west-2'
+REGION = '{{cookiecutter.region_secundaria}}'
 PROFILE = 'principal-dev'
 session = boto3.Session(region_name=REGION, profile_name=PROFILE)
 client = session.client("lambda")
