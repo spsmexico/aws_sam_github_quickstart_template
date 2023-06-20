@@ -46,7 +46,12 @@ jobs:
           git checkout -b releases/{{'${{'}}inputs.version{{ '}}' }}
           # Copiando los workflows actualizados...
           git checkout main .github/workflows/manual_deploy_dev.yml || echo "Sin cambios"
+          git checkout main .github/workflows/reusable_create_fix.yml || echo "Sin cambios"
+          git checkout main .github/workflows/reusable_create-pre-release.yml || echo "Sin cambios"
+          git checkout main .github/workflows/reusable_create-release.yml || echo "Sin cambios"
+          git checkout main .github/workflows/reusable_deploy.yml || echo "Sin cambios"
           git checkout main .github/workflows/manual_hotfix.yml || echo "Sin cambios"
+          git checkout main .github/workflows/manual_pre-release.yml || echo "Sin cambios"
           git checkout main .github/workflows/manual_redeploy.yml || echo "Sin cambios"
           git checkout main .github/workflows/manual_release.yml || echo "Sin cambios"
           git checkout main .github/workflows/push-manual_main.yml || echo "Sin cambios"
