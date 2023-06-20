@@ -16,8 +16,10 @@
     "sam_container": "public.ecr.aws/sam/build-python3.8:1.32.0",
     "sam_bucket": "Nombre del bucket para SAM",
     "DEV_secret_aws_account_id": "DEV_AWS_ACCOUNT_ID",
+    "PRE_secret_aws_account_id": "PRE_AWS_ACCOUNT_ID",
     "PROD_secret_aws_account_id": "PROD_AWS_ACCOUNT_ID",
     "DEV_ROLE_DEPLOY": "Nombre del rol de despliegue. DEV",
+    "PRE_ROLE_DEPLOY": "Nombre del rol de despliegue. PRE",
     "PROD_ROLE_DEPLOY": "Nombre del rol de despliegue. PROD",
     "_copy_without_render": [
         ".cz.yaml"

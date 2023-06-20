@@ -158,6 +158,13 @@ jobs:
           role-to-assume: arn:aws:iam::{{'${{'}}secrets.{{cookiecutter.DEV_secret_aws_account_id}}{{ '}}' }}:role/{{cookiecutter.DEV_ROLE_DEPLOY}}
           role-session-name: {{cookiecutter.DEV_ROLE_DEPLOY}}
           aws-region: {{'${{'}} inputs.region {{ '}}' }}        
+      # Credenciales de preprod
+      - if: {{'${{'}} inputs.ambiente == 'preprod'{{ '}}' }}
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          role-to-assume: arn:aws:iam::{{'${{'}}secrets.{{cookiecutter.PRE_secret_aws_account_id}}{{ '}}' }}:role/{{cookiecutter.PRE_ROLE_DEPLOY}}
+          role-session-name: {{cookiecutter.PRE_ROLE_DEPLOY}}
+          aws-region: {{'${{'}} inputs.region {{ '}}' }}  
       # Credenciales de producción
       - if: {{'${{'}} inputs.ambiente == 'production' {{ '}}' }}
         uses: aws-actions/configure-aws-credentials@v1
