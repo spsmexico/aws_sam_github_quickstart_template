@@ -1,0 +1,39 @@
+name: manual_pre-release
+
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Número de versión para el pre-release a crear. Ejemplo 1.1.3. | En caso de hotfix especificar la rama fix/. Ejemplo. fix/3.0.1
+        required: true
+        type: string
+      dynamodb:
+        description: 'Desmarcar la casilla para desactivar la insercion a DynamoDB'
+        required: false
+        default: true
+        type: boolean
+        
+concurrency: preprod
+
+jobs:
+
+  CreatePreRelease:
+    permissions: write-all
+    uses: spsdevops/webinar_test_despliegue/.github/workflows/reusable_create-pre-release.yml@main
+    with:
+      version: "${{github.event.inputs.version}}"
+        
+  PreRelease:
+    needs: CreatePreRelease
+    uses: spsdevops/webinar_test_despliegue/.github/workflows/reusable_deploy.yml@main
+    with:
+      ambiente: "preprod"
+      ref: "${{github.event.inputs.version}}"
+      region: us-east-1
+      dynamodb: ${{github.event.inputs.dynamodb}}
+      region_dr: us-west-2
+    secrets: inherit
+permissions:
+  id-token: write
+  contents: read

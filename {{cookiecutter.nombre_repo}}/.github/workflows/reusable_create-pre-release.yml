@@ -1,0 +1,86 @@
+#V1.0.0
+name: reusable_create_pre-release
+
+on:
+
+  workflow_call:
+
+    inputs:
+      version:
+        description: "Número de versión del pre-release"
+        required: true
+        type: string     
+
+jobs:   
+
+  CrearPreRelease:
+    runs-on: ubuntu-20.04
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+          
+      - if: ${{ ! startsWith(inputs.version, 'fix/') }}
+        name: "Validar número de versión"
+        run: |
+          echo "Version ${{inputs.version}}"
+          [[ "${{inputs.version}}" =~ ^([0-9]|[1-9][0-9]*)\.([0-9]|[1-9][0-9]*)\.([0-9]|[1-9][0-9]*)$ ]] && echo "Correcto" || exit 1
+          echo "Validando si ya existe un release"
+          ! git ls-remote --exit-code --heads origin releases/${{inputs.version}}
+      
+      - name: Configurar Git
+        run: |
+          git config --global user.name 'Github'
+          git config --global user.email 'workflow@noreply.github.com'
+          git branch --show-current
+
+      # Si el tag es nuevo lo crea
+      # Si ya existe el tag, lo elimina del repositorio (local y remoto) y lo crea de nuevo en el ultimo commit de main
+      - if: ${{ ! startsWith(inputs.version, 'fix') }}
+        name: "Crear tag de pre-release"
+        run: |
+          
+          echo "VER=${{inputs.version}}" >> $GITHUB_ENV
+                  
+          ############ Si es versión normal.
+          if [[ ! "${{inputs.version}}" =~ ^([0-9]|[1-9][0-9]*)\.([0-9]|[1-9][0-9]*)\.([0-9]|[1-9][0-9]*)$ ]]; \
+          then exit 1; fi
+          git tag --force ${{inputs.version}} 
+          git push origin ${{inputs.version}} --force     
+
+      - if: ${{ startsWith(inputs.version, 'fix') }}
+        name: "Crear tag de pre-release (desde fix)"
+        run: |
+          ############ Si es hotfix
+          VER=(${{ inputs.version }})
+          VER="${VER:4:10}"
+          # En caso de que se esté tratando con una rama de hotfix, se hace checkout a esa rama.
+          if [[ ${{inputs.version}} == "fix/"$VER ]]; then git checkout ${{inputs.version}}; fi
+          # La variable VER, contendrá el input. Y en caso de que ese contenido comience con fix/ se recortará.
+          if [[ ${{inputs.version}} == "fix/"$VER ]]; then git tag --force $VER; fi 
+          if [[ ${{inputs.version}} == "fix/"$VER ]]; then git push origin $VER --force; fi
+
+      # Se crea el pre-release
+      # Si ya existe, primero se elimina y se crea de nuevo
+      - if: ${{ startsWith(inputs.version, 'fix') }}
+        name: "Release (desde fix)"
+        run: |
+          VER=(${{ inputs.version }})
+          VER="${VER:4:10}"
+          (gh release create $VER --title $VER -F CHANGELOG.md --prerelease) || \
+          (gh release delete $VER -y && gh release create $VER --title $VER -F CHANGELOG.md --prerelease)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Se crea el pre-release
+      # Si ya existe, primero se elimina y se crea de nuevo
+      - name: "Release"
+        if: ${{ ! startsWith(inputs.version, 'fix') }}
+        run: |
+          (gh release create ${{ inputs.version }} --title ${{ inputs.version }} -F CHANGELOG.md --prerelease) || \
+          (gh release delete ${{ inputs.version }} -y && gh release create ${{ inputs.version }} --title ${{ inputs.version }} -F CHANGELOG.md --prerelease)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
