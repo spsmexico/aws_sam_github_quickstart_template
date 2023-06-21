@@ -521,6 +521,7 @@ Ejemplo: us-east-1
 
 ### *region_secundaria*: Región secundaria en la que se desplegarán los recursos del proyecto. 
 Ejemplo: us-west-2
+
 ### *DEV_ARN_SSM_KMS*: Llave multiregion para Parameter Store. DEV 
 Es una de las llaves que creamos para la región principal en [Creación de llaves KMS](#creación-de-llaves-kms) para el ambiente de Desarrollo.
 
@@ -532,6 +533,12 @@ Es una de las llaves que creamos para la región DR en [Creación de llaves KMS]
 
 ### *DEV_ARN_DYNAMODB_KMS_DR*: Llave multiregion para DynamoDB. DR. DEV
 Es una de las llaves que creamos para la región DR en [Creación de llaves KMS](#creación-de-llaves-kms) para el ambiente de Desarrollo.
+
+### *PRE_ARN_SSM_KMS*: Llave multiregion para Parameter Store. PRE/QA 
+Es una de las llaves que creamos para la región principal en [Creación de llaves KMS](#creación-de-llaves-kms) para el ambiente de QA/Preproducción.
+
+### *PRE_ARN_SSM_KMS_DR*: Llave multiregion para Parameter Store. PRE/QA 
+Es una de las llaves que creamos para la región principal en [Creación de llaves KMS](#creación-de-llaves-kms) para el ambiente de QA/Preproducción.
 
 ### *PROD_ARN_SSM_KMS*: Llave multiregion para Parameter Store. PROD
 Es una de las llaves que creamos para la región principal en [Creación de llaves KMS](#creación-de-llaves-kms) para el ambiente de Producción.
@@ -554,12 +561,17 @@ Es el bucket que necesita SAM para realizar los despliegues.
 ### *DEV_secret_aws_account_id*: DEV_AWS_ACCOUNT_ID. 
 Aquí se deja por default este valor, salvo se haya especificado uno diferente en la [configuración de secretos por ambiente](#configurar-secretos-por-ambiente)
 
+### *PRE_secret_aws_account_id*: PRE_AWS_ACCOUNT_ID. 
+Aquí se deja por default este valor, salvo se haya especificado uno diferente en la [configuración de secretos por ambiente](#configurar-secretos-por-ambiente)
 
 ### *PROD_secret_aws_account_id*: PROD_AWS_ACCOUNT_ID. 
 Aquí se deja por default este valor, salvo se haya especificado uno diferente en la [configuración de secretos por ambiente](#configurar-secretos-por-ambiente)
 
 ### *DEV_ROLE_DEPLOY*: Nombre del rol de despliegue en el ambiente de desarrollo. 
 Es el nombre del rol que creamos en la sección de [creando rol](#creando-rol) para el ambiente de desarrollo.
+
+### *PRE_ROLE_DEPLOY*: Nombre del rol de despliegue en el ambiente de QA/preproducción. 
+Es el nombre del rol que creamos en la sección de [creando rol](#creando-rol) para el ambiente de QA/preproducción.
 
 ### *PROD_ROLE_DEPLOY*: Nombre del rol de despliegue en el ambiente de producción. 
 Es el nombre del rol que creamos en la sección de [creando rol](#creando-rol) para el ambiente de producción.

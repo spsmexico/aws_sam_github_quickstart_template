@@ -1,0 +1,6 @@
+[
+  {
+    "ParameterKey": "ParametersKMSARN",
+    "ParameterValue": "{{cookiecutter.PRE_ARN_SSM_KMS}}"
+  }
+]

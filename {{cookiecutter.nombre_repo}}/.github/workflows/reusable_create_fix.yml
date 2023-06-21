@@ -46,10 +46,14 @@ jobs:
           git checkout main .github/workflows/push-manual_main.yml
           git checkout main .github/workflows/reusable_create-release.yml || echo "Sin cambios"
           git checkout main .github/workflows/reusable_deploy.yml || echo "Sin cambios"  
-          git checkout main .github/workflows/reusable_create_fix.yml || echo "Sin cambios"                    
+          git checkout main .github/workflows/reusable_create_fix.yml || echo "Sin cambios"    
+          git checkout main .github/workflows/manual_pre-release.yml || echo "Sin cambios"
+          git checkout main .github/workflows/reusable_create-pre-release.yml || echo "Sin cambios"                
           git checkout main pfg-sam.json
           git checkout main parameters-develop.json
           git checkout main parameters-dev-dr.json
+          git checkout main parameters-preprod.json
+          git checkout main parameters-pre-dr.json
           git checkout main parameters-prod-dr.json
           git checkout main parameters-production.json
           git checkout main dynamo.py
