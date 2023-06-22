@@ -22,16 +22,16 @@ jobs:
     permissions: write-all
     uses: spsdevops/webinar_test_despliegue/.github/workflows/reusable_create-pre-release.yml@main
     with:
-      version: "${{github.event.inputs.version}}"
+      version: "{{'${{'}}github.event.inputs.version{{ '}}' }}"
         
   PreRelease:
     needs: CreatePreRelease
     uses: spsdevops/webinar_test_despliegue/.github/workflows/reusable_deploy.yml@main
     with:
       ambiente: "preprod"
-      ref: "${{github.event.inputs.version}}"
+      ref: "{{'${{'}}github.event.inputs.version{{ '}}' }}"
       region: {{cookiecutter.region_primaria}}
-      dynamodb: ${{github.event.inputs.dynamodb}}
+      dynamodb: "{{'${{'}}github.event.inputs.dynamodb{{ '}}' }}"
       region_dr: {{cookiecutter.region_secundaria}}
     secrets: inherit
 permissions:
