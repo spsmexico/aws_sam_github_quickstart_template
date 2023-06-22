@@ -1,10 +1,10 @@
 {
     "nombre_repo": "Nombre del repositorio",
-    "org_or_user_github": "Usuario de GitHub u Organizacion del repo",
+    "org_or_user_github": "spsmexico",
     "cfn_stack": "Nombre del stack en AWS",
-    "project": "Identificador del proyecto",
-    "region_primaria": "Region primaria en la que se desplegara.",
-    "region_secundaria": "Region secundaria en la que se desplegara.",
+    "project": "webinar",
+    "region_primaria": "us-east-1",
+    "region_secundaria": "us-west-2",
     "DEV_ARN_SSM_KMS": "Llave multiregion para Parameter Store. DEV",
     "PRE_ARN_SSM_KMS": "Llave multiregion para Parameter Store. PRE",
     "PRE_ARN_SSM_KMS_DR": "Llave multiregion para Parameter Store. DR. PRE",
@@ -16,9 +16,9 @@
     "DEV_secret_aws_account_id": "DEV_AWS_ACCOUNT_ID",
     "PRE_secret_aws_account_id": "PRE_AWS_ACCOUNT_ID",
     "PROD_secret_aws_account_id": "PROD_AWS_ACCOUNT_ID",
-    "DEV_ROLE_DEPLOY": "Nombre del rol de despliegue. DEV",
-    "PRE_ROLE_DEPLOY": "Nombre del rol de despliegue. PRE",
-    "PROD_ROLE_DEPLOY": "Nombre del rol de despliegue. PROD",
+    "DEV_ROLE_DEPLOY": "webinar_rol_despliegue",
+    "PRE_ROLE_DEPLOY": "webinar_rol_despliegue",
+    "PROD_ROLE_DEPLOY": "webinar_rol_despliegue",
     "_copy_without_render": [
         ".cz.yaml"
     ]
