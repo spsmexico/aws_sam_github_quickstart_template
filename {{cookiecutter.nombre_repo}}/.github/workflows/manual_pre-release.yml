@@ -1,4 +1,4 @@
-name: manual_pre-release
+name: 2 📦🚀 Pre-release
 
 
 on:
@@ -22,18 +22,32 @@ jobs:
     permissions: write-all
     uses: spsdevops/webinar_test_despliegue/.github/workflows/reusable_create-pre-release.yml@main
     with:
+<<<<<<< HEAD
       version: "${{github.event.inputs.version}}"
+=======
+      version: "{{'${{'}}github.event.inputs.version{{ '}}' }}"
+>>>>>>> ecf053d45f9ed1f80430647f5687a4f1f2e3577c
         
   PreRelease:
     needs: CreatePreRelease
     uses: spsdevops/webinar_test_despliegue/.github/workflows/reusable_deploy.yml@main
     with:
       ambiente: "preprod"
+<<<<<<< HEAD
       ref: "${{github.event.inputs.version}}"
       region: {{cookiecutter.region_primaria}}
       dynamodb: ${{github.event.inputs.dynamodb}}
+=======
+      ref: "{{'${{'}}github.event.inputs.version{{ '}}' }}"
+      region: {{cookiecutter.region_primaria}}
+      dynamodb: "{{'${{'}}github.event.inputs.dynamodb{{ '}}' }}"
+>>>>>>> ecf053d45f9ed1f80430647f5687a4f1f2e3577c
       region_dr: {{cookiecutter.region_secundaria}}
     secrets: inherit
 permissions:
   id-token: write
+<<<<<<< HEAD
   contents: read
+=======
+  contents: read
+>>>>>>> ecf053d45f9ed1f80430647f5687a4f1f2e3577c

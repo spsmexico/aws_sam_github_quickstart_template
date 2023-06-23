@@ -525,14 +525,15 @@ Ejemplo: us-west-2
 ### *DEV_ARN_SSM_KMS*: Llave multiregion para Parameter Store. DEV 
 Es una de las llaves que creamos para la región principal en [Creación de llaves KMS](#creación-de-llaves-kms) para el ambiente de Desarrollo.
 
-### *DEV_ARN_DYNAMODB_KMS*: Llave multiregion para DynamoDB. DEV
-Es una de las llaves que creamos para la región principal en [Creación de llaves KMS](#creación-de-llaves-kms) para el ambiente de Desarrollo.
 
 ### *DEV_ARN_SSM_KMS_DR*: Llave multiregion para Parameter Store. DR. DEV
 Es una de las llaves que creamos para la región DR en [Creación de llaves KMS](#creación-de-llaves-kms) para el ambiente de Desarrollo.
 
-### *DEV_ARN_DYNAMODB_KMS_DR*: Llave multiregion para DynamoDB. DR. DEV
-Es una de las llaves que creamos para la región DR en [Creación de llaves KMS](#creación-de-llaves-kms) para el ambiente de Desarrollo.
+### *PRE_ARN_SSM_KMS*: Llave multiregion para Parameter Store. PRE/QA 
+Es una de las llaves que creamos para la región principal en [Creación de llaves KMS](#creación-de-llaves-kms) para el ambiente de QA/Preproducción.
+
+### *PRE_ARN_SSM_KMS_DR*: Llave multiregion para Parameter Store. PRE/QA 
+Es una de las llaves que creamos para la región principal en [Creación de llaves KMS](#creación-de-llaves-kms) para el ambiente de QA/Preproducción.
 
 ### *PRE_ARN_SSM_KMS*: Llave multiregion para Parameter Store. PRE/QA 
 Es una de las llaves que creamos para la región principal en [Creación de llaves KMS](#creación-de-llaves-kms) para el ambiente de QA/Preproducción.
@@ -543,13 +544,7 @@ Es una de las llaves que creamos para la región principal en [Creación de llav
 ### *PROD_ARN_SSM_KMS*: Llave multiregion para Parameter Store. PROD
 Es una de las llaves que creamos para la región principal en [Creación de llaves KMS](#creación-de-llaves-kms) para el ambiente de Producción.
 
-### *PROD_ARN_DYNAMODB_KMS*: Llave multiregion para DynamoDB. PROD
-Es una de las llaves que creamos para la región principal en [Creación de llaves KMS](#creación-de-llaves-kms) para el ambiente de Producción.
-
 ### *PROD_ARN_SSM_KMS_DR*: Llave multiregion para Parameter Store. DR. PROD
-Es una de las llaves que creamos para la región DR en [Creación de llaves KMS](#creación-de-llaves-kms) para el ambiente de Producción.
-
-### *PROD_ARN_DYNAMODB_KMS_DR*: Llave multiregion para DynamoDB. DR. PROD
 Es una de las llaves que creamos para la región DR en [Creación de llaves KMS](#creación-de-llaves-kms) para el ambiente de Producción.
 
 ### *sam_container*: public.ecr.aws/sam/build-python3.8:1.32.0. 
