@@ -197,9 +197,9 @@ jobs:
             echo "awsAccountID={{'${{'}} secrets.{{cookiecutter.DEV_secret_aws_account_id}} {{ '}}' }}" >> $GITHUB_ENV; \
           elif [[ {{'${{'}}inputs.ambiente}} = "preprod" || $GITHUB_REF = "*-pre" ]]; then \
             echo "samEnv=pre" >> $GITHUB_ENV; \
-            echo "roleARN=arn:aws:iam::{{'${{'}}secrets.PRE_aws_account_id{{ '}}' }}:role/{{'${{'}}fromJson(steps.read_json.outputs.pfgSamJSON).cfn_role{{ '}}' }}" >> $GITHUB_ENV; \
+            echo "roleARN=arn:aws:iam::{{'${{'}}secrets.{{cookiecutter.PRE_aws_account_id{{ '}}' }}:role/{{'${{'}}fromJson(steps.read_json.outputs.pfgSamJSON).cfn_role{{ '}}' }}" >> $GITHUB_ENV; \
             echo "Region {{'${{'}}inputs.region{{ '}}' }}"; \
-            echo "awsAccountID={{'${{'}}secrets.PRE_aws_account_id{{ '}}' }}" >> $GITHUB_ENV; \
+            echo "awsAccountID={{'${{'}}secrets.{{cookiecutter.PRE_aws_account_id{{ '}}' }}" >> $GITHUB_ENV; \
           elif [[ {{'${{'}}inputs.ambiente{{ '}}' }} = "production" || $GITHUB_REF != "*-pre" ]]; then \
             echo "samEnv=prod" >> $GITHUB_ENV; \
             echo "roleARN=arn:aws:iam::{{'${{'}}secrets.{{cookiecutter.PROD_secret_aws_account_id}}{{ '}}' }}:role/{{'${{'}}fromJson(steps.read_json.outputs.pfgSamJSON).cfn_role{{ '}}' }}" >> $GITHUB_ENV; \
