@@ -1,10 +1,10 @@
 [
   {
     "ParameterKey": "DynamoKMSARN",
-    "ParameterValue": "{{cookiecutter.DEV_ARN_DYNAMODB_KMS_DR}}"
+    "ParameterValue": "{{ cookiecutter.DEV_ARN_DYNAMODB_KMS|replace(region_primaria,region_secundaria) }}"
   },
   {
     "ParameterKey": "ParametersKMSARN",
-    "ParameterValue": "{{cookiecutter.DEV_ARN_SSM_KMS_DR}}"
+    "ParameterValue": "{{ cookiecutter.DEV_ARN_SSM_KMS_DR|replace(region_primaria,region_secundaria) }}"
   }
 ]
