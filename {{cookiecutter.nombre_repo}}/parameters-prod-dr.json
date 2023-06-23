@@ -1,6 +1,6 @@
 [
     {
       "ParameterKey": "ParametersKMSARN",
-      "ParameterValue": "{{cookiecutter.PROD_ARN_SSM_KMS_DR|replace(cookiecutter.region_primaria,cookiecutter.region_secundaria)}}"
+      "ParameterValue": "{{cookiecutter.PROD_ARN_SSM_KMS|replace(cookiecutter.region_primaria,cookiecutter.region_secundaria)}}"
     }
 ]
