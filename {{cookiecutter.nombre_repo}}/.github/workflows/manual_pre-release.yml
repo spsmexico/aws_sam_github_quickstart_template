@@ -20,13 +20,13 @@ jobs:
 
   CreatePreRelease:
     permissions: write-all
-    uses: spsdevops/webinar_test_despliegue/.github/workflows/reusable_create-pre-release.yml@main
+    uses: {{cookiecutter.org_or_user_github}}/{{cookiecutter.nombre_repo}}/.github/workflows/reusable_create-pre-release.yml@main
     with:
       version: "{{'${{'}}github.event.inputs.version{{ '}}' }}"
         
   PreRelease:
     needs: CreatePreRelease
-    uses: spsdevops/webinar_test_despliegue/.github/workflows/reusable_deploy.yml@main
+    uses: {{cookiecutter.org_or_user_github}}/{{cookiecutter.nombre_repo}}/.github/workflows/reusable_deploy.yml@main
     with:
       ambiente: "preprod"
       ref: "{{'${{'}}github.event.inputs.version{{ '}}' }}"
