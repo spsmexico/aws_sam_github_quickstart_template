@@ -1,8 +1,12 @@
+ℹ️ Si requieres apoyo para crear un proceso de CI/CD Serverless en tu organización o ya tienes uno pero es complicado administrar multiples repositorios. Tal vez podamos ayudarte:
+- Escribir a nuestro Sandpy Chatbot https://spsolutions.com.mx/
+- Levanta un sissue en este repositorio.
+
+-----------------------
+
 # Cookiecutter Github SAM API
 
 Este proyecto es una plantilla que permite generar un proyecto "serverless" básico, que sirva como punto inicial a proyectos pequeños de un solo repositorio.
-
-> Si requieres crear un proyecto más complejo: multiples repositorios, más de 3 desarrolladores o la plantilla ya tiene demasidadas lambdas contacta al equipo de CI/CD.
 
 **Diagrama:**
 
