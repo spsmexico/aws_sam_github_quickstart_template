@@ -135,48 +135,50 @@ def funcion_madre(nombre_tabla):
         Al momento de su creación, revisa su estatus. La función termina hasta que el estatus
         de la tabla a crear sea ACTIVO.
         """
+        # Primero verificamos que la tabla Actualizaciones no este vacía
+        if conversion_json.archivo['Actualizaciones'] == []:
+            print("No se realizaran actualizaciones.")
+        else:
+            # Dependiendo de la lista se usa la llave primaria y tipo de dato de llave primaria.
+            if tabla_a_crear in lista_tablas.lista_tablas_json:
+            
+                # Se toma la primera llave del diccionario a insertar como PK. Y el tipo de esa PK.
+                diccionario = conversion_json.archivo['Actualizaciones'][0]
+                llave_primaria = list(diccionario.keys())[0]
+                tipo_dato_llave_primaria = list(diccionario[llave_primaria])[0]
 
+            if tabla_a_crear in tablas_inexistentes:
+                try:
+                    print("Creando tabla.. " + tabla_a_crear)
+                    print(f"Llave primaria:{llave_primaria}")
+                    print(f"Tipo dato:{tipo_dato_llave_primaria}")
 
-        # Dependiendo de la lista se usa la llave primaria y tipo de dato de llave primaria.
-        if tabla_a_crear in lista_tablas.lista_tablas_json:
-        
-            # Se toma la primera llave del diccionario a insertar como PK. Y el tipo de esa PK.
-            diccionario = conversion_json.archivo['Actualizaciones'][0]
-            llave_primaria = list(diccionario.keys())[0]
-            tipo_dato_llave_primaria = list(diccionario[llave_primaria])[0]
+                    response = dynamo.create_table(
+                        AttributeDefinitions=[
+                            {"AttributeName": llave_primaria, "AttributeType": tipo_dato_llave_primaria},
+                        ],
+                        TableName=tabla_a_crear,
+                        KeySchema=[
+                            {"AttributeName": llave_primaria, "KeyType": "HASH"},
+                        ],
+                        BillingMode="PAY_PER_REQUEST",
+                        Tags=[
+                            {"Key": "Proyecto", "Value": "{{cookiecutter.project|upper}}"},
+                        ],
+                    )
 
-        if tabla_a_crear in tablas_inexistentes:
-            try:
-                print("Creando tabla.. " + tabla_a_crear)
-                print(f"Llave primaria:{llave_primaria}")
-                print(f"Tipo dato:{tipo_dato_llave_primaria}")
-
-                response = dynamo.create_table(
-                    AttributeDefinitions=[
-                        {"AttributeName": llave_primaria, "AttributeType": tipo_dato_llave_primaria},
-                    ],
-                    TableName=tabla_a_crear,
-                    KeySchema=[
-                        {"AttributeName": llave_primaria, "KeyType": "HASH"},
-                    ],
-                    BillingMode="PAY_PER_REQUEST",
-                    Tags=[
-                        {"Key": "Proyecto", "Value": "{{cookiecutter.project|upper}}"},
-                    ],
-                )
-
-                response = dynamo.describe_table(TableName=tabla_a_crear)
-
-                estado_tabla = response["Table"]["TableStatus"]
-                while estado_tabla != "ACTIVE":
-                    time.sleep(3)
                     response = dynamo.describe_table(TableName=tabla_a_crear)
+
                     estado_tabla = response["Table"]["TableStatus"]
-                    print(estado_tabla)
-                print(f"Tabla {tabla_a_crear} creada exitosamente")
-            except Exception as e:
-                print("Error al intentar crear tabla.")
-                exit(1)
+                    while estado_tabla != "ACTIVE":
+                        time.sleep(3)
+                        response = dynamo.describe_table(TableName=tabla_a_crear)
+                        estado_tabla = response["Table"]["TableStatus"]
+                        print(estado_tabla)
+                    print(f"Tabla {tabla_a_crear} creada exitosamente")
+                except Exception as e:
+                    print("Error al intentar crear tabla.")
+                    exit(1)
 
     def respaldos_tablas(nombre_tabla):
         ''' Crea respaldos de la tabla a la que se le insertarán los datos.
