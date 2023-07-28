@@ -7,6 +7,8 @@
     "region_secundaria": "Region secundaria en la que se desplegara.",
     "DEV_ARN_SSM_KMS": "Llave multiregion para Parameter Store. DEV",
     "DEV_ARN_DYNAMODB_KMS": "Llave multiregion para DynamoDB. DEV",
+    "PRE_ARN_SSM_KMS": "Llave multiregion para Parameter Store. PRE",
+    "PRE_ARN_SSM_KMS_DR": "Llave multiregion para Parameter Store. DR. PRE",
     "DEV_ARN_SSM_KMS_DR": "Llave multiregion para Parameter Store. DR. DEV",
     "DEV_ARN_DYNAMODB_KMS_DR": "Llave multiregion para DynamoDB. DR. DEV",
     "PROD_ARN_SSM_KMS": "Llave multiregion para Parameter Store. PROD",
