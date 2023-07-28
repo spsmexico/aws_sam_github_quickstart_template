@@ -108,6 +108,7 @@ jobs:
 
       - uses: aws-actions/setup-sam@v2
         with:
+          version: 1.37.0
           use-installer: true
 
       # Se obtienen propiedades del proyecto
