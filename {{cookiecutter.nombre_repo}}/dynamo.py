@@ -289,6 +289,125 @@ def funcion_madre(nombre_tabla):
             print(e)
             print("La tabla ya cuenta con una tabla global.")
 
+    def lista_respaldos_paginados(nombre_tabla):
+        '''
+        Obtiene una lista paginada de los respaldos de la tabla.
+        Solo obtiene los respaldos de tipo USER.
+
+        Args:
+            nombre_tabla = nombre de la tabla. Es utilizado en todas las funciones.
+        Returns:
+            lista_respaldos = lista paginada de respaldos de la tabla recibida.
+        Raises:
+            N/A 
+        '''
+
+        lista_respaldos = []
+        paginador_respaldos = dynamo.get_paginator("list_backups")
+        paginas_respaldos = paginador_respaldos.paginate(
+            TableName=nombre_tabla, BackupType='USER'
+        )
+        for pagina_respaldos in paginas_respaldos:
+            lista_respaldos.extend(pagina_respaldos['BackupSummaries'])
+
+        return lista_respaldos
+    
+    def limpieza_respaldos(nombre_tabla, lista_respaldos):
+        '''
+        Si la cantidad de respaldos con nombrado despliegue_ es mayor a 4. 
+        elimina los respaldos más antiguos.
+
+        Args: 
+            nombre_tabla= nombre de la tabla. Es utilizado en todas las funciones.
+            lista_respaldos = función de la lista_respaldos_paginados.
+        Returns: 
+            N/A
+        Raises:
+            N/A
+        '''
+
+        print(f'Se listarán los respaldos de la tabla: {nombre_tabla}')
+
+        # Variables de la función
+        # Utilizado para el bucle donde se listan los respaldos.
+        backup_reciente = True
+        # Utilizado para contar el número de respaldos totales.
+        numero_backup = 0
+        # Se utiliza para contar la cantidad de respaldos que comienzan con despliegue_.
+        numero_backup_despliegues = 0
+        # Lista de arns respaldos que se eliminarán.
+        respaldos_excedentes = []
+        # Lista de nombres de respaldos que se eliminarán.
+        respaldos_excedentes_nombres = []
+
+        while backup_reciente == True:
+            try:
+
+                print("Fecha de creación del backup: ",
+                      lista_respaldos[numero_backup]["BackupCreationDateTime"],
+                      lista_respaldos[numero_backup]["BackupName"])
+                
+                backup_despliegue = lista_respaldos[numero_backup]["BackupName"]
+
+                if backup_despliegue.startswith('despliegue_'):
+                    # Se obtiene el ARN del respaldo
+                    backup_despliegue_arn = lista_respaldos[numero_backup]["BackupArn"]
+                    # Se contabilizan los respaldos hehcos por despliegues.
+                    numero_backup_despliegues = numero_backup_despliegues + 1
+
+                    # Agrega todos los respaldos hechos por despliegues a una lista.
+                    respaldos_excedentes.append(backup_despliegue_arn)
+                    respaldos_excedentes_nombres.append(backup_despliegue)
+                numero_backup = numero_backup + 1
+
+            except:
+                # El while se rompe al momento de sobrepasar los items de la lista de respaldos de DynamoDB.
+                print("Se terminaron de obtener los respaldos.")
+                break
+
+        if numero_backup_despliegues > 4:
+            # Se define lista vacía, la cual se poblará con los ARN´s de los respaldos que se van a conservar.
+            respaldos_conservar = []
+
+            # Se rescatan los 4 respaldos más recientes hechos por despliegues.
+            for limite_respaldos in range(4):
+
+                # Se le resta un número al número de backups hechos por despliegues desde el más reciente al más antiguo.
+                numero_backup_despliegues = numero_backup_despliegues - 1
+
+                # Se obtiene el ARN del respaldo.
+                backup_despliegue_arn = lista_respaldos[numero_backup_despliegues]["BackupArn"]
+
+                # Se agrega a la lista de respaldos a conservar para imprimirse con fines informativos.
+                respaldos_conservar.append(respaldos_excedentes_nombres[numero_backup_despliegues])
+
+                # Se elimina el ARN de los respaldos excedentes para que no se elimine.
+                respaldos_excedentes.pop(numero_backup_despliegues)
+
+                # Se elimina el nombre de los respaldos excedentes para que no se elimine.
+                respaldos_excedentes_nombres.pop(numero_backup_despliegues)
+
+            print("Respaldos a conservar:")
+            print("#-------------------------------------------------------------------------#")
+            for respaldos_a_conservar in respaldos_conservar:
+                print(respaldos_a_conservar)
+            print("#-------------------------------------------------------------------------#")
+            try: 
+                print("Se eliminarán los respaldos excedentes:")
+                print("#-------------------------------------------------------------------------#")
+                for respaldo_a_eliminar, respaldo_a_eliminar_nombre in zip(respaldos_excedentes, respaldos_excedentes_nombres):
+                    print(f"Se eliminará {respaldo_a_eliminar_nombre}")
+                    response = dynamo.delete_backup(BackupArn=respaldo_a_eliminar)
+                print("#-------------------------------------------------------------------------#")
+                print("\n")
+                print("Se terminó limpieza de respaldos. \n")
+
+            except Exception as e:
+                print(e)
+                print("Ocurrió un error al eliminar los respaldos.")
+        else:
+            print("No se eliminará ningún respaldo.")
+
     # Orden de funciones
 
     validar_existencia_tablas(lista_tablas.lista_tablas_json)
@@ -305,6 +424,8 @@ def funcion_madre(nombre_tabla):
         eliminaciones(nombre_tabla)
 
     tabla_tag(nombre_tabla)
+
+    limpieza_respaldos(nombre_tabla, lista_respaldos_paginados(nombre_tabla))
 
     crear_tabla_global(nombre_tabla)
 
