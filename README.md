@@ -111,7 +111,6 @@ SAM también tiene soporte para agregar a tu proyecto Step Functions y orquestar
 
 #### SAM command line interface
 
-
 SAM también ofrece un CLI que permite inicializar proyectos basados en plantillas, construir y desplegar una plantilla de SAM, crear eventos de pruebas, ejecutar localmente el proyecto y obtener logs los componentes luego de desplegados en AWS.
 
 ![SAM CLI](assets/aws-sam-cli.png)
@@ -173,39 +172,6 @@ Para mayor información de comandos de CLI de SAM: [AWS SAM CLI command referenc
 
 
 
-### Cursos
-
-Si quieres aprender a crear aplicaciones con herramientas "serverless" de AWS puedes tomar alguno de estos cursos (en negritas están los recomendados):
-- [**Coursera: Building Modern Python Applications on AWS**](https://www.coursera.org/learn/building-modern-python-applications-on-aws?specialization=aws-python-serverless-development)
-  - Este curso da una introducción a los servicios más usados al construir aplicaciones serverless (Lambda, API Gateway, DynamoDB, Cognito y S3), a las herramientas que estaras utilizando en el día a día (AWS CLI, Boto3 Cloud Shell y Postman) y a utilizar una metodología orientada a APIs (API Driven Development). Es el curso que se recomienda tomar antes de iniciar tu primer proyecto. El curso se puede tomar de forma gratuita, pero para realizar las prácticas, cuestionarios y obtener un certificado de completado se debe realizar un pago.
-  - Existen versiones del curso para otros lenguajes: [Building Modern Java Applications on AWS](https://www.coursera.org/learn/building-modern-java-applications-on-aws?specialization=aws-java-serverless-development) y [Building Modern Node.js Applications on AWS](https://www.coursera.org/learn/building-modern-node-applications-on-aws?specialization=aws-nodejs-serverless-development)
-- [**AWS Workshop: Building Serverless Apps with SAM**](https://catalog.us-east-1.prod.workshops.aws/workshops/d21ec850-bab5-4276-af98-a91664f8b161)
-  - Es una introducción rápida al framework de SAM, si tienes prisa con este workshop aprenderas lo  minimo necesaro para construir aplicaciones con SAM.
-- [Serverless land: Learn](https://serverlessland.com/learn)
-  - Serverless land es un sitio creado y mantenido por el equipo de AWS, en la sección de _learn_ hay algunos cursos si se quiere profundizar más en el uso de estas herramientas.
-- [Coursera: AWS Fundamentals Building Serverless Applications](https://www.coursera.org/learn/aws-fundamentals-building-serverless-applications#syllabus)
-  - Construye un chatbot utilizando herramientas serverless. El curso se puede tomar de forma gratuita, pero para realizar las prácticas, cuestionarios y obtener un certificado de completado se debe realizar un pago.
-
-### AWS IDE Toolkits
-
-AWS ofrece extensiones para distintos IDEs, los relevantes para este repositorio son:
-- [Visual Studio Code](https://aws.amazon.com/visualstudiocode/)
-- [PyCharm](https://aws.amazon.com/pycharm/)
-
-Utilizar alguna de estas extensiones en tu IDE favorito te facilitará el desarrollo de aplicaciones SAM.
-
-### Referencias
-
-Estas referencias pueden ser útiles cuando estás desarrollando una aplicación con SAM:
-
-- [Lista de recursos que agrega SAM a CLoudFormation (Más simples describir)](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-specification-resources-and-properties.html)
-- [Lista de recursos en CloudFormation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html)
-- [Lista de política incluidas en SAM](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-policy-templates.html)
-- [Patrónes comunes al usar SAM y herramientas "serverless"](https://serverlessland.com/patterns?framework=SAM)
-- [Ejemplos de máquinas de estados (Step Functions)](https://serverlessland.com/workflows)
-- [Fragmentos de código y consultas comunes](https://serverlessland.com/snippets)
-
-
 ## Github y Github Actions
 
 Github inicio como una plataforma para subir repositorios de código basados en Git, con el tiempo ha ido agregando más funcionalidades al punto de volverse una plataforma para administrar todo el ciclo de vida de una aplicación:
@@ -213,7 +179,7 @@ Github inicio como una plataforma para subir repositorios de código basados en 
 - Colaboración (Pull request y Forks)
 - Marcar liberaciones (Releases)
 - Repositorio de artefactos (Github Packages)
-- Administración de proyectos (Github Proyects)
+- Administración de proyectos (Github Projects)
 - Automatización de la construcción y despliegue (Github Actions)
 - Automatización de tareas dentro de Github (Github Actions)
 - Escaneo de vulnerabilidas
@@ -572,17 +538,27 @@ Es el nombre del rol que creamos en la sección de [creando rol](#creando-rol) p
 ## Post inicialización del proyecto
 Al terminar de generar el proyecto, por medio de un script se vincula el repo generado con el [repo remoto que creamos en GitHub](#creación-de-repositorio). Por lo tanto ya es posible comenzar a trabajar en él. Pero antes, se recomienda agregar alguna modificación en el archivo template.yaml para desplegar el proyecto Hello world por primera vez y evitar que se tengan problemas relacionados con un primer despliegue fallido.
 
-## Contribuciones
 
-Lista de deseos:
-- código: Agregar soporte para poetry o pdm
-- ci/cd: Agregar soporte para utilizar OIDC en los workflows
-- docs: crear especificación de OpenAPI
-- código: Agregar soporte para scopes en API Gateway
-- código: Agregar reintentos al consumir el API de RapidAPI
-- código: Agrgar replicación de parametros
-- código: implementar request-id para mejor trazabilidad
-- docs: agregar ejemplos de consultas con logs insights (trace-id, lambda request-id, filtrar por tipo de petición, filtrar por código http)
-- código: Agregar filtros al listar animales
-- feature: validar uso de configmanager como alternativa a solo usar parameterstore
-- docs: cambiar diagrama de api para leerlo de izquierda a derecha
+### Referencias
+
+Estas referencias pueden ser útiles cuando estás desarrollando una aplicación con SAM:
+
+- [Lista de recursos que agrega SAM a CLoudFormation (Más simples describir)](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-specification-resources-and-properties.html)
+- [Lista de recursos en CloudFormation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-template-resource-type-ref.html)
+- [Lista de política incluidas en SAM](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-policy-templates.html)
+- [Patrónes comunes al usar SAM y herramientas "serverless"](https://serverlessland.com/patterns?framework=SAM)
+- [Ejemplos de máquinas de estados (Step Functions)](https://serverlessland.com/workflows)
+- [Fragmentos de código y consultas comunes](https://serverlessland.com/snippets)
+
+### Cursos
+
+Si quieres aprender a crear aplicaciones con herramientas "serverless" de AWS puedes tomar alguno de estos cursos (en negritas están los recomendados):
+- [**Coursera: Building Modern Python Applications on AWS**](https://www.coursera.org/learn/building-modern-python-applications-on-aws?specialization=aws-python-serverless-development)
+  - Este curso da una introducción a los servicios más usados al construir aplicaciones serverless (Lambda, API Gateway, DynamoDB, Cognito y S3), a las herramientas que estaras utilizando en el día a día (AWS CLI, Boto3 Cloud Shell y Postman) y a utilizar una metodología orientada a APIs (API Driven Development). Es el curso que se recomienda tomar antes de iniciar tu primer proyecto. El curso se puede tomar de forma gratuita, pero para realizar las prácticas, cuestionarios y obtener un certificado de completado se debe realizar un pago.
+  - Existen versiones del curso para otros lenguajes: [Building Modern Java Applications on AWS](https://www.coursera.org/learn/building-modern-java-applications-on-aws?specialization=aws-java-serverless-development) y [Building Modern Node.js Applications on AWS](https://www.coursera.org/learn/building-modern-node-applications-on-aws?specialization=aws-nodejs-serverless-development)
+- [**AWS Workshop: Building Serverless Apps with SAM**](https://catalog.us-east-1.prod.workshops.aws/workshops/d21ec850-bab5-4276-af98-a91664f8b161)
+  - Es una introducción rápida al framework de SAM, si tienes prisa con este workshop aprenderas lo  minimo necesaro para construir aplicaciones con SAM.
+- [Serverless land: Learn](https://serverlessland.com/learn)
+  - Serverless land es un sitio creado y mantenido por el equipo de AWS, en la sección de _learn_ hay algunos cursos si se quiere profundizar más en el uso de estas herramientas.
+- [Coursera: AWS Fundamentals Building Serverless Applications](https://www.coursera.org/learn/aws-fundamentals-building-serverless-applications#syllabus)
+  - Construye un chatbot utilizando herramientas serverless. El curso se puede tomar de forma gratuita, pero para realizar las prácticas, cuestionarios y obtener un certificado de completado se debe realizar un pago.
