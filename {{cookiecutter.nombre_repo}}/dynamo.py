@@ -352,7 +352,7 @@ def funcion_madre(nombre_tabla):
                 if backup_despliegue.startswith('despliegue_'):
                     # Se obtiene el ARN del respaldo
                     backup_despliegue_arn = lista_respaldos[numero_backup]["BackupArn"]
-                    # Se contabilizan los respaldos hehcos por despliegues.
+                    # Se contabilizan los respaldos hechos por despliegues.
                     numero_backup_despliegues = numero_backup_despliegues + 1
 
                     # Agrega todos los respaldos hechos por despliegues a una lista.
