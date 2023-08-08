@@ -266,12 +266,67 @@ Contar con las siguientes herramientas instaladas:
 ## Pasos
 
 ---
-[1. Generación de rol de despliegue](#generación-de-rol-de-despliegue) \
-[2. Creación de llaves KMS](#creación-de-llaves-kms) \
-[3. Creación de repositorio y ambientes](#creación-de-repositorio) \
+[1. Creación de repositorio y ambientes](#creación-de-repositorio) \
+[2. Generación de rol de despliegue](#generación-de-rol-de-despliegue) \
+[3. Creación de llaves KMS](#creación-de-llaves-kms) \
 [4. Inicialización del proyecto](#inicializar-proyecto) \
 [5. Post-inicialización del proyecto](#post-inicialización-del-proyecto) \
 ---
+
+## Creación de repositorio
+-------------------
+Se debe crear un repositorio nuevo. El repositorio debe ser creado vacío, para que se pueda inicializar correctamente el proyecto.
+
+## Creación de ambientes
+Es necesario crear 3 [ambientes](https://docs.github.com/en/github-ae@latest/actions/deployment/targeting-different-environments/using-environments-for-deployment) en el repositorio para poder inicializar el proyecto, *develop*, *preprod* y *production*
+#### Ambiente develop:
+Para ello nos dirigiremos a "Settings" > "Environments" > "New environment":
+
+![](assets/environments.PNG)
+
+Agregaremos el ambiente "develop" y daremos clic en "Configure environment":
+
+![](assets/develop_environment.PNG)
+
+Posteriormente, daremos clic em "Save protection rules".:
+
+![](assets/develop_protectionrules.PNG)
+
+
+#### Ambiente preprod y production:
+Sería el mismo paso que seguimos en el ambiente *develop*:
+
+![](assets/environments.PNG)
+
+Esta vez se nombrará como *production*:
+
+![](assets/production_environment.PNG)
+
+Por último, agregaremos a los equipos o personas que pueden aprobar despliegues en este ambiente:
+
+![](assets/production_reviewers.PNG)
+## Configurar secretos por ambiente
+
+#### Nota: Los nombres de los secretos a mostrar son los valores default, se recomienda que permanezcan así. Pero en caso de ser necesario agregarles un sufijo o utilizar otro nombrado al [inicializar el proyecto](#inicializar-proyecto) se deberán especificar.
+
+Una vez creados los ambientes:
+
+![](assets/workshop/GH_01.PNG)
+
+Seleccionaremos el ambiente *develop*, y en la parte inferior daremos clic en "add secret":
+![](assets/add_secret.PNG)
+
+Agregaremos los números de cuenta en los secretos del repositorio de GitHub. Esto será para todos los ambientes:
+
+Número de cuenta AWS del ambiente *develop*:
+
+![](assets/dev_account_id.PNG)
+
+Acto seguido procederemos a hacer lo mismo para el ambiente  de *preprod* y *production*:
+```
+PRE_AWS_ACCOUNT_ID
+PROD_AWS_ACCOUNT_ID
+```
 
 ## Generación de rol de despliegue
 -------------------
@@ -279,26 +334,46 @@ Para poder realizar los despliegues a una cuenta AWS, es importante generar un r
 AWS destino. Esto para ejercer [mejores prácticas de seguridad en AWS](https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html).
 
 Nota: este paso debe realizarse en las cuentas de AWS de todos los ambientes.
+
+---
+
 ### Creando identity provider:
-Para crear un identity provider es necesario ingresar a IAM daremos clic en la opción de la barra lateral izquierda "identity providers" y daremos clic en el botón azul de "Add provider".
-![](assets/create-identity-provider.PNG)
+Para crear un identity provider es necesario ingresar a **IAM**, daremos clic en la opción de la barra lateral izquierda en **identity providers** 
+![](assets/workshop/GRD_01.PNG)
 
-En provider URL ingresaremos: https://token.actions.githubusercontent.com
-En "Audience" ingresaremos: sts.amazonaws.com
+damos clic en el botón de "Add provider".
+![](assets/workshop/GRD_02.PNG)
 
-Posteriormente daremos clic en "get thumbprint"
+Para comenzar a configurarlo damos:
+1. clic en **OpenID Connect**, 
+2. en **provider URL** escribimos: ```https://token.actions.githubusercontent.com```
+3. y clic en **Get thumbprint**
+![](assets/workshop/GRD_03a.PNG)
 
-![](assets/get-thumbprint.PNG)
+En **Audience** debemos agregar ```sts.amazonaws.com```
+![](assets/workshop/GRD_05.PNG)
 
-y para terminar daremos clic en "Add provider"
+Se puede agregar de forma opcional un tag en **Add tags** y por último damos clic en **Add provider**:
+![](assets/workshop/GRD_04.PNG)
 
-![](assets/add-provider.PNG)
+Una ves creado debería de verse de la siguiente forma:
+![](assets/workshop/GRD_06.PNG)
 
 ### Creando rol
 En esta sección se sugiere nombrar el rol con *identificador-del-proyecto*-github-actions-role (sin agregarle el sufijo de ambiente. 
-Para crear el rol, nos iremos en la sección de IAM > Roles y daremos clic en "Create role", en el tipo de entidad confiable daremos clic en "Web identity" y seleccionaremos el identity provider y audience que acabamos de crear en el paso anterior y daremos clic en "Next":
+Para crear el rol, nos iremos en la sección de IAM > Roles 
+![](assets/workshop/CR_01.PNG)
 
-![](assets/select-trusted-entity.PNG)
+y daremos clic en "**Create role**", 
+![](assets/workshop/CR_02.PNG)
+
+Aquí los pasos a seguir son:
+
+1. Seleccionamos **Web identity**,
+2. en *_Identity povider_* seleccionamos ```https://token.actions.githubusercontent.com```, 
+3. en *_Audience_* seleccionamos ```sts.amazonaws.com``` y
+4. damos clic en **Next**
+![](assets/workshop/CR_03.PNG)
 
 
 #### Agregar las políticas necesarias:
@@ -308,10 +383,33 @@ desplegando:
 
 #### Permisos sugeridos:
 Estos permisos se sugieren habilitar para poder realizar su despliegue. Salvo que haya alguno que sobre o alguno que falte deberá ser agregado/eliminado:
+```
+AmazonAPIGatewayAdministrator
+AmazonS3FullAccess
+AWSCloudFormationFullAccess
+AWSLambda_FullAccess
+```
+![](assets/workshop/CR_05.gif)
 
-![](assets/politicas_despliegue.PNG)
+Y damos clic en siguiente
+![](assets/workshop/CR_04.PNG)
 
-La siguiente política puede insertarse directamente al rol para poder desplegar:
+Le asignamos un nombre al rol
+![](assets/workshop/CR_06.PNG)
+
+De manera opcional también podemos asignar un tag, y damos clic en **Create role**:
+![](assets/workshop/CR_07.PNG)
+
+Para verificar que el rol esta creado, podemos buscarlo:
+![](assets/workshop/CR_08.PNG)
+
+Le damos clic a nuestro rol y en **Add permissions**, sale un menú desplegable y damos clic en **Create inline policy**:
+![](assets/workshop/CR_09.PNG)
+
+Lo cambiamos a formato *_JSON_*:
+![](assets/workshop/CR_10.PNG)
+
+Insertamos directamente al rol para poder desplegar y damos clic en siguiente:
 
 ```
 {
@@ -340,11 +438,12 @@ La siguiente política puede insertarse directamente al rol para poder desplegar
     ]
 }
 ```
-#### Agregar tag relacionado al proyecto:
-Por acá estaremos agregando el tag "Proyecto" con el nombre del proyecto para el que se utilizará este rol:
-![](assets/tags_usuario.PNG)
 
-Una vez que el rol haya sido creado, abriremos el rol que creamos y daremos clic en "Edit trust policy":
+Le damos un nombre en **Policy name** y para terminar, clic en **Create policy**:
+![](assets/workshop/CR_11.PNG)
+
+Ahora damos clic en la pestaña de **Trust relationships** y en **Edit trust policy**:
+![](assets/workshop/CR_12a.PNG)
 
 En este bloque agregaremos lo siguiente sustituyendo los siguientes valores: 
 
@@ -376,10 +475,11 @@ ORGANIZACION_GITHUB = Organización o usuario de GitHub a la que pertenece el re
 
 NOMBRE_REPOSITORIO = Nombre del repositorio.
 
-Por último daremos clic en "Update Policy".
+Por último daremos clic en **Update Policy**.
 
 Recursos: https://www.automat-it.com/post/using-github-actions-with-aws-iam-roles
 
+<!---
 ## Creación de llaves KMS
 -------------------
 Como prerequisito es importante crear 2 llaves KMS simétricas "[multiregión](https://docs.aws.amazon.com/kms/latest/developerguide/multi-region-keys-overview.html)", una para SSM y otra para DynamoDB.
@@ -407,7 +507,7 @@ NOTA: Este proceso debe realizarse en ambas cuentas (desarrollo y producción).
 Cuando [inicialicemos el proyecto con cookiecutter](#inicializar-proyecto) nos solicitará los ARN's 
 de las llaves llaves. Por lo que es importante tenerlas a la mano cuando se inicialice el proyecto.
 
-
+<!---
 ## Creación de repositorio
 -------------------
 Se debe crear un repositorio nuevo. El repositorio debe ser creado vacío, para que se pueda inicializar correctamente el proyecto.
@@ -464,6 +564,7 @@ Acto seguido procederemos a dirigirnos al ambiente *production*:
 Número de cuenta AWS del ambiente *production*:
 
 ![](assets/prod_account_id.PNG)
+-->
 
 ## Inicializar proyecto
 Una vez concluidos los pasos anteriores podemos proseguir a inicializar el proyecto, nos moveremos hacia la carpeta donde se alojará el repositorio y ejecutaremos el siguiente comando:
