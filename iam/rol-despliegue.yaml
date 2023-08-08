@@ -1,6 +1,16 @@
 ---
 Description: Stack de rol de despliegue para GitHub Actions SPS
 AWSTemplateFormatVersion: '2010-09-09'
+
+Parameters:
+
+  Organizacion:
+    Type: String  
+    Description: Nombre de la organización del repositorio
+  Repositorio:
+    Type: String
+    Description: Nombre del repositorio que se utilizará para desplegar
+
 Resources:
 
   GitHubActionsDeployRole:
@@ -15,7 +25,7 @@ Resources:
             StringEquals:
               token.actions.githubusercontent.com:aud: sts.amazonaws.com
             StringLike:
-              token.actions.githubusercontent.com:sub: "repo:organizacion/repos:*"
+              token.actions.githubusercontent.com:sub: !Sub "repo:${Organizacion}/${Repositorio}:*"
           Effect: Allow
           Principal:
             Federated: !Sub arn:aws:iam::${AWS::AccountId}:oidc-provider/token.actions.githubusercontent.com
@@ -56,7 +66,7 @@ Resources:
 
       Tags:
         - Key: "Proyecto"
-          Value: "sps"
+          Value: "Workshop-sps"
 
   IAMOIDCProvider:
       Type: "AWS::IAM::OIDCProvider"
@@ -69,4 +79,5 @@ Resources:
             - "1c58a3a8518e8759bf075b76b750d4f2df264fcd"
           Tags:
             - Key: "Proyecto"
-              Value: "sps"
+              Value: "Workshop-sps"
+

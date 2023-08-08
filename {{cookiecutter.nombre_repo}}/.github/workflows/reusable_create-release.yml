@@ -57,7 +57,7 @@ jobs:
           git checkout main .github/workflows/push-manual_main.yml || echo "Sin cambios"
           git checkout main pfg-sam.json || echo "Sin cambios"
           git commit -m "ci(github): Se agregan workflows actualizados" || echo "Sin cambios"
-          git diff HEAD^ HEAD
+          git diff HEAD^ HEAD || echo "Sin cambios"
           git tag --force {{'${{'}}inputs.version{{ '}}' }} 
           git push origin releases/{{'${{'}}inputs.version{{ '}}' }} || echo "No se pudo crear la rama de release"
           git push origin {{'${{'}}inputs.version{{ '}}' }} --force || echo "No se pudo crear el tag de release"
