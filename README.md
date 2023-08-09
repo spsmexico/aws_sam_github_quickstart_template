@@ -211,26 +211,26 @@ Se debe crear un repositorio nuevo. El repositorio debe ser creado vacío, para 
 Es necesario crear 3 [ambientes](https://docs.github.com/en/github-ae@latest/actions/deployment/targeting-different-environments/using-environments-for-deployment) en el repositorio para poder inicializar el proyecto, *develop*, *preprod* y *production*
 
 #### Ambiente develop:
-1.1.1. En el repositorio que acabas de crear dirigete a "Settings"
-1.1.2. Da clic en "Environments" en el apartado de **Code and automation**
-1.1.3. Da clic en "New environment"
+**1.1.1.** En el repositorio que acabas de crear dirigete a "Settings"
+**1.1.2.** Da clic en "Environments" en el apartado de **Code and automation**
+**1.1.3.** Da clic en "New environment"
 
 ![](assets/environments.PNG)
 
-1.1.4. Agregaremos el ambiente "develop" y daremos clic en "Configure environment":
+**1.1.4.** Agregaremos el ambiente "develop" y daremos clic en "Configure environment":
 
 ![](assets/develop_environment.PNG)
 
 #### Ambiente preprod y production:
-Repetimos los pasos 1.1.1. al 1.1.3. que seguimos para el ambiente *develop*:
+Repetimos los pasos **1.1.1.** al **1.1.3.** que seguimos para el ambiente *develop*:
 
 ![](assets/environments.PNG)
 
-En el paso 1.1.4. se nombrarán los ambientes como *preprod* y *production*:
+En el paso **1.1.4.** se nombrarán los ambientes como *preprod* y *production*:
 
 ![](assets/production_environment.PNG)
 
-1.1.5. Por último, agregaremos a los equipos o personas que pueden aprobar despliegues en este ambiente, y damos clic en "Save protection rules"
+**1.1.5.** Por último, agregaremos a los equipos o personas que pueden aprobar despliegues en este ambiente, y damos clic en "Save protection rules"
 
 ![](assets/production_reviewers.PNG)
 ## 1.2. Configurar secretos por ambiente
@@ -241,30 +241,60 @@ Una vez creados los ambientes:
 
 ![environments](assets/workshop/GH_01.png)
 
-1.2.1. Seleccionaremos el ambiente *develop*, y en la parte inferior en la sección **Environment secrets** daremos clic en "add secret":
+**1.2.1.** Seleccionaremos el ambiente *develop*, y en la parte inferior en la sección **Environment secrets** daremos clic en "add secret":
 ![](assets/add_secret.PNG)
 
-1.2.2. Asigna un nombre al secreto, de preferencia **DEV_AWS_ACCOUNT_ID**
-1.2.3. Agrega el número de la cuenta de AWS como valor del secreto de GitHub. Esto será para todos los ambientes:
+**1.2.2.** Asigna un nombre al secreto, de preferencia **DEV_AWS_ACCOUNT_ID**.  
+**1.2.3.** Agrega el número de la cuenta de AWS como valor del secreto de GitHub. Esto será para todos los ambientes:
 
 ![adding secret](assets/dev_account_id.PNG)
 
-1.2.4. Repite los pasos 1.2.1. al 1.2.3. con los ambientes de *preprod* y *production*:
+**1.2.4.** Repite los pasos **1.2.1.** al **1.2.3.** con los ambientes de *preprod* y *production*:
 
 ```
 PRE_AWS_ACCOUNT_ID
 PROD_AWS_ACCOUNT_ID
 ```
 
-## Generación de rol de despliegue
+## 2. Generación de rol de despliegue
 -------------------
-Para poder realizar los despliegues a una cuenta AWS, es importante generar un rol en lugar de un usuario en las cuentas
+ Para poder realizar los despliegues a una cuenta AWS, es importante generar un rol en lugar de un usuario en las cuentas
 AWS destino. Esto para ejercer [mejores prácticas de seguridad en AWS](https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html).
 
 Nota: este paso debe realizarse en las cuentas de AWS de todos los ambientes.
 
----
+**2.1.** Ingresa a la consola de *AWS Cloudformation*.  
+**2.2.** Da clic en **Create stack** y selecciona **With new resources (standard)**.  
 
+![create-stack](assets/create-stack-rol.png)
+
+**2.3.** Selecciona **Template is ready** y la opción **Upload a template file**.  
+![create-stack](assets/prepare-template.png)
+
+**2.4.** Para descargar la plantilla que debes subir debes descargarla [aqui](https://github.com/spsmexico/aws_sam_github_quickstart_template/blob/ROAD-110-Workshop-CI-CD-con-Github-Actions-y-SAM/iam/rol-despliegue.yaml).  
+![download-template-role](assets/download-template-role.png)
+
+**2.5.** Una vez que subiste la plantilla, da clic en *Next*.  
+**2.6.** Asigna un nombre al stack, i.e. **rol-despliegue-workshop**.  
+**2.7.** En el apartado de los parametros ingresa el nombre de la organización y repositorio que creaste previamente en el [Paso 1](#creación-de-repositorio), y da clic en *Next*
+
+> Nota: Si creaste el repositorio en tu cuenta personal, y no en una organización, el nombre de la organización es el nombre de tu user en GitHub
+
+![stack-details](assets/stack-details.png)
+
+**2.8.** Recomendación: agrega tags a la plantilla, te permitirá identificar los recursos que has creado. Puedes añadir la tag *Proyecto* con valor *Workshop*, posteriormente, da clic en *Next*.  
+
+![add-tags-stack](assets/add-tags-stack.png)
+
+**2.9.** Finalmente, aparecerá un resumen de la configuración de la plantilla, hacia el final marca la casilla del apartado azul y da clic en *Submit*.  
+
+![capabilities-stack](assets/capabilities-stack.png)
+
+Y veremos que se ha creado el stack con el rol. Si quieres realizar este paso de manera manual, puedes seguir esta [guia](https://github.com/spsmexico/aws_sam_github_quickstart_template/blob/ROAD-110-Workshop-CI-CD-con-Github-Actions-y-SAM/create-role-manual.md)
+
+
+---
+<!--
 ### Creando identity provider:
 Para crear un identity provider es necesario ingresar a **IAM**, daremos clic en la opción de la barra lateral izquierda en **identity providers** 
 ![](assets/workshop/GRD_01.PNG)
@@ -403,7 +433,7 @@ ORGANIZACION_GITHUB = Organización o usuario de GitHub a la que pertenece el re
 
 NOMBRE_REPOSITORIO = Nombre del repositorio.
 
-Por último daremos clic en **Update Policy**.
+Por último daremos clic en **Update Policy**. -->
 
 Recursos: https://www.automat-it.com/post/using-github-actions-with-aws-iam-roles
 
