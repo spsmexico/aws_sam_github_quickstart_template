@@ -15,12 +15,7 @@ Este proyecto es una plantilla que permite generar un proyecto "serverless" bás
 **Tipo:** API
 
 **Descripción:** 
-Esta API le permite a un zoológico llevar el control de sus animales.
-- Permite obtener información sobre un animal
-- Permite listar todos los animales que tienen
-- Permite configurar el número de animales que devuelve por pagina si no se especifica en la petición.
-- Permite agregar un nuevo animal y valida con un servicio externo si es una especie amenazada
-- Permite borrar un animal
+Esta API permite presentar el mensaje "Hello World" en el path /hello
 
 Si quieres pulir tus habilidades en AWS [puedes contribuir agregando más funcionalidades](#contribuciones).
 
@@ -28,16 +23,9 @@ Si quieres pulir tus habilidades en AWS [puedes contribuir agregando más funcio
 - Categoría: Activo/Pasivo (Active/pasive)
 - Estrategia: Espera caliente (Warm standby) 
 
-**Lenguaje:** [Python 3.9](https://www.python.org/downloads/release/python-3913/)
-
-**Dependencias:**
-- [AWS Lambda Powertools 1.28](https://awslabs.github.io/aws-lambda-powertools-python/1.28.0/)
-
 **Servicios:**
 - [AWS API Gateway (HTTP)](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api.html)
 - [AWS Lambda](https://docs.aws.amazon.com/es_es/lambda/latest/dg/welcome.html)
-- [AWS DynamoDB](https://docs.aws.amazon.com/dynamodb/?icmpid=docs_homepage_featuredsvcs)
-- [AWS Parameter Store](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-parameter-store.html)
 - [AWS CloudFormation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html)
 
 **Herramientas:**
@@ -54,7 +42,7 @@ Si quieres pulir tus habilidades en AWS [puedes contribuir agregando más funcio
   - [CloudFormation](#cloudformation)
   - [SAM](#sam)
 2. [Github y Github Actions](#github-y-github-actions)
-3. [Cookiecutter y Cruft](#cookiecutter-y-cruft)
+3. [Cookiecutter](#cookiecutter)
 4. [Contribuciones](#contribuciones)
 
 
@@ -116,58 +104,6 @@ SAM también ofrece un CLI que permite inicializar proyectos basados en plantill
 ![SAM CLI](assets/aws-sam-cli.png)
 _Inciando con el CLI de SAM_: https://www.sqlshack.com/getting-started-with-the-aws-sam-cli/
 
-- Inicializar proyecto de SAM:
-
-```bash
-sam init
-```
-
-- Construir aplicación:
-
-Usando Docker (No requiere que tengas Python instalado)
-
-```bash
-sam build --use-container
-```
-
-Usando Docker y una imagen en especifico (No requiere que tengas Python instalado)
-
-```bash
-sam build --use-container --build-image public.ecr.aws/sam/build-python3.8:1.32.0
-```
-
-- Generar un evento de ejemplo:
-
-Si necesitas ver un ejemplo de la estructura del evento que recibe tu lambda puede utilizar estos comandos.
-
-- Para SQS
-  
-  ```bash
-  sam local generate-event sqs receive-message
-  ```
-
-- API Gateway:
-
-```bash
-sam local generate-event apigateway aws-proxy --method GET --path document --body "{"test": "1", "tests2": "2"}"
-```
-
-Para visualizar la lista de servicios de los que se pueden generar eventos favor de visitar: [sam local generate-event - AWS Serverless Application Model](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-local-generate-event.html)
-
-- Desplegar API en ambiente local (localhost:3000):
-
-```bash
-sam local start-api
-```
-
-- Invocar lambda local:
-
-Si necesitas validar el funcionamiento de tu lambda puede pasarle un evento en formato json si necesidad de desplegar. (Requiere Docker instalado)
-
-```bash
-sam local invoke -e events/event.json
-```
-
 Para mayor información de comandos de CLI de SAM: [AWS SAM CLI command reference - AWS Serverless Application Model](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-command-reference.html)
 
 
@@ -224,14 +160,16 @@ Agregar nota: Si el proyecto crece y se crean multiples repositorios, se debe cr
 
 ### Referencias
 
-## Cookiecutter y Cruft
+## Cookiecutter
 
-Crea un proyecto (Crear proyecto a partir de plantilla de cookiecutter y agregar los número de cuenta de los ambientes como secretos en Github)
+Cookiecutter es un manejador de plantillas multiplataforma que permite crear plantillas en lenguajes de programación o formato de marcado. Puede utilizarse como herramienta de la linea de comandos o como librería de Python. 
+
 ## Prerequisitos:
 Contar con las siguientes herramientas instaladas:
    - [Python](https://www.python.org/downloads/release/python-3913/)
    - [Cookiecutter](https://cookiecutter.readthedocs.io/en/stable/installation.html)
    - [Git](https://git-scm.com/downloads)
+
 ## Overview:
 
 ```mermaid
@@ -244,85 +182,75 @@ Contar con las siguientes herramientas instaladas:
       crear_rol_despliegue-->agregar_politicas_requeridas;
       agregar_politicas_requeridas-->agregar_tags_del_proyecto;
       agregar_tags_del_proyecto-->copiar_account_id;
-      copiar_account_id-->agregar_account_id;
+      copiar_account_id-->agregar_account_id; 
 
-      AWS-->2_KMS;
-      2_KMS-->crear_llave_simetrica_multiregion_SSM;
-      crear_llave_simetrica_multiregion_SSM-->copiar_ARN;
-      2_KMS-->crear_llave_simetrica_multiregion_DynamoDB;
-      crear_llave_simetrica_multiregion_DynamoDB-->copiar_ARN;
-      crear_llave_simetrica_multiregion_SSM-->configurar_regionalidad_en_region_dr;
-      crear_llave_simetrica_multiregion_DynamoDB-->configurar_regionalidad_en_region_dr;
-      configurar_regionalidad_en_region_dr-->copiar_ARN;
-      copiar_ARN-->ingresarlos_al_inicializar_cookiecutter;    
-
-      3_GitHub-->crear_repositorio;
+      2_GitHub-->crear_repositorio;
       crear_repositorio-->crear_ambientes;
       crear_ambientes-->configurar_secretos_ambiente;
       agregar_account_id-->configurar_secretos_ambiente;
                 
 ```
-#### - Los pasos 1 y 2 deberán ser realizados en las cuentas AWS de cada ambiente (develop, prod)
+#### - El paso 1 deberá realizarse en las cuentas AWS de cada ambiente (develop, preprod, prod)
 ## Pasos
 
 ---
-[1. Creación de repositorio y ambientes](#creación-de-repositorio) \
+[1. Creación de repositorio y configuración de ambientes](#creación-de-repositorio) \
 [2. Generación de rol de despliegue](#generación-de-rol-de-despliegue) \
 [3. Creación de llaves KMS](#creación-de-llaves-kms) \
 [4. Inicialización del proyecto](#inicializar-proyecto) \
 [5. Post-inicialización del proyecto](#post-inicialización-del-proyecto) \
 ---
 
-## Creación de repositorio
+## 1. Creación de repositorio
 -------------------
 Se debe crear un repositorio nuevo. El repositorio debe ser creado vacío, para que se pueda inicializar correctamente el proyecto.
 
-## Creación de ambientes
+![Crear repositorio](assets/create-repository.png)
+
+## 1.1. Creación de ambientes
 Es necesario crear 3 [ambientes](https://docs.github.com/en/github-ae@latest/actions/deployment/targeting-different-environments/using-environments-for-deployment) en el repositorio para poder inicializar el proyecto, *develop*, *preprod* y *production*
+
 #### Ambiente develop:
-Para ello nos dirigiremos a "Settings" > "Environments" > "New environment":
+1.1.1. En el repositorio que acabas de crear dirigete a "Settings"
+1.1.2. Da clic en "Environments" en el apartado de **Code and automation**
+1.1.3. Da clic en "New environment"
 
 ![](assets/environments.PNG)
 
-Agregaremos el ambiente "develop" y daremos clic en "Configure environment":
+1.1.4. Agregaremos el ambiente "develop" y daremos clic en "Configure environment":
 
 ![](assets/develop_environment.PNG)
 
-Posteriormente, daremos clic em "Save protection rules".:
-
-![](assets/develop_protectionrules.PNG)
-
-
 #### Ambiente preprod y production:
-Sería el mismo paso que seguimos en el ambiente *develop*:
+Repetimos los pasos 1.1.1. al 1.1.3. que seguimos para el ambiente *develop*:
 
 ![](assets/environments.PNG)
 
-Esta vez se nombrará como *production*:
+En el paso 1.1.4. se nombrarán los ambientes como *preprod* y *production*:
 
 ![](assets/production_environment.PNG)
 
-Por último, agregaremos a los equipos o personas que pueden aprobar despliegues en este ambiente:
+1.1.5. Por último, agregaremos a los equipos o personas que pueden aprobar despliegues en este ambiente, y damos clic en "Save protection rules"
 
 ![](assets/production_reviewers.PNG)
-## Configurar secretos por ambiente
+## 1.2. Configurar secretos por ambiente
 
 #### Nota: Los nombres de los secretos a mostrar son los valores default, se recomienda que permanezcan así. Pero en caso de ser necesario agregarles un sufijo o utilizar otro nombrado al [inicializar el proyecto](#inicializar-proyecto) se deberán especificar.
 
 Una vez creados los ambientes:
 
-![](assets/workshop/GH_01.PNG)
+![environments](assets/workshop/GH_01.png)
 
-Seleccionaremos el ambiente *develop*, y en la parte inferior daremos clic en "add secret":
+1.2.1. Seleccionaremos el ambiente *develop*, y en la parte inferior en la sección **Environment secrets** daremos clic en "add secret":
 ![](assets/add_secret.PNG)
 
-Agregaremos los números de cuenta en los secretos del repositorio de GitHub. Esto será para todos los ambientes:
+1.2.2. Asigna un nombre al secreto, de preferencia **DEV_AWS_ACCOUNT_ID**
+1.2.3. Agrega el número de la cuenta de AWS como valor del secreto de GitHub. Esto será para todos los ambientes:
 
-Número de cuenta AWS del ambiente *develop*:
+![adding secret](assets/dev_account_id.PNG)
 
-![](assets/dev_account_id.PNG)
+1.2.4. Repite los pasos 1.2.1. al 1.2.3. con los ambientes de *preprod* y *production*:
 
-Acto seguido procederemos a hacer lo mismo para el ambiente  de *preprod* y *production*:
 ```
 PRE_AWS_ACCOUNT_ID
 PROD_AWS_ACCOUNT_ID
