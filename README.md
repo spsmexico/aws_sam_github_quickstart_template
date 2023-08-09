@@ -211,9 +211,9 @@ Se debe crear un repositorio nuevo. El repositorio debe ser creado vacío, para 
 Es necesario crear 3 [ambientes](https://docs.github.com/en/github-ae@latest/actions/deployment/targeting-different-environments/using-environments-for-deployment) en el repositorio para poder inicializar el proyecto, *develop*, *preprod* y *production*
 
 #### Ambiente develop:
-**1.1.1.** En el repositorio que acabas de crear dirigete a "Settings"
-**1.1.2.** Da clic en "Environments" en el apartado de **Code and automation**
-**1.1.3.** Da clic en "New environment"
+1.1.1. En el repositorio que acabas de crear dirigete a "Settings".  
+1.1.2. Da clic en "Environments" en el apartado de **Code and automation**.  
+1.1.3. Da clic en "New environment".  
 
 ![](assets/environments.PNG)
 
