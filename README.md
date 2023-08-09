@@ -196,9 +196,9 @@ Contar con las siguientes herramientas instaladas:
 ---
 [1. Creación de repositorio y configuración de ambientes](#creación-de-repositorio) \
 [2. Generación de rol de despliegue](#generación-de-rol-de-despliegue) \
-[3. Creación de llaves KMS](#creación-de-llaves-kms) \
-[4. Inicialización del proyecto](#inicializar-proyecto) \
-[5. Post-inicialización del proyecto](#post-inicialización-del-proyecto) \
+<!-- [3. Creación de llaves KMS](#creación-de-llaves-kms) \ -->
+[3. Inicialización del proyecto](#inicializar-proyecto) \
+[4. Post-inicialización del proyecto](#post-inicialización-del-proyecto) \
 ---
 
 ## 1. Creación de repositorio
@@ -524,11 +524,14 @@ Número de cuenta AWS del ambiente *production*:
 ![](assets/prod_account_id.PNG)
 -->
 
-## Inicializar proyecto
-Una vez concluidos los pasos anteriores podemos proseguir a inicializar el proyecto, nos moveremos hacia la carpeta donde se alojará el repositorio y ejecutaremos el siguiente comando:
+## 3. Inicializar proyecto
 
+Una vez concluidos los pasos anteriores podemos proseguir a inicializar el proyecto.
+
+**3.1** Crearemos una carpeta dónde se alojará el proyecto.  
+**3.2.** Nos moveremos hacia la carpeta donde se alojará el repositorio y ejecutaremos el siguiente comando:
 ```
-cookiecutter https://github.com/spsdevops/aws_sam_github_quickstart_template
+cookiecutter https://github.com/spsdevops/aws_sam_github_quickstart_template -c ROAD-110-Workshop-CI-CD-con-Github-Actions-y-SAM
 ```
 Ingresaremos los valores que nos pide la plantilla.
 Algunas opciones cuentan con valores default.
@@ -550,25 +553,6 @@ Ejemplo: us-east-1
 
 ### *region_secundaria*: Región secundaria en la que se desplegarán los recursos del proyecto. 
 Ejemplo: us-west-2
-
-### *DEV_ARN_SSM_KMS*: Llave multiregion para Parameter Store. DEV 
-Es una de las llaves que creamos para la región principal en [Creación de llaves KMS](#creación-de-llaves-kms) para el ambiente de Desarrollo.
-
-
-### *DEV_ARN_SSM_KMS_DR*: Llave multiregion para Parameter Store. DR. DEV
-Es una de las llaves que creamos para la región DR en [Creación de llaves KMS](#creación-de-llaves-kms) para el ambiente de Desarrollo.
-
-### *PRE_ARN_SSM_KMS*: Llave multiregion para Parameter Store. PRE/QA 
-Es una de las llaves que creamos para la región principal en [Creación de llaves KMS](#creación-de-llaves-kms) para el ambiente de QA/Preproducción.
-
-### *PRE_ARN_SSM_KMS_DR*: Llave multiregion para Parameter Store. PRE/QA 
-Es una de las llaves que creamos para la región principal en [Creación de llaves KMS](#creación-de-llaves-kms) para el ambiente de QA/Preproducción.
-
-### *PROD_ARN_SSM_KMS*: Llave multiregion para Parameter Store. PROD
-Es una de las llaves que creamos para la región principal en [Creación de llaves KMS](#creación-de-llaves-kms) para el ambiente de Producción.
-
-### *PROD_ARN_SSM_KMS_DR*: Llave multiregion para Parameter Store. DR. PROD
-Es una de las llaves que creamos para la región DR en [Creación de llaves KMS](#creación-de-llaves-kms) para el ambiente de Producción.
 
 ### *sam_container*: public.ecr.aws/sam/build-python3.8:1.32.0. 
 Es el contenedor que construye la aplicación, en esta caso está como default uno de Python. Pero de ser requerido usar una lambda de otro lenguaje se puede especificar en esta opción.
