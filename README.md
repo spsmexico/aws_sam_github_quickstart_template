@@ -578,6 +578,171 @@ Es el nombre del rol que creamos en la sección de [creando rol](#creando-rol) p
 ### *PROD_ROLE_DEPLOY*: Nombre del rol de despliegue en el ambiente de producción. 
 Es el nombre del rol que creamos en la sección de [creando rol](#creando-rol) para el ambiente de producción.
 
+Una ves terminemos de introducir los valores requeridos en la plantilla, nos dirigimos a nuestro repositorio de GitHub en la sección de **Actions** y notarémos que se desplega de manera automática el worflow de **"🚀Dev"**:
+![](assets/workshop/CC_01.PNG)
+
+Si vamos a nuestra cuenta de **AWS** en el servicio de **CloudFormation**, tambien podemos ver que esta desplegado nuestro *Stack* en el ambiente de **dev**:
+![](assets/workshop/CC_02.PNG)
+
+Si damos clic a nuestro *Stack* en la pestaña de **Stack info**, podremos acceder a la información de el *dr*, *hash*, su *repositorio* y la *versión* actual: 
+![](assets/workshop/CC_03.PNG)
+
+En la pestaña de **Resources**, podemos encontrar el link que nos direcciona al *ApiGateway*:
+![](assets/workshop/CC_04.PNG)
+
+En el menú que se encuentra del lado izquierdo, damos clic en **Settings** y copiamos el link que nos aparece:
+![](assets/workshop/CC_05.PNG)
+
+Este link lo pegamos en una nueva pestaña de nuestro navegador, y al link le agregamos `/dev/hellow` para poder visualizar la respuesta:
+![](assets/workshop/CC_06.PNG)
+
+Regresando a **CloudFormation**, si cambiamos a la región de **Oregon**, veremos que el *Stack* esta activo pero en **dr**:
+![](assets/workshop/CC_07a.PNG)
+
+Ya que validamos que está activo en **dev** y en **dr**, podemos promoverlo al ambiente de **preprod**. 
+
+Los pasos para desplegar a **preprod** son los siguientes:
+
+1. Regresar a nuestro repositorio y dar clic en la pestaña de **Actions**
+2. seleccionamos el workflow de **"📦🚀Pre-release"**
+3. damos clic en **Run workflow**
+4. le damos el número de versión (en este caso el *1.0.0*)
+5. desmarcamos la casillla, ya que no estamos trabajando con tablas de *Dynamo* 
+6. y por último damos clic en **Run workflow**
+
+![](assets/workshop/CC_08.PNG)
+
+Esto ejecutará el workflow, pero ya que necesita ser aprobado nos aparecera en modo de espera:
+![](assets/workshop/CC_09.PNG)
+
+Así que entramos, damos clic en **Review deployments**, marcamos la casilla de **preprod** y damos clic en **Approve and deploy**, lo cual permitirá que siga corriendo el workflow.
+![](assets/workshop/CC_10.PNG)
+
+Al terminar de ejecutarse el workflow, vamos a **CloudFormation** en la región de **Virginia** y podrémos visualizar el *Stack* junto con el número de versión actualizado (*1.0.0*):
+![](assets/workshop/CC_11.PNG)
+
+Si cambiamos de región a **Oregon** podrémos ver lo mismo en **dr** con la diferencia de que el tag de **dr** sera **true**:
+![](assets/workshop/CC_12.PNG)
+
+Ya que validamos que está activo en **preprod** y en **dr**, podemos promoverlo al ambiente de **production**. 
+
+Los pasos para desplegar a **production** son los siguientes:
+
+1. Regresar a nuestro repositorio y dar clic en la pestaña de **Actions**
+2. seleccionamos el workflow de **"📦🚀Release"**
+3. damos clic en **Run workflow**
+4. le damos el número de versión que pusimos en *preprod*: **1.0.0**
+5. desmarcamos la casillla, ya que no estamos trabajando con tablas de *Dynamo* 
+6. y por último damos clic en **Run workflow**
+
+![](assets/workshop/CC_13.PNG)
+
+Esto ejecutará el workflow, pero ya que necesita ser aprobado nos aparecera en modo de espera:
+![](assets/workshop/CC_14.PNG)
+
+Así que entramos, damos clic en **Review deployments**, marcamos la casilla de **production** y damos clic en **Approve and deploy**, lo cual permitirá que siga corriendo el workflow.
+![](assets/workshop/CC_15.PNG)
+
+Al terminar de ejecutarse el workflow, vamos a **CloudFormation** en la región de **Virginia** y podrémos visualizar el *Stack* junto con el número de versión actualizado (*1.0.0*):
+![](assets/workshop/CC_16.PNG)
+
+Si vamos a la pestaña de **Resources** y damos clic en el link del ApiGateway:
+![](assets/workshop/CC_17.PNG)
+
+Nos aparecerá un menú del lado derecho, damos clic en **Stages**, clic en **prod** y clic en la **URL**:
+![](assets/workshop/CC_18.PNG)
+
+Esto nos mandará a la URL, pero debemos completar el link con `/hello` para que no nos dé error:
+![](assets/workshop/CC_19.PNG)
+
+Hasta aquí se ha mandado el mismo mensaje de `hello world` desde **develop**, pasando por **preprod**, hasta llegar a **production**. 
+
+Supongamos que se agrega una nueva funcionalidad que apenas debe estar en **develop** y después te piden arreglar algo que está en **production**.
+
+La nueva funcionalidad que nos piden es modificar el código para que en lugar de `hello world` diga `hola mundo`:
+![](assets/workshop/FIX_01.PNG)
+
+Hacemos commit, y estos cambios se reflejarán automaticamente. Podemos ver esto en la pestaña de **Actions** de nuestro repositorio:
+![](assets/workshop/FIX_02.PNG)
+
+Si checamos el endpoint del ApiGateway para **dev**, podremos ver que este cambio esta reflejado con exito:
+
+![](assets/workshop/FIX_03.PNG)
+
+Ahora nos piden cambiar algo en **production**, pero no nos podemos llevar lo de **develop** porque aun esta en *desarrollo* y no sabemos si vaya a afectar lo que ya esta desplegado. Para evitar este tipo de conflictos, se creo el workflow de **"🐛fix Release"**.
+
+Los pasos son los siguientes:
+
+1. Regresar a nuestro repositorio y dar clic en la pestaña de **Actions**
+2. seleccionamos el workflow de **"🐛fix Release"**
+3. damos clic en **Run workflow**
+4. le damos el número de versión que pusimos en *production*: **1.0.0**
+5. le damos la versión que se estaría liberando para este fix: *1.0.1*
+6. no activamos la casillla, ya que no estamos trabajando con tablas de *Dynamo* 
+7. y por último damos clic en **Run workflow**
+
+![](assets/workshop/FIX_04.PNG)
+
+Al terminar de ejecutarse el workflow, vamos a **CloudFormation**, en la región de **Virginia**, al *Stack* de **dev**, *Stack info* en la parte de *Tags* y podrémos visualizar el **fix/1.0.1** en el número de versión:
+
+![](assets/workshop/FIX_05.PNG)
+
+Si checamos el endpoint de **dev**, vemos que sigue como antes, sin cambios en esta nueva rama:
+![](assets/workshop/FIX_06.PNG)
+
+Supongamos que ahora, lo que nos piden arreglar en **production** es cambiar la letra **h** de nuestro `hello world` a mayúscula: `Hello world`. 
+
+Para esto, nos vamos a nuestro repositorio y nos cambiamos a la rama `fix/1.0.1`, modificamos el código y hacemos commit:
+
+![](assets/workshop/FIX_07.PNG)
+
+Esto ejecutará de manera automatica el workflow **"🚀Dev"**:
+![](assets/workshop/FIX_08.PNG)
+
+Una ves termina el workflow, tenemos que mandar el cambio a **preprod** desde la version del fix.
+
+Los pasos son los siguientes:
+
+1. Dar clic en la pestaña de **Actions**
+2. seleccionamos el workflow de **"📦🚀Pre-elease"**
+3. damos clic en **Run workflow**
+4. le damos el número de versión que pusimos en el *fix*: **fix/1.0.1**
+5. desmarcamos la casillla, ya que no estamos trabajando con tablas de *Dynamo* 
+6. y por último damos clic en **Run workflow**
+
+![](assets/workshop/FIX_09.PNG)
+
+Esto ejecutará el workflow, pero ya que necesita ser aprobado nos aparecera en modo de espera. Así que entramos, damos clic en **Review deployments**, marcamos la casilla de **preprod** y damos clic en **Approve and deploy**, lo cual permitirá que siga corriendo el workflow.
+![](assets/workshop/FIX_10.PNG)
+
+Al terminar de ejecutarse el workflow, vamos a **CloudFormation**, en la región de **Virginia**, al *Stack* de **pre**, *Stack info* en la parte de *Tags* y podrémos visualizar el **fix/1.0.1** en el número de versión:
+
+![](assets/workshop/FIX_11.PNG)
+
+Ahora tenemos que mandar el cambio a **production** desde la nueva version **1.0.1** donde hicimos el fix.
+
+Los pasos son los siguientes:
+
+1. Dar clic en la pestaña de **Actions**
+2. seleccionamos el workflow de **"📦🚀Release"**
+3. damos clic en **Run workflow**
+4. le damos el nuevo número de versión: **1.0.1**
+5. desmarcamos la casillla, ya que no estamos trabajando con tablas de *Dynamo* 
+6. y por último damos clic en **Run workflow**
+
+![](assets/workshop/FIX_12.PNG)
+
+Esto ejecutará el workflow, pero ya que necesita ser aprobado nos aparecera en modo de espera. Así que entramos, damos clic en **Review deployments**, marcamos la casilla de **production** y damos clic en **Approve and deploy**, lo cual permitirá que siga corriendo el workflow.
+![](assets/workshop/FIX_13.PNG)
+
+Al terminar de ejecutarse el workflow, vamos a **CloudFormation**, en la región de **Virginia**, al *Stack* de **prod**, *Stack info* en la parte de *Tags* y podrémos visualizar la nueva versión **1.0.1**:
+
+![](assets/workshop/FIX_14.PNG)
+
+Si checamos el endpoint de **prod**, vemos que se actualizó el cambio:
+
+![](assets/workshop/FIX_15.PNG)
+
 ## Post inicialización del proyecto
 Al terminar de generar el proyecto, por medio de un script se vincula el repo generado con el [repo remoto que creamos en GitHub](#creación-de-repositorio). Por lo tanto ya es posible comenzar a trabajar en él. Pero antes, se recomienda agregar alguna modificación en el archivo template.yaml para desplegar el proyecto Hello world por primera vez y evitar que se tengan problemas relacionados con un primer despliegue fallido.
 
