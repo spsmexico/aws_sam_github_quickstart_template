@@ -528,7 +528,7 @@ Número de cuenta AWS del ambiente *production*:
 
 Una vez concluidos los pasos anteriores podemos proseguir a inicializar el proyecto.
 
-**3.1** Crearemos una carpeta dónde se alojará el proyecto.  
+**3.1.** Crearemos una carpeta dónde se alojará el proyecto.  
 **3.2.** Nos moveremos hacia la carpeta donde se alojará el repositorio y ejecutaremos el siguiente comando:
 ```
 cookiecutter https://github.com/spsdevops/aws_sam_github_quickstart_template -c ROAD-110-Workshop-CI-CD-con-Github-Actions-y-SAM
@@ -536,14 +536,14 @@ cookiecutter https://github.com/spsdevops/aws_sam_github_quickstart_template -c 
 Ingresaremos los valores que nos pide la plantilla.
 Algunas opciones cuentan con valores default.
 
-A continuación se describen cada una de las opciones:
+**3.3.** A continuación se describen cada una de las opciones:
 
 ### *nombre_repo*: Nombre del repositorio de GitHub.
 
 ### *org_or_user_github*: Usuario de GitHub u Organización a la que pertenece el repositorio.
 
 ### *cfn_stack*: Nombre del stack en AWS. 
-Es importante que no incluya el identificador o sufijo del proyecto.
+Es importante que no incluya el identificador o sufijo del proyecto o "_".
 
 ### *project*: Identificador del proyecto. 
 Pueden ser las iniciales de la empresa o nombre del proyecto. Se utilizará como sufijo para los recursos del proyecto.
@@ -578,28 +578,28 @@ Es el nombre del rol que creamos en la sección de [creando rol](#creando-rol) p
 ### *PROD_ROLE_DEPLOY*: Nombre del rol de despliegue en el ambiente de producción. 
 Es el nombre del rol que creamos en la sección de [creando rol](#creando-rol) para el ambiente de producción.
 
-Una ves terminemos de introducir los valores requeridos en la plantilla, nos dirigimos a nuestro repositorio de GitHub en la sección de **Actions** y notarémos que se desplega de manera automática el worflow de **"🚀Dev"**:
+**3.4.** Una ves terminemos de introducir los valores requeridos en la plantilla, nos dirigimos a nuestro repositorio de GitHub en la sección de **Actions** y notarémos que se desplega de manera automática el worflow de **"🚀Dev"**:
 ![](assets/workshop/CC_01.PNG)
 
-Si vamos a nuestra cuenta de **AWS** en el servicio de **CloudFormation**, tambien podemos ver que esta desplegado nuestro *Stack* en el ambiente de **dev**:
+**3.5.** Si vamos a nuestra cuenta de **AWS** en el servicio de **CloudFormation**, tambien podemos ver que esta desplegado nuestro *Stack* en el ambiente de **dev**:
 ![](assets/workshop/CC_02.PNG)
 
-Si damos clic a nuestro *Stack* en la pestaña de **Stack info**, podremos acceder a la información de el *dr*, *hash*, su *repositorio* y la *versión* actual: 
+**3.6.** Si damos clic a nuestro *Stack* en la pestaña de **Stack info**, podremos acceder a la información de el *dr*, *hash*, su *repositorio* y la *versión* actual: 
 ![](assets/workshop/CC_03.PNG)
 
-En la pestaña de **Resources**, podemos encontrar el link que nos direcciona al *ApiGateway*:
+**3.7.** En la pestaña de **Resources**, podemos encontrar el link que nos direcciona al *ApiGateway*:
 ![](assets/workshop/CC_04.PNG)
 
-En el menú que se encuentra del lado izquierdo, damos clic en **Settings** y copiamos el link que nos aparece:
+**3.8.** En el menú que se encuentra del lado izquierdo, damos clic en **Settings** y copiamos el link que nos aparece:
 ![](assets/workshop/CC_05.PNG)
 
-Este link lo pegamos en una nueva pestaña de nuestro navegador, y al link le agregamos `/dev/hellow` para poder visualizar la respuesta:
+**3.9.** Este link lo pegamos en una nueva pestaña de nuestro navegador, y al link le agregamos `/dev/hellow` para poder visualizar la respuesta:
 ![](assets/workshop/CC_06.PNG)
 
-Regresando a **CloudFormation**, si cambiamos a la región de **Oregon**, veremos que el *Stack* esta activo pero en **dr**:
+**3.10.** Regresando a **CloudFormation**, si cambiamos a la región de **Oregon**, veremos que el *Stack* esta activo pero en **dr**:
 ![](assets/workshop/CC_07a.PNG)
 
-Ya que validamos que está activo en **dev** y en **dr**, podemos promoverlo al ambiente de **preprod**. 
+**3.11.** Ya que validamos que está activo en **dev** y en **dr**, podemos promoverlo al ambiente de **preprod**. 
 
 Los pasos para desplegar a **preprod** son los siguientes:
 
@@ -612,19 +612,19 @@ Los pasos para desplegar a **preprod** son los siguientes:
 
 ![](assets/workshop/CC_08.PNG)
 
-Esto ejecutará el workflow, pero ya que necesita ser aprobado nos aparecera en modo de espera:
+**3.12.** Esto ejecutará el workflow, pero ya que necesita ser aprobado nos aparecera en modo de espera:
 ![](assets/workshop/CC_09.PNG)
 
-Así que entramos, damos clic en **Review deployments**, marcamos la casilla de **preprod** y damos clic en **Approve and deploy**, lo cual permitirá que siga corriendo el workflow.
+**3.13.** Así que entramos, damos clic en **Review deployments**, marcamos la casilla de **preprod** y damos clic en **Approve and deploy**, lo cual permitirá que siga corriendo el workflow.
 ![](assets/workshop/CC_10.PNG)
 
-Al terminar de ejecutarse el workflow, vamos a **CloudFormation** en la región de **Virginia** y podrémos visualizar el *Stack* junto con el número de versión actualizado (*1.0.0*):
+**3.14.** Al terminar de ejecutarse el workflow, vamos a **CloudFormation** en la región de **Virginia** y podrémos visualizar el *Stack* junto con el número de versión actualizado (*1.0.0*):
 ![](assets/workshop/CC_11.PNG)
 
-Si cambiamos de región a **Oregon** podrémos ver lo mismo en **dr** con la diferencia de que el tag de **dr** sera **true**:
+**3.15.** Si cambiamos de región a **Oregon** podrémos ver lo mismo en **dr** con la diferencia de que el tag de **dr** sera **true**:
 ![](assets/workshop/CC_12.PNG)
 
-Ya que validamos que está activo en **preprod** y en **dr**, podemos promoverlo al ambiente de **production**. 
+**3.16.** Ya que validamos que está activo en **preprod** y en **dr**, podemos promoverlo al ambiente de **production**. 
 
 Los pasos para desplegar a **production** son los siguientes:
 
@@ -637,39 +637,39 @@ Los pasos para desplegar a **production** son los siguientes:
 
 ![](assets/workshop/CC_13.PNG)
 
-Esto ejecutará el workflow, pero ya que necesita ser aprobado nos aparecera en modo de espera:
+**3.17.** Esto ejecutará el workflow, pero ya que necesita ser aprobado nos aparecera en modo de espera:
 ![](assets/workshop/CC_14.PNG)
 
-Así que entramos, damos clic en **Review deployments**, marcamos la casilla de **production** y damos clic en **Approve and deploy**, lo cual permitirá que siga corriendo el workflow.
+**3.18.** Así que entramos, damos clic en **Review deployments**, marcamos la casilla de **production** y damos clic en **Approve and deploy**, lo cual permitirá que siga corriendo el workflow.
 ![](assets/workshop/CC_15.PNG)
 
-Al terminar de ejecutarse el workflow, vamos a **CloudFormation** en la región de **Virginia** y podrémos visualizar el *Stack* junto con el número de versión actualizado (*1.0.0*):
+**3.19.** Al terminar de ejecutarse el workflow, vamos a **CloudFormation** en la región de **Virginia** y podrémos visualizar el *Stack* junto con el número de versión actualizado (*1.0.0*):
 ![](assets/workshop/CC_16.PNG)
 
-Si vamos a la pestaña de **Resources** y damos clic en el link del ApiGateway:
+**3.20.** Si vamos a la pestaña de **Resources** y damos clic en el link del ApiGateway:
 ![](assets/workshop/CC_17.PNG)
 
-Nos aparecerá un menú del lado derecho, damos clic en **Stages**, clic en **prod** y clic en la **URL**:
+**3.21.** Nos aparecerá un menú del lado derecho, damos clic en **Stages**, clic en **prod** y clic en la **URL**:
 ![](assets/workshop/CC_18.PNG)
 
-Esto nos mandará a la URL, pero debemos completar el link con `/hello` para que no nos dé error:
+**3.22.** Esto nos mandará a la URL, pero debemos completar el link con `/hello` para que no nos dé error:
 ![](assets/workshop/CC_19.PNG)
 
-Hasta aquí se ha mandado el mismo mensaje de `hello world` desde **develop**, pasando por **preprod**, hasta llegar a **production**. 
+**3.23.** Hasta aquí se ha mandado el mismo mensaje de `hello world` desde **develop**, pasando por **preprod**, hasta llegar a **production**. 
 
 Supongamos que se agrega una nueva funcionalidad que apenas debe estar en **develop** y después te piden arreglar algo que está en **production**.
 
 La nueva funcionalidad que nos piden es modificar el código para que en lugar de `hello world` diga `hola mundo`:
 ![](assets/workshop/FIX_01.PNG)
 
-Hacemos commit, y estos cambios se reflejarán automaticamente. Podemos ver esto en la pestaña de **Actions** de nuestro repositorio:
+**3.24.** Hacemos commit, y estos cambios se reflejarán automaticamente. Podemos ver esto en la pestaña de **Actions** de nuestro repositorio:
 ![](assets/workshop/FIX_02.PNG)
 
-Si checamos el endpoint del ApiGateway para **dev**, podremos ver que este cambio esta reflejado con exito:
+**3.25.** Si checamos el endpoint del ApiGateway para **dev**, podremos ver que este cambio esta reflejado con exito:
 
 ![](assets/workshop/FIX_03.PNG)
 
-Ahora nos piden cambiar algo en **production**, pero no nos podemos llevar lo de **develop** porque aun esta en *desarrollo* y no sabemos si vaya a afectar lo que ya esta desplegado. Para evitar este tipo de conflictos, se creo el workflow de **"🐛fix Release"**.
+**3.26.** Ahora nos piden cambiar algo en **production**, pero no nos podemos llevar lo de **develop** porque aun esta en *desarrollo* y no sabemos si vaya a afectar lo que ya esta desplegado. Para evitar este tipo de conflictos, se creo el workflow de **"🐛fix Release"**.
 
 Los pasos son los siguientes:
 
@@ -683,23 +683,23 @@ Los pasos son los siguientes:
 
 ![](assets/workshop/FIX_04.PNG)
 
-Al terminar de ejecutarse el workflow, vamos a **CloudFormation**, en la región de **Virginia**, al *Stack* de **dev**, *Stack info* en la parte de *Tags* y podrémos visualizar el **fix/1.0.1** en el número de versión:
+**3.27.** Al terminar de ejecutarse el workflow, vamos a **CloudFormation**, en la región de **Virginia**, al *Stack* de **dev**, *Stack info* en la parte de *Tags* y podrémos visualizar el **fix/1.0.1** en el número de versión:
 
 ![](assets/workshop/FIX_05.PNG)
 
-Si checamos el endpoint de **dev**, vemos que sigue como antes, sin cambios en esta nueva rama:
+**3.28.** Si checamos el endpoint de **dev**, vemos que sigue como antes, sin cambios en esta nueva rama:
 ![](assets/workshop/FIX_06.PNG)
 
 Supongamos que ahora, lo que nos piden arreglar en **production** es cambiar la letra **h** de nuestro `hello world` a mayúscula: `Hello world`. 
 
-Para esto, nos vamos a nuestro repositorio y nos cambiamos a la rama `fix/1.0.1`, modificamos el código y hacemos commit:
+**3.29.** Para esto, nos vamos a nuestro repositorio y nos cambiamos a la rama `fix/1.0.1`, modificamos el código y hacemos commit:
 
 ![](assets/workshop/FIX_07.PNG)
 
-Esto ejecutará de manera automatica el workflow **"🚀Dev"**:
+**3.30.** Esto ejecutará de manera automatica el workflow **"🚀Dev"**:
 ![](assets/workshop/FIX_08.PNG)
 
-Una ves termina el workflow, tenemos que mandar el cambio a **preprod** desde la version del fix.
+**3.31.** Una ves termina el workflow, tenemos que mandar el cambio a **preprod** desde la version del fix.
 
 Los pasos son los siguientes:
 
@@ -712,14 +712,14 @@ Los pasos son los siguientes:
 
 ![](assets/workshop/FIX_09.PNG)
 
-Esto ejecutará el workflow, pero ya que necesita ser aprobado nos aparecera en modo de espera. Así que entramos, damos clic en **Review deployments**, marcamos la casilla de **preprod** y damos clic en **Approve and deploy**, lo cual permitirá que siga corriendo el workflow.
+**3.32.** Esto ejecutará el workflow, pero ya que necesita ser aprobado nos aparecera en modo de espera. Así que entramos, damos clic en **Review deployments**, marcamos la casilla de **preprod** y damos clic en **Approve and deploy**, lo cual permitirá que siga corriendo el workflow.
 ![](assets/workshop/FIX_10.PNG)
 
-Al terminar de ejecutarse el workflow, vamos a **CloudFormation**, en la región de **Virginia**, al *Stack* de **pre**, *Stack info* en la parte de *Tags* y podrémos visualizar el **fix/1.0.1** en el número de versión:
+**3.33.** Al terminar de ejecutarse el workflow, vamos a **CloudFormation**, en la región de **Virginia**, al *Stack* de **pre**, *Stack info* en la parte de *Tags* y podrémos visualizar el **fix/1.0.1** en el número de versión:
 
 ![](assets/workshop/FIX_11.PNG)
 
-Ahora tenemos que mandar el cambio a **production** desde la nueva version **1.0.1** donde hicimos el fix.
+**3.34.** Ahora tenemos que mandar el cambio a **production** desde la nueva version **1.0.1** donde hicimos el fix.
 
 Los pasos son los siguientes:
 
@@ -732,14 +732,14 @@ Los pasos son los siguientes:
 
 ![](assets/workshop/FIX_12.PNG)
 
-Esto ejecutará el workflow, pero ya que necesita ser aprobado nos aparecera en modo de espera. Así que entramos, damos clic en **Review deployments**, marcamos la casilla de **production** y damos clic en **Approve and deploy**, lo cual permitirá que siga corriendo el workflow.
+**3.35.** Esto ejecutará el workflow, pero ya que necesita ser aprobado nos aparecera en modo de espera. Así que entramos, damos clic en **Review deployments**, marcamos la casilla de **production** y damos clic en **Approve and deploy**, lo cual permitirá que siga corriendo el workflow.
 ![](assets/workshop/FIX_13.PNG)
 
-Al terminar de ejecutarse el workflow, vamos a **CloudFormation**, en la región de **Virginia**, al *Stack* de **prod**, *Stack info* en la parte de *Tags* y podrémos visualizar la nueva versión **1.0.1**:
+**3.36.** Al terminar de ejecutarse el workflow, vamos a **CloudFormation**, en la región de **Virginia**, al *Stack* de **prod**, *Stack info* en la parte de *Tags* y podrémos visualizar la nueva versión **1.0.1**:
 
 ![](assets/workshop/FIX_14.PNG)
 
-Si checamos el endpoint de **prod**, vemos que se actualizó el cambio:
+**3.37.** Si checamos el endpoint de **prod**, vemos que se actualizó el cambio:
 
 ![](assets/workshop/FIX_15.PNG)
 
