@@ -156,9 +156,7 @@ En caso de que ocurra un bug en producción, hay dos posibles caminos:
 
 Workflow reusables (Como los workflows hacen llamados a los workflows reusables para completar tareas y liga a la administración de workflows)
 
-Agregar nota: Si el proyecto crece y se crean multiples repositorios, se debe crear un repo independiente en el que puedan guardarse los workflows reusables y otras utilerías
-
-### Referencias
+> Nota: Si el proyecto crece y se crean multiples repositorios, se debe crear un repo independiente en el que puedan guardarse los workflows reusables y otras utilerías
 
 ## Cookiecutter
 
@@ -168,6 +166,25 @@ Cookiecutter es un manejador de plantillas multiplataforma que permite crear pla
 Contar con las siguientes herramientas instaladas:
    - [Python](https://www.python.org/downloads/release/python-3913/)
    - [Cookiecutter](https://cookiecutter.readthedocs.io/en/stable/installation.html)
+   <details open>
+   <summary>Instalación Cookiecutter</summary>
+   <br>
+   Corre el siguiente comando en tu terminal, asegurate de tener instalado python en tu sistema operativo:
+   ```
+    python3 -m pip install --user cookiecutter
+   ```
+
+   Para validar la instalación, puedes correr el siguiente comando:
+   ```
+    cookiecutter --version
+   ```
+
+   Si te manda error, es posible que tengas que correr el siguiente comando:
+   ```
+    python3 -m cookiecutter --version
+   ```
+
+   </details>
    - [Git](https://git-scm.com/downloads)
 
 ## Overview:
@@ -190,13 +207,12 @@ Contar con las siguientes herramientas instaladas:
       agregar_account_id-->configurar_secretos_ambiente;
                 
 ```
-#### - El paso 1 deberá realizarse en las cuentas AWS de cada ambiente (develop, preprod, prod)
+> ***El paso 1 deberá realizarse en las cuentas AWS de cada ambiente (develop, preprod, prod)***
 ## Pasos
 
 ---
 [1. Creación de repositorio y configuración de ambientes](#creación-de-repositorio) \
 [2. Generación de rol de despliegue](#generación-de-rol-de-despliegue) \
-<!-- [3. Creación de llaves KMS](#creación-de-llaves-kms) \ -->
 [3. Inicialización del proyecto](#inicializar-proyecto) \
 [4. Post-inicialización del proyecto](#post-inicialización-del-proyecto) \
 ---
@@ -211,13 +227,13 @@ Se debe crear un repositorio nuevo. El repositorio debe ser creado vacío, para 
 Es necesario crear 3 [ambientes](https://docs.github.com/en/github-ae@latest/actions/deployment/targeting-different-environments/using-environments-for-deployment) en el repositorio para poder inicializar el proyecto, *develop*, *preprod* y *production*
 
 #### Ambiente develop:
-1.1.1. En el repositorio que acabas de crear dirigete a "Settings".  
-1.1.2. Da clic en "Environments" en el apartado de **Code and automation**.  
-1.1.3. Da clic en "New environment".  
+**1.1.1.** En el repositorio que acabas de crear dirigete a ***"Settings"***.  
+**1.1.2.** Da clic en ***"Environments"*** en el apartado de **Code and automation**.  
+**1.1.3.** Da clic en ***"New environment"***.  
 
 ![](assets/environments.PNG)
 
-**1.1.4.** Agregaremos el ambiente "develop" y daremos clic en "Configure environment":
+**1.1.4.** Agregaremos el ambiente *"develop"* y daremos clic en ***"Configure environment"***:
 
 ![](assets/develop_environment.PNG)
 
@@ -230,7 +246,7 @@ En el paso **1.1.4.** se nombrarán los ambientes como *preprod* y *production*:
 
 ![](assets/production_environment.PNG)
 
-**1.1.5.** Por último, agregaremos a los equipos o personas que pueden aprobar despliegues en este ambiente, y damos clic en "Save protection rules"
+**1.1.5.** Por último, agregaremos a los equipos o personas que pueden aprobar despliegues en este ambiente, y damos clic en ***"Save protection rules"***
 
 ![](assets/production_reviewers.PNG)
 ## 1.2. Configurar secretos por ambiente
@@ -241,7 +257,7 @@ Una vez creados los ambientes:
 
 ![environments](assets/workshop/GH_01.png)
 
-**1.2.1.** Seleccionaremos el ambiente *develop*, y en la parte inferior en la sección **Environment secrets** daremos clic en "add secret":
+**1.2.1.** Seleccionaremos el ambiente *develop*, y en la parte inferior en la sección **Environment secrets** daremos clic en ***"add secret"***:
 ![](assets/add_secret.PNG)
 
 **1.2.2.** Asigna un nombre al secreto, de preferencia **DEV_AWS_ACCOUNT_ID**.  
@@ -249,44 +265,39 @@ Una vez creados los ambientes:
 
 ![adding secret](assets/dev_account_id.PNG)
 
-**1.2.4.** Repite los pasos **1.2.1.** al **1.2.3.** con los ambientes de *preprod* y *production*:
-
-```
-PRE_AWS_ACCOUNT_ID
-PROD_AWS_ACCOUNT_ID
-```
+**1.2.4.** Repite los pasos **1.2.1.** al **1.2.3.** con los ambientes de *preprod* `PRE_AWS_ACCOUNT_ID` y *production* `PROD_AWS_ACCOUNT_ID`:
 
 ## 2. Generación de rol de despliegue
 -------------------
- Para poder realizar los despliegues a una cuenta AWS, es importante generar un rol en lugar de un usuario en las cuentas
+Para poder realizar los despliegues a una cuenta AWS, es importante generar un rol en lugar de un usuario en las cuentas
 AWS destino. Esto para ejercer [mejores prácticas de seguridad en AWS](https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html).
 
-Nota: este paso debe realizarse en las cuentas de AWS de todos los ambientes.
+> Nota: este paso debe realizarse en las cuentas de AWS de todos los ambientes.
 
 **2.1.** Ingresa a la consola de *AWS Cloudformation*.  
-**2.2.** Da clic en **Create stack** y selecciona **With new resources (standard)**.  
+**2.2.** Da clic en ***Create stack*** y selecciona ***With new resources (standard)***.  
 
 ![create-stack](assets/create-stack-rol.png)
 
-**2.3.** Selecciona **Template is ready** y la opción **Upload a template file**.  
+**2.3.** Selecciona ***Template is ready*** y la opción ***Upload a template file***.  
 ![create-stack](assets/prepare-template.png)
 
 **2.4.** Para descargar la plantilla que debes subir debes descargarla [aqui](https://github.com/spsmexico/aws_sam_github_quickstart_template/blob/ROAD-110-Workshop-CI-CD-con-Github-Actions-y-SAM/iam/rol-despliegue.yaml).  
 ![download-template-role](assets/download-template-role.png)
 
-**2.5.** Una vez que subiste la plantilla, da clic en *Next*.  
-**2.6.** Asigna un nombre al stack, i.e. **rol-despliegue-workshop**.  
-**2.7.** En el apartado de los parametros ingresa el nombre de la organización y repositorio que creaste previamente en el [Paso 1](#creación-de-repositorio), y da clic en *Next*
+**2.5.** Una vez que subiste la plantilla, da clic en ***Next***.  
+**2.6.** Asigna un nombre al stack, i.e. `rol-despliegue-workshop`.  
+**2.7.** En el apartado de los parametros ingresa el nombre de la organización y repositorio que creaste previamente en el [Paso 1](#creación-de-repositorio), y da clic en ***Next***
 
 > Nota: Si creaste el repositorio en tu cuenta personal, y no en una organización, el nombre de la organización es el nombre de tu user en GitHub
 
 ![stack-details](assets/stack-details.png)
 
-**2.8.** Recomendación: agrega tags a la plantilla, te permitirá identificar los recursos que has creado. Puedes añadir la tag *Proyecto* con valor *Workshop*, posteriormente, da clic en *Next*.  
+**2.8.** Recomendación: agrega tags a la plantilla, te permitirá identificar los recursos que has creado. Puedes añadir la tag ***Proyecto*** con valor *Workshop*, posteriormente, da clic en *Next*.  
 
 ![add-tags-stack](assets/add-tags-stack.png)
 
-**2.9.** Finalmente, aparecerá un resumen de la configuración de la plantilla, hacia el final marca la casilla del apartado azul y da clic en *Submit*.  
+**2.9.** Finalmente, aparecerá un resumen de la configuración de la plantilla, hacia el final marca la casilla del apartado azul y da clic en ***Submit***.  
 
 ![capabilities-stack](assets/capabilities-stack.png)
 
@@ -560,14 +571,16 @@ Es el contenedor que construye la aplicación, en esta caso está como default u
 ### *sam_bucket*: Nombre del bucket para SAM. 
 Es el bucket que necesita SAM para realizar los despliegues.
 
+> Nota: 
+
 ### *DEV_secret_aws_account_id*: DEV_AWS_ACCOUNT_ID. 
-Aquí se deja por default este valor, salvo se haya especificado uno diferente en la [configuración de secretos por ambiente](#configurar-secretos-por-ambiente)
+Aquí se deja por default este valor, a menos que se haya especificado uno diferente en la [configuración de secretos por ambiente](#configurar-secretos-por-ambiente)
 
 ### *PRE_secret_aws_account_id*: PRE_AWS_ACCOUNT_ID. 
-Aquí se deja por default este valor, salvo se haya especificado uno diferente en la [configuración de secretos por ambiente](#configurar-secretos-por-ambiente)
+Aquí se deja por default este valor, a menos que se haya especificado uno diferente en la [configuración de secretos por ambiente](#configurar-secretos-por-ambiente)
 
 ### *PROD_secret_aws_account_id*: PROD_AWS_ACCOUNT_ID. 
-Aquí se deja por default este valor, salvo se haya especificado uno diferente en la [configuración de secretos por ambiente](#configurar-secretos-por-ambiente)
+Aquí se deja por default este valor, a menos que se haya especificado uno diferente en la [configuración de secretos por ambiente](#configurar-secretos-por-ambiente)
 
 ### *DEV_ROLE_DEPLOY*: Nombre del rol de despliegue en el ambiente de desarrollo. 
 Es el nombre del rol que creamos en la sección de [creando rol](#creando-rol) para el ambiente de desarrollo.
@@ -578,7 +591,7 @@ Es el nombre del rol que creamos en la sección de [creando rol](#creando-rol) p
 ### *PROD_ROLE_DEPLOY*: Nombre del rol de despliegue en el ambiente de producción. 
 Es el nombre del rol que creamos en la sección de [creando rol](#creando-rol) para el ambiente de producción.
 
-**3.4.** Una ves terminemos de introducir los valores requeridos en la plantilla, nos dirigimos a nuestro repositorio de GitHub en la sección de **Actions** y notarémos que se desplega de manera automática el worflow de **"🚀Dev"**:
+**3.4.** Una vez terminemos de introducir los valores requeridos en la plantilla, nos dirigimos a nuestro repositorio de GitHub en la sección de **Actions** y notarémos que se desplega de manera automática el worflow de **"🚀Dev"**:
 ![](assets/workshop/CC_01.PNG)
 
 **3.5.** Si vamos a nuestra cuenta de **AWS** en el servicio de **CloudFormation**, tambien podemos ver que esta desplegado nuestro *Stack* en el ambiente de **dev**:
@@ -593,7 +606,7 @@ Es el nombre del rol que creamos en la sección de [creando rol](#creando-rol) p
 **3.8.** En el menú que se encuentra del lado izquierdo, damos clic en **Settings** y copiamos el link que nos aparece:
 ![](assets/workshop/CC_05.PNG)
 
-**3.9.** Este link lo pegamos en una nueva pestaña de nuestro navegador, y al link le agregamos `/dev/hellow` para poder visualizar la respuesta:
+**3.9.** Este link lo pegamos en una nueva pestaña de nuestro navegador, y al link le agregamos `/dev/hello` para poder visualizar la respuesta:
 ![](assets/workshop/CC_06.PNG)
 
 **3.10.** Regresando a **CloudFormation**, si cambiamos a la región de **Oregon**, veremos que el *Stack* esta activo pero en **dr**:
@@ -604,11 +617,11 @@ Es el nombre del rol que creamos en la sección de [creando rol](#creando-rol) p
 Los pasos para desplegar a **preprod** son los siguientes:
 
 1. Regresar a nuestro repositorio y dar clic en la pestaña de **Actions**
-2. seleccionamos el workflow de **"📦🚀Pre-release"**
-3. damos clic en **Run workflow**
-4. le damos el número de versión (en este caso el *1.0.0*)
-5. desmarcamos la casillla, ya que no estamos trabajando con tablas de *Dynamo* 
-6. y por último damos clic en **Run workflow**
+2. Seleccionamos el workflow de **"📦🚀Pre-release"**
+3. Damos clic en **Run workflow**
+4. Asignamos el número de versión (en este caso el *1.0.0*)
+5. Desmarcamos la casillla, ya que no estamos trabajando con tablas de *Dynamo* 
+6. Y por último damos clic en **Run workflow**
 
 ![](assets/workshop/CC_08.PNG)
 
@@ -629,10 +642,10 @@ Los pasos para desplegar a **preprod** son los siguientes:
 Los pasos para desplegar a **production** son los siguientes:
 
 1. Regresar a nuestro repositorio y dar clic en la pestaña de **Actions**
-2. seleccionamos el workflow de **"📦🚀Release"**
-3. damos clic en **Run workflow**
-4. le damos el número de versión que pusimos en *preprod*: **1.0.0**
-5. desmarcamos la casillla, ya que no estamos trabajando con tablas de *Dynamo* 
+2. Seleccionamos el workflow de **"📦🚀Release"**
+3. Damos clic en **Run workflow**
+4. Le damos el número de versión que pusimos en *preprod*: **1.0.0**
+5. Desmarcamos la casillla, ya que no estamos trabajando con tablas de *Dynamo* 
 6. y por último damos clic en **Run workflow**
 
 ![](assets/workshop/CC_13.PNG)
@@ -674,11 +687,11 @@ La nueva funcionalidad que nos piden es modificar el código para que en lugar d
 Los pasos son los siguientes:
 
 1. Regresar a nuestro repositorio y dar clic en la pestaña de **Actions**
-2. seleccionamos el workflow de **"🐛fix Release"**
-3. damos clic en **Run workflow**
-4. le damos el número de versión que pusimos en *production*: **1.0.0**
-5. le damos la versión que se estaría liberando para este fix: *1.0.1*
-6. no activamos la casillla, ya que no estamos trabajando con tablas de *Dynamo* 
+2. Seleccionamos el workflow de **"🐛fix Release"**
+3. Damos clic en **Run workflow**
+4. Le damos el número de versión que pusimos en *production*: **1.0.0**
+5. Le damos la versión que se estaría liberando para este fix: *1.0.1*
+6. No activamos la casillla, ya que no estamos trabajando con tablas de *Dynamo* 
 7. y por último damos clic en **Run workflow**
 
 ![](assets/workshop/FIX_04.PNG)
@@ -704,10 +717,10 @@ Supongamos que ahora, lo que nos piden arreglar en **production** es cambiar la 
 Los pasos son los siguientes:
 
 1. Dar clic en la pestaña de **Actions**
-2. seleccionamos el workflow de **"📦🚀Pre-elease"**
-3. damos clic en **Run workflow**
-4. le damos el número de versión que pusimos en el *fix*: **fix/1.0.1**
-5. desmarcamos la casillla, ya que no estamos trabajando con tablas de *Dynamo* 
+2. Seleccionamos el workflow de **"📦🚀Pre-elease"**
+3. Damos clic en **Run workflow**
+4. Le damos el número de versión que pusimos en el *fix*: **fix/1.0.1**
+5. Desmarcamos la casillla, ya que no estamos trabajando con tablas de *Dynamo* 
 6. y por último damos clic en **Run workflow**
 
 ![](assets/workshop/FIX_09.PNG)
@@ -724,10 +737,10 @@ Los pasos son los siguientes:
 Los pasos son los siguientes:
 
 1. Dar clic en la pestaña de **Actions**
-2. seleccionamos el workflow de **"📦🚀Release"**
-3. damos clic en **Run workflow**
-4. le damos el nuevo número de versión: **1.0.1**
-5. desmarcamos la casillla, ya que no estamos trabajando con tablas de *Dynamo* 
+2. Seleccionamos el workflow de **"📦🚀Release"**
+3. Damos clic en **Run workflow**
+4. Le damos el nuevo número de versión: **1.0.1**
+5. Desmarcamos la casillla, ya que no estamos trabajando con tablas de *Dynamo* 
 6. y por último damos clic en **Run workflow**
 
 ![](assets/workshop/FIX_12.PNG)
