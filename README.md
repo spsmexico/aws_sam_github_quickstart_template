@@ -170,7 +170,8 @@ Contar con las siguientes herramientas instaladas:
    <details open>
    <summary>Instalación Cookiecutter</summary>
    <br>
-   Corre el siguiente comando en tu terminal, asegurate de tener instalado python en tu sistema operativo:  
+   Corre el siguiente comando en tu terminal, asegurate de tener instalado python en tu sistema operativo.  
+     
    <br>  
    ```
     python3 -m pip install --user cookiecutter
