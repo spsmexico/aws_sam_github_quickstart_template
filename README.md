@@ -166,10 +166,12 @@ Cookiecutter es un manejador de plantillas multiplataforma que permite crear pla
 Contar con las siguientes herramientas instaladas:
    - [Python](https://www.python.org/downloads/release/python-3913/)
    - [Cookiecutter](https://cookiecutter.readthedocs.io/en/stable/installation.html)
+   - [Git](https://git-scm.com/downloads)
    <details open>
    <summary>Instalación Cookiecutter</summary>
    <br>
    Corre el siguiente comando en tu terminal, asegurate de tener instalado python en tu sistema operativo:  
+   <br>
    ```
     python3 -m pip install --user cookiecutter
    ```
@@ -185,7 +187,6 @@ Contar con las siguientes herramientas instaladas:
    ```
 
    </details>
-   - [Git](https://git-scm.com/downloads)
 
 ## Overview:
 
