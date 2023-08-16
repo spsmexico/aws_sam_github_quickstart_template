@@ -172,11 +172,10 @@ Contar con las siguientes herramientas instaladas:
    <br>
    Corre el siguiente comando en tu terminal, asegurate de tener instalado python en tu sistema operativo:  
    <br>  
-     
    ```
     python3 -m pip install --user cookiecutter
    ```
-
+   
    Para validar la instalación, puedes correr el siguiente comando:
    ```
     cookiecutter --version
