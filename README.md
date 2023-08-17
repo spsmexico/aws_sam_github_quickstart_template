@@ -15,12 +15,7 @@ Este proyecto es una plantilla que permite generar un proyecto "serverless" bás
 **Tipo:** API
 
 **Descripción:** 
-Esta API le permite a un zoológico llevar el control de sus animales.
-- Permite obtener información sobre un animal
-- Permite listar todos los animales que tienen
-- Permite configurar el número de animales que devuelve por pagina si no se especifica en la petición.
-- Permite agregar un nuevo animal y valida con un servicio externo si es una especie amenazada
-- Permite borrar un animal
+Esta API permite presentar el mensaje "Hello World" en el path /hello
 
 Si quieres pulir tus habilidades en AWS [puedes contribuir agregando más funcionalidades](#contribuciones).
 
@@ -28,16 +23,9 @@ Si quieres pulir tus habilidades en AWS [puedes contribuir agregando más funcio
 - Categoría: Activo/Pasivo (Active/pasive)
 - Estrategia: Espera caliente (Warm standby) 
 
-**Lenguaje:** [Python 3.9](https://www.python.org/downloads/release/python-3913/)
-
-**Dependencias:**
-- [AWS Lambda Powertools 1.28](https://awslabs.github.io/aws-lambda-powertools-python/1.28.0/)
-
 **Servicios:**
 - [AWS API Gateway (HTTP)](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api.html)
 - [AWS Lambda](https://docs.aws.amazon.com/es_es/lambda/latest/dg/welcome.html)
-- [AWS DynamoDB](https://docs.aws.amazon.com/dynamodb/?icmpid=docs_homepage_featuredsvcs)
-- [AWS Parameter Store](https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-parameter-store.html)
 - [AWS CloudFormation](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/Welcome.html)
 
 **Herramientas:**
@@ -54,7 +42,7 @@ Si quieres pulir tus habilidades en AWS [puedes contribuir agregando más funcio
   - [CloudFormation](#cloudformation)
   - [SAM](#sam)
 2. [Github y Github Actions](#github-y-github-actions)
-3. [Cookiecutter y Cruft](#cookiecutter-y-cruft)
+3. [Cookiecutter](#cookiecutter)
 4. [Contribuciones](#contribuciones)
 
 
@@ -116,58 +104,6 @@ SAM también ofrece un CLI que permite inicializar proyectos basados en plantill
 ![SAM CLI](assets/aws-sam-cli.png)
 _Inciando con el CLI de SAM_: https://www.sqlshack.com/getting-started-with-the-aws-sam-cli/
 
-- Inicializar proyecto de SAM:
-
-```bash
-sam init
-```
-
-- Construir aplicación:
-
-Usando Docker (No requiere que tengas Python instalado)
-
-```bash
-sam build --use-container
-```
-
-Usando Docker y una imagen en especifico (No requiere que tengas Python instalado)
-
-```bash
-sam build --use-container --build-image public.ecr.aws/sam/build-python3.8:1.32.0
-```
-
-- Generar un evento de ejemplo:
-
-Si necesitas ver un ejemplo de la estructura del evento que recibe tu lambda puede utilizar estos comandos.
-
-- Para SQS
-  
-  ```bash
-  sam local generate-event sqs receive-message
-  ```
-
-- API Gateway:
-
-```bash
-sam local generate-event apigateway aws-proxy --method GET --path document --body "{"test": "1", "tests2": "2"}"
-```
-
-Para visualizar la lista de servicios de los que se pueden generar eventos favor de visitar: [sam local generate-event - AWS Serverless Application Model](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-cli-command-reference-sam-local-generate-event.html)
-
-- Desplegar API en ambiente local (localhost:3000):
-
-```bash
-sam local start-api
-```
-
-- Invocar lambda local:
-
-Si necesitas validar el funcionamiento de tu lambda puede pasarle un evento en formato json si necesidad de desplegar. (Requiere Docker instalado)
-
-```bash
-sam local invoke -e events/event.json
-```
-
 Para mayor información de comandos de CLI de SAM: [AWS SAM CLI command reference - AWS Serverless Application Model](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-command-reference.html)
 
 
@@ -220,18 +156,39 @@ En caso de que ocurra un bug en producción, hay dos posibles caminos:
 
 Workflow reusables (Como los workflows hacen llamados a los workflows reusables para completar tareas y liga a la administración de workflows)
 
-Agregar nota: Si el proyecto crece y se crean multiples repositorios, se debe crear un repo independiente en el que puedan guardarse los workflows reusables y otras utilerías
+> Nota: Si el proyecto crece y se crean multiples repositorios, se debe crear un repo independiente en el que puedan guardarse los workflows reusables y otras utilerías
 
-### Referencias
+## Cookiecutter
 
-## Cookiecutter y Cruft
+Cookiecutter es un manejador de plantillas multiplataforma que permite crear plantillas en lenguajes de programación o formato de marcado. Puede utilizarse como herramienta de la linea de comandos o como librería de Python. 
 
-Crea un proyecto (Crear proyecto a partir de plantilla de cookiecutter y agregar los número de cuenta de los ambientes como secretos en Github)
 ## Prerequisitos:
 Contar con las siguientes herramientas instaladas:
    - [Python](https://www.python.org/downloads/release/python-3913/)
    - [Cookiecutter](https://cookiecutter.readthedocs.io/en/stable/installation.html)
    - [Git](https://git-scm.com/downloads)
+   <details open>
+   <summary>Instalación Cookiecutter</summary>
+   <br>
+   Corre el siguiente comando en tu terminal, asegurate de tener instalado python en tu sistema operativo.  
+     
+   <br>  
+   ```
+    python3 -m pip install --user cookiecutter
+   ```
+   
+   Para validar la instalación, puedes correr el siguiente comando:
+   ```
+    cookiecutter --version
+   ```
+
+   Si te manda error, es posible que tengas que correr el siguiente comando:
+   ```
+    python3 -m cookiecutter --version
+   ```
+
+   </details>
+
 ## Overview:
 
 ```mermaid
@@ -244,61 +201,150 @@ Contar con las siguientes herramientas instaladas:
       crear_rol_despliegue-->agregar_politicas_requeridas;
       agregar_politicas_requeridas-->agregar_tags_del_proyecto;
       agregar_tags_del_proyecto-->copiar_account_id;
-      copiar_account_id-->agregar_account_id;
+      copiar_account_id-->agregar_account_id; 
 
-      AWS-->2_KMS;
-      2_KMS-->crear_llave_simetrica_multiregion_SSM;
-      crear_llave_simetrica_multiregion_SSM-->copiar_ARN;
-      2_KMS-->crear_llave_simetrica_multiregion_DynamoDB;
-      crear_llave_simetrica_multiregion_DynamoDB-->copiar_ARN;
-      crear_llave_simetrica_multiregion_SSM-->configurar_regionalidad_en_region_dr;
-      crear_llave_simetrica_multiregion_DynamoDB-->configurar_regionalidad_en_region_dr;
-      configurar_regionalidad_en_region_dr-->copiar_ARN;
-      copiar_ARN-->ingresarlos_al_inicializar_cookiecutter;    
-
-      3_GitHub-->crear_repositorio;
+      2_GitHub-->crear_repositorio;
       crear_repositorio-->crear_ambientes;
       crear_ambientes-->configurar_secretos_ambiente;
       agregar_account_id-->configurar_secretos_ambiente;
                 
 ```
-#### - Los pasos 1 y 2 deberán ser realizados en las cuentas AWS de cada ambiente (develop, prod)
+> ***El paso 1 deberá realizarse en las cuentas AWS de cada ambiente (develop, preprod, prod)***
 ## Pasos
 
 ---
-[1. Generación de rol de despliegue](#generación-de-rol-de-despliegue) \
-[2. Creación de llaves KMS](#creación-de-llaves-kms) \
-[3. Creación de repositorio y ambientes](#creación-de-repositorio) \
-[4. Inicialización del proyecto](#inicializar-proyecto) \
-[5. Post-inicialización del proyecto](#post-inicialización-del-proyecto) \
+[1. Creación de repositorio y configuración de ambientes](#creación-de-repositorio) \
+[2. Generación de rol de despliegue](#generación-de-rol-de-despliegue) \
+[3. Inicialización del proyecto](#inicializar-proyecto) \
+[4. Post-inicialización del proyecto](#post-inicialización-del-proyecto) \
 ---
 
-## Generación de rol de despliegue
+## 1. Creación de repositorio
+-------------------
+Se debe crear un repositorio nuevo. El repositorio debe ser creado vacío, para que se pueda inicializar correctamente el proyecto.
+
+![Crear repositorio](assets/create-repository.png)
+
+## 1.1. Creación de ambientes
+Es necesario crear 3 [ambientes](https://docs.github.com/en/github-ae@latest/actions/deployment/targeting-different-environments/using-environments-for-deployment) en el repositorio para poder inicializar el proyecto, *develop*, *preprod* y *production*
+
+#### Ambiente develop:
+**1.1.1.** En el repositorio que acabas de crear dirigete a ***"Settings"***.  
+**1.1.2.** Da clic en ***"Environments"*** en el apartado de **Code and automation**.  
+**1.1.3.** Da clic en ***"New environment"***.  
+
+![](assets/environments.PNG)
+
+**1.1.4.** Agregaremos el ambiente *"develop"* y daremos clic en ***"Configure environment"***:
+
+![](assets/develop_environment.PNG)
+
+#### Ambiente preprod y production:
+Repetimos los pasos **1.1.1.** al **1.1.3.** que seguimos para el ambiente *develop*:
+
+![](assets/environments.PNG)
+
+En el paso **1.1.4.** se nombrarán los ambientes como *preprod* y *production*:
+
+![](assets/production_environment.PNG)
+
+**1.1.5.** Por último, agregaremos a los equipos o personas que pueden aprobar despliegues en este ambiente, y damos clic en ***"Save protection rules"***
+
+![](assets/production_reviewers.PNG)
+## 1.2. Configurar secretos por ambiente
+
+#### Nota: Los nombres de los secretos a mostrar son los valores default, se recomienda que permanezcan así. Pero en caso de ser necesario agregarles un sufijo o utilizar otro nombrado al [inicializar el proyecto](#inicializar-proyecto) se deberán especificar.
+
+Una vez creados los ambientes:
+
+![environments](assets/workshop/GH_01.png)
+
+**1.2.1.** Seleccionaremos el ambiente *develop*, y en la parte inferior en la sección **Environment secrets** daremos clic en ***"add secret"***:
+![](assets/add_secret.PNG)
+
+**1.2.2.** Asigna un nombre al secreto, de preferencia **DEV_AWS_ACCOUNT_ID**.  
+**1.2.3.** Agrega el número de la cuenta de AWS como valor del secreto de GitHub. Esto será para todos los ambientes:
+
+![adding secret](assets/dev_account_id.PNG)
+
+**1.2.4.** Repite los pasos **1.2.1.** al **1.2.3.** con los ambientes de *preprod* `PRE_AWS_ACCOUNT_ID` y *production* `PROD_AWS_ACCOUNT_ID`:
+
+## 2. Generación de rol de despliegue
 -------------------
 Para poder realizar los despliegues a una cuenta AWS, es importante generar un rol en lugar de un usuario en las cuentas
 AWS destino. Esto para ejercer [mejores prácticas de seguridad en AWS](https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html).
 
-Nota: este paso debe realizarse en las cuentas de AWS de todos los ambientes.
+> Nota: este paso debe realizarse en las cuentas de AWS de todos los ambientes.
+
+**2.1.** Ingresa a la consola de *AWS Cloudformation*.  
+**2.2.** Da clic en ***Create stack*** y selecciona ***With new resources (standard)***.  
+
+![create-stack](assets/create-stack-rol.png)
+
+**2.3.** Selecciona ***Template is ready*** y la opción ***Upload a template file***.  
+![create-stack](assets/prepare-template.png)
+
+**2.4.** Para descargar la plantilla que debes subir debes descargarla [aqui](https://github.com/spsmexico/aws_sam_github_quickstart_template/blob/ROAD-110-Workshop-CI-CD-con-Github-Actions-y-SAM/iam/rol-despliegue.yaml).  
+![download-template-role](assets/download-template-role.png)
+
+**2.5.** Una vez que subiste la plantilla, da clic en ***Next***.  
+**2.6.** Asigna un nombre al stack, i.e. `rol-despliegue-workshop`.  
+**2.7.** En el apartado de los parametros ingresa el nombre de la organización y repositorio que creaste previamente en el [Paso 1](#creación-de-repositorio), y da clic en ***Next***
+
+> Nota: Si creaste el repositorio en tu cuenta personal, y no en una organización, el nombre de la organización es el nombre de tu user en GitHub
+
+![stack-details](assets/stack-details.png)
+
+**2.8.** Recomendación: agrega tags a la plantilla, te permitirá identificar los recursos que has creado. Puedes añadir la tag ***Proyecto*** con valor *Workshop*, posteriormente, da clic en *Next*.  
+
+![add-tags-stack](assets/add-tags-stack.png)
+
+**2.9.** Finalmente, aparecerá un resumen de la configuración de la plantilla, hacia el final marca la casilla del apartado azul y da clic en ***Submit***.  
+
+![capabilities-stack](assets/capabilities-stack.png)
+
+Y veremos que se ha creado el stack con el rol. Si quieres realizar este paso de manera manual, puedes seguir esta [guia](https://github.com/spsmexico/aws_sam_github_quickstart_template/blob/ROAD-110-Workshop-CI-CD-con-Github-Actions-y-SAM/create-role-manual.md)
+
+
+---
+<!--
 ### Creando identity provider:
-Para crear un identity provider es necesario ingresar a IAM daremos clic en la opción de la barra lateral izquierda "identity providers" y daremos clic en el botón azul de "Add provider".
-![](assets/create-identity-provider.PNG)
+Para crear un identity provider es necesario ingresar a **IAM**, daremos clic en la opción de la barra lateral izquierda en **identity providers** 
+![](assets/workshop/GRD_01.PNG)
 
-En provider URL ingresaremos: https://token.actions.githubusercontent.com
-En "Audience" ingresaremos: sts.amazonaws.com
+damos clic en el botón de "Add provider".
+![](assets/workshop/GRD_02.PNG)
 
-Posteriormente daremos clic en "get thumbprint"
+Para comenzar a configurarlo damos:
+1. clic en **OpenID Connect**, 
+2. en **provider URL** escribimos: ```https://token.actions.githubusercontent.com```
+3. y clic en **Get thumbprint**
+![](assets/workshop/GRD_03a.PNG)
 
-![](assets/get-thumbprint.PNG)
+En **Audience** debemos agregar ```sts.amazonaws.com```
+![](assets/workshop/GRD_05.PNG)
 
-y para terminar daremos clic en "Add provider"
+Se puede agregar de forma opcional un tag en **Add tags** y por último damos clic en **Add provider**:
+![](assets/workshop/GRD_04.PNG)
 
-![](assets/add-provider.PNG)
+Una ves creado debería de verse de la siguiente forma:
+![](assets/workshop/GRD_06.PNG)
 
 ### Creando rol
 En esta sección se sugiere nombrar el rol con *identificador-del-proyecto*-github-actions-role (sin agregarle el sufijo de ambiente. 
-Para crear el rol, nos iremos en la sección de IAM > Roles y daremos clic en "Create role", en el tipo de entidad confiable daremos clic en "Web identity" y seleccionaremos el identity provider y audience que acabamos de crear en el paso anterior y daremos clic en "Next":
+Para crear el rol, nos iremos en la sección de IAM > Roles 
+![](assets/workshop/CR_01.PNG)
 
-![](assets/select-trusted-entity.PNG)
+y daremos clic en "**Create role**", 
+![](assets/workshop/CR_02.PNG)
+
+Aquí los pasos a seguir son:
+
+1. Seleccionamos **Web identity**,
+2. en *_Identity povider_* seleccionamos ```https://token.actions.githubusercontent.com```, 
+3. en *_Audience_* seleccionamos ```sts.amazonaws.com``` y
+4. damos clic en **Next**
+![](assets/workshop/CR_03.PNG)
 
 
 #### Agregar las políticas necesarias:
@@ -308,10 +354,33 @@ desplegando:
 
 #### Permisos sugeridos:
 Estos permisos se sugieren habilitar para poder realizar su despliegue. Salvo que haya alguno que sobre o alguno que falte deberá ser agregado/eliminado:
+```
+AmazonAPIGatewayAdministrator
+AmazonS3FullAccess
+AWSCloudFormationFullAccess
+AWSLambda_FullAccess
+```
+![](assets/workshop/CR_05.gif)
 
-![](assets/politicas_despliegue.PNG)
+Y damos clic en siguiente
+![](assets/workshop/CR_04.PNG)
 
-La siguiente política puede insertarse directamente al rol para poder desplegar:
+Le asignamos un nombre al rol
+![](assets/workshop/CR_06.PNG)
+
+De manera opcional también podemos asignar un tag, y damos clic en **Create role**:
+![](assets/workshop/CR_07.PNG)
+
+Para verificar que el rol esta creado, podemos buscarlo:
+![](assets/workshop/CR_08.PNG)
+
+Le damos clic a nuestro rol y en **Add permissions**, sale un menú desplegable y damos clic en **Create inline policy**:
+![](assets/workshop/CR_09.PNG)
+
+Lo cambiamos a formato *_JSON_*:
+![](assets/workshop/CR_10.PNG)
+
+Insertamos directamente al rol para poder desplegar y damos clic en siguiente:
 
 ```
 {
@@ -340,11 +409,12 @@ La siguiente política puede insertarse directamente al rol para poder desplegar
     ]
 }
 ```
-#### Agregar tag relacionado al proyecto:
-Por acá estaremos agregando el tag "Proyecto" con el nombre del proyecto para el que se utilizará este rol:
-![](assets/tags_usuario.PNG)
 
-Una vez que el rol haya sido creado, abriremos el rol que creamos y daremos clic en "Edit trust policy":
+Le damos un nombre en **Policy name** y para terminar, clic en **Create policy**:
+![](assets/workshop/CR_11.PNG)
+
+Ahora damos clic en la pestaña de **Trust relationships** y en **Edit trust policy**:
+![](assets/workshop/CR_12a.PNG)
 
 En este bloque agregaremos lo siguiente sustituyendo los siguientes valores: 
 
@@ -376,10 +446,11 @@ ORGANIZACION_GITHUB = Organización o usuario de GitHub a la que pertenece el re
 
 NOMBRE_REPOSITORIO = Nombre del repositorio.
 
-Por último daremos clic en "Update Policy".
+Por último daremos clic en **Update Policy**. -->
 
 Recursos: https://www.automat-it.com/post/using-github-actions-with-aws-iam-roles
 
+<!---
 ## Creación de llaves KMS
 -------------------
 Como prerequisito es importante crear 2 llaves KMS simétricas "[multiregión](https://docs.aws.amazon.com/kms/latest/developerguide/multi-region-keys-overview.html)", una para SSM y otra para DynamoDB.
@@ -407,7 +478,7 @@ NOTA: Este proceso debe realizarse en ambas cuentas (desarrollo y producción).
 Cuando [inicialicemos el proyecto con cookiecutter](#inicializar-proyecto) nos solicitará los ARN's 
 de las llaves llaves. Por lo que es importante tenerlas a la mano cuando se inicialice el proyecto.
 
-
+<!---
 ## Creación de repositorio
 -------------------
 Se debe crear un repositorio nuevo. El repositorio debe ser creado vacío, para que se pueda inicializar correctamente el proyecto.
@@ -464,24 +535,28 @@ Acto seguido procederemos a dirigirnos al ambiente *production*:
 Número de cuenta AWS del ambiente *production*:
 
 ![](assets/prod_account_id.PNG)
+-->
 
-## Inicializar proyecto
-Una vez concluidos los pasos anteriores podemos proseguir a inicializar el proyecto, nos moveremos hacia la carpeta donde se alojará el repositorio y ejecutaremos el siguiente comando:
+## 3. Inicializar proyecto
 
+Una vez concluidos los pasos anteriores podemos proseguir a inicializar el proyecto.
+
+**3.1.** Crearemos una carpeta dónde se alojará el proyecto.  
+**3.2.** Nos moveremos hacia la carpeta donde se alojará el repositorio y ejecutaremos el siguiente comando:
 ```
-cookiecutter https://github.com/spsdevops/aws_sam_github_quickstart_template
+cookiecutter https://github.com/spsdevops/aws_sam_github_quickstart_template -c ROAD-110-Workshop-CI-CD-con-Github-Actions-y-SAM
 ```
 Ingresaremos los valores que nos pide la plantilla.
 Algunas opciones cuentan con valores default.
 
-A continuación se describen cada una de las opciones:
+**3.3.** A continuación se describen cada una de las opciones:
 
 ### *nombre_repo*: Nombre del repositorio de GitHub.
 
 ### *org_or_user_github*: Usuario de GitHub u Organización a la que pertenece el repositorio.
 
 ### *cfn_stack*: Nombre del stack en AWS. 
-Es importante que no incluya el identificador o sufijo del proyecto.
+Es importante que no incluya el identificador o sufijo del proyecto o "_".
 
 ### *project*: Identificador del proyecto. 
 Pueden ser las iniciales de la empresa o nombre del proyecto. Se utilizará como sufijo para los recursos del proyecto.
@@ -492,39 +567,22 @@ Ejemplo: us-east-1
 ### *region_secundaria*: Región secundaria en la que se desplegarán los recursos del proyecto. 
 Ejemplo: us-west-2
 
-### *DEV_ARN_SSM_KMS*: Llave multiregion para Parameter Store. DEV 
-Es una de las llaves que creamos para la región principal en [Creación de llaves KMS](#creación-de-llaves-kms) para el ambiente de Desarrollo.
-
-
-### *DEV_ARN_SSM_KMS_DR*: Llave multiregion para Parameter Store. DR. DEV
-Es una de las llaves que creamos para la región DR en [Creación de llaves KMS](#creación-de-llaves-kms) para el ambiente de Desarrollo.
-
-### *PRE_ARN_SSM_KMS*: Llave multiregion para Parameter Store. PRE/QA 
-Es una de las llaves que creamos para la región principal en [Creación de llaves KMS](#creación-de-llaves-kms) para el ambiente de QA/Preproducción.
-
-### *PRE_ARN_SSM_KMS_DR*: Llave multiregion para Parameter Store. PRE/QA 
-Es una de las llaves que creamos para la región principal en [Creación de llaves KMS](#creación-de-llaves-kms) para el ambiente de QA/Preproducción.
-
-### *PROD_ARN_SSM_KMS*: Llave multiregion para Parameter Store. PROD
-Es una de las llaves que creamos para la región principal en [Creación de llaves KMS](#creación-de-llaves-kms) para el ambiente de Producción.
-
-### *PROD_ARN_SSM_KMS_DR*: Llave multiregion para Parameter Store. DR. PROD
-Es una de las llaves que creamos para la región DR en [Creación de llaves KMS](#creación-de-llaves-kms) para el ambiente de Producción.
-
 ### *sam_container*: public.ecr.aws/sam/build-python3.8:1.32.0. 
 Es el contenedor que construye la aplicación, en esta caso está como default uno de Python. Pero de ser requerido usar una lambda de otro lenguaje se puede especificar en esta opción.
 
 ### *sam_bucket*: Nombre del bucket para SAM. 
 Es el bucket que necesita SAM para realizar los despliegues.
 
+> Nota: 
+
 ### *DEV_secret_aws_account_id*: DEV_AWS_ACCOUNT_ID. 
-Aquí se deja por default este valor, salvo se haya especificado uno diferente en la [configuración de secretos por ambiente](#configurar-secretos-por-ambiente)
+Aquí se deja por default este valor, a menos que se haya especificado uno diferente en la [configuración de secretos por ambiente](#configurar-secretos-por-ambiente)
 
 ### *PRE_secret_aws_account_id*: PRE_AWS_ACCOUNT_ID. 
-Aquí se deja por default este valor, salvo se haya especificado uno diferente en la [configuración de secretos por ambiente](#configurar-secretos-por-ambiente)
+Aquí se deja por default este valor, a menos que se haya especificado uno diferente en la [configuración de secretos por ambiente](#configurar-secretos-por-ambiente)
 
 ### *PROD_secret_aws_account_id*: PROD_AWS_ACCOUNT_ID. 
-Aquí se deja por default este valor, salvo se haya especificado uno diferente en la [configuración de secretos por ambiente](#configurar-secretos-por-ambiente)
+Aquí se deja por default este valor, a menos que se haya especificado uno diferente en la [configuración de secretos por ambiente](#configurar-secretos-por-ambiente)
 
 ### *DEV_ROLE_DEPLOY*: Nombre del rol de despliegue en el ambiente de desarrollo. 
 Es el nombre del rol que creamos en la sección de [creando rol](#creando-rol) para el ambiente de desarrollo.
@@ -534,6 +592,171 @@ Es el nombre del rol que creamos en la sección de [creando rol](#creando-rol) p
 
 ### *PROD_ROLE_DEPLOY*: Nombre del rol de despliegue en el ambiente de producción. 
 Es el nombre del rol que creamos en la sección de [creando rol](#creando-rol) para el ambiente de producción.
+
+**3.4.** Una vez terminemos de introducir los valores requeridos en la plantilla, nos dirigimos a nuestro repositorio de GitHub en la sección de **Actions** y notarémos que se desplega de manera automática el worflow de **"🚀Dev"**:
+![](assets/workshop/CC_01.PNG)
+
+**3.5.** Si vamos a nuestra cuenta de **AWS** en el servicio de **CloudFormation**, tambien podemos ver que esta desplegado nuestro *Stack* en el ambiente de **dev**:
+![](assets/workshop/CC_02.PNG)
+
+**3.6.** Si damos clic a nuestro *Stack* en la pestaña de **Stack info**, podremos acceder a la información de el *dr*, *hash*, su *repositorio* y la *versión* actual: 
+![](assets/workshop/CC_03.PNG)
+
+**3.7.** En la pestaña de **Resources**, podemos encontrar el link que nos direcciona al *ApiGateway*:
+![](assets/workshop/CC_04.PNG)
+
+**3.8.** En el menú que se encuentra del lado izquierdo, damos clic en **Settings** y copiamos el link que nos aparece:
+![](assets/workshop/CC_05.PNG)
+
+**3.9.** Este link lo pegamos en una nueva pestaña de nuestro navegador, y al link le agregamos `/dev/hello` para poder visualizar la respuesta:
+![](assets/workshop/CC_06.PNG)
+
+**3.10.** Regresando a **CloudFormation**, si cambiamos a la región de **Oregon**, veremos que el *Stack* esta activo pero en **dr**:
+![](assets/workshop/CC_07a.PNG)
+
+**3.11.** Ya que validamos que está activo en **dev** y en **dr**, podemos promoverlo al ambiente de **preprod**. 
+
+Los pasos para desplegar a **preprod** son los siguientes:
+
+1. Regresar a nuestro repositorio y dar clic en la pestaña de **Actions**
+2. Seleccionamos el workflow de **"📦🚀Pre-release"**
+3. Damos clic en **Run workflow**
+4. Asignamos el número de versión (en este caso el *1.0.0*)
+5. Desmarcamos la casillla, ya que no estamos trabajando con tablas de *Dynamo* 
+6. Y por último damos clic en **Run workflow**
+
+![](assets/workshop/CC_08.PNG)
+
+**3.12.** Esto ejecutará el workflow, pero ya que necesita ser aprobado nos aparecera en modo de espera:
+![](assets/workshop/CC_09.PNG)
+
+**3.13.** Así que entramos, damos clic en **Review deployments**, marcamos la casilla de **preprod** y damos clic en **Approve and deploy**, lo cual permitirá que siga corriendo el workflow.
+![](assets/workshop/CC_10.PNG)
+
+**3.14.** Al terminar de ejecutarse el workflow, vamos a **CloudFormation** en la región de **Virginia** y podrémos visualizar el *Stack* junto con el número de versión actualizado (*1.0.0*):
+![](assets/workshop/CC_11.PNG)
+
+**3.15.** Si cambiamos de región a **Oregon** podrémos ver lo mismo en **dr** con la diferencia de que el tag de **dr** sera **true**:
+![](assets/workshop/CC_12.PNG)
+
+**3.16.** Ya que validamos que está activo en **preprod** y en **dr**, podemos promoverlo al ambiente de **production**. 
+
+Los pasos para desplegar a **production** son los siguientes:
+
+1. Regresar a nuestro repositorio y dar clic en la pestaña de **Actions**
+2. Seleccionamos el workflow de **"📦🚀Release"**
+3. Damos clic en **Run workflow**
+4. Le damos el número de versión que pusimos en *preprod*: **1.0.0**
+5. Desmarcamos la casillla, ya que no estamos trabajando con tablas de *Dynamo* 
+6. y por último damos clic en **Run workflow**
+
+![](assets/workshop/CC_13.PNG)
+
+**3.17.** Esto ejecutará el workflow, pero ya que necesita ser aprobado nos aparecera en modo de espera:
+![](assets/workshop/CC_14.PNG)
+
+**3.18.** Así que entramos, damos clic en **Review deployments**, marcamos la casilla de **production** y damos clic en **Approve and deploy**, lo cual permitirá que siga corriendo el workflow.
+![](assets/workshop/CC_15.PNG)
+
+**3.19.** Al terminar de ejecutarse el workflow, vamos a **CloudFormation** en la región de **Virginia** y podrémos visualizar el *Stack* junto con el número de versión actualizado (*1.0.0*):
+![](assets/workshop/CC_16.PNG)
+
+**3.20.** Si vamos a la pestaña de **Resources** y damos clic en el link del ApiGateway:
+![](assets/workshop/CC_17.PNG)
+
+**3.21.** Nos aparecerá un menú del lado derecho, damos clic en **Stages**, clic en **prod** y clic en la **URL**:
+![](assets/workshop/CC_18.PNG)
+
+**3.22.** Esto nos mandará a la URL, pero debemos completar el link con `/hello` para que no nos dé error:
+![](assets/workshop/CC_19.PNG)
+
+**3.23.** Hasta aquí se ha mandado el mismo mensaje de `hello world` desde **develop**, pasando por **preprod**, hasta llegar a **production**. 
+
+Supongamos que se agrega una nueva funcionalidad que apenas debe estar en **develop** y después te piden arreglar algo que está en **production**.
+
+La nueva funcionalidad que nos piden es modificar el código para que en lugar de `hello world` diga `hola mundo`:
+![](assets/workshop/FIX_01.PNG)
+
+**3.24.** Hacemos commit, y estos cambios se reflejarán automaticamente. Podemos ver esto en la pestaña de **Actions** de nuestro repositorio:
+![](assets/workshop/FIX_02.PNG)
+
+**3.25.** Si checamos el endpoint del ApiGateway para **dev**, podremos ver que este cambio esta reflejado con exito:
+
+![](assets/workshop/FIX_03.PNG)
+
+**3.26.** Ahora nos piden cambiar algo en **production**, pero no nos podemos llevar lo de **develop** porque aun esta en *desarrollo* y no sabemos si vaya a afectar lo que ya esta desplegado. Para evitar este tipo de conflictos, se creo el workflow de **"🐛fix Release"**.
+
+Los pasos son los siguientes:
+
+1. Regresar a nuestro repositorio y dar clic en la pestaña de **Actions**
+2. Seleccionamos el workflow de **"🐛fix Release"**
+3. Damos clic en **Run workflow**
+4. Le damos el número de versión que pusimos en *production*: **1.0.0**
+5. Le damos la versión que se estaría liberando para este fix: *1.0.1*
+6. No activamos la casillla, ya que no estamos trabajando con tablas de *Dynamo* 
+7. y por último damos clic en **Run workflow**
+
+![](assets/workshop/FIX_04.PNG)
+
+**3.27.** Al terminar de ejecutarse el workflow, vamos a **CloudFormation**, en la región de **Virginia**, al *Stack* de **dev**, *Stack info* en la parte de *Tags* y podrémos visualizar el **fix/1.0.1** en el número de versión:
+
+![](assets/workshop/FIX_05.PNG)
+
+**3.28.** Si checamos el endpoint de **dev**, vemos que sigue como antes, sin cambios en esta nueva rama:
+![](assets/workshop/FIX_06.PNG)
+
+Supongamos que ahora, lo que nos piden arreglar en **production** es cambiar la letra **h** de nuestro `hello world` a mayúscula: `Hello world`. 
+
+**3.29.** Para esto, nos vamos a nuestro repositorio y nos cambiamos a la rama `fix/1.0.1`, modificamos el código y hacemos commit:
+
+![](assets/workshop/FIX_07.PNG)
+
+**3.30.** Esto ejecutará de manera automatica el workflow **"🚀Dev"**:
+![](assets/workshop/FIX_08.PNG)
+
+**3.31.** Una ves termina el workflow, tenemos que mandar el cambio a **preprod** desde la version del fix.
+
+Los pasos son los siguientes:
+
+1. Dar clic en la pestaña de **Actions**
+2. Seleccionamos el workflow de **"📦🚀Pre-elease"**
+3. Damos clic en **Run workflow**
+4. Le damos el número de versión que pusimos en el *fix*: **fix/1.0.1**
+5. Desmarcamos la casillla, ya que no estamos trabajando con tablas de *Dynamo* 
+6. y por último damos clic en **Run workflow**
+
+![](assets/workshop/FIX_09.PNG)
+
+**3.32.** Esto ejecutará el workflow, pero ya que necesita ser aprobado nos aparecera en modo de espera. Así que entramos, damos clic en **Review deployments**, marcamos la casilla de **preprod** y damos clic en **Approve and deploy**, lo cual permitirá que siga corriendo el workflow.
+![](assets/workshop/FIX_10.PNG)
+
+**3.33.** Al terminar de ejecutarse el workflow, vamos a **CloudFormation**, en la región de **Virginia**, al *Stack* de **pre**, *Stack info* en la parte de *Tags* y podrémos visualizar el **fix/1.0.1** en el número de versión:
+
+![](assets/workshop/FIX_11.PNG)
+
+**3.34.** Ahora tenemos que mandar el cambio a **production** desde la nueva version **1.0.1** donde hicimos el fix.
+
+Los pasos son los siguientes:
+
+1. Dar clic en la pestaña de **Actions**
+2. Seleccionamos el workflow de **"📦🚀Release"**
+3. Damos clic en **Run workflow**
+4. Le damos el nuevo número de versión: **1.0.1**
+5. Desmarcamos la casillla, ya que no estamos trabajando con tablas de *Dynamo* 
+6. y por último damos clic en **Run workflow**
+
+![](assets/workshop/FIX_12.PNG)
+
+**3.35.** Esto ejecutará el workflow, pero ya que necesita ser aprobado nos aparecera en modo de espera. Así que entramos, damos clic en **Review deployments**, marcamos la casilla de **production** y damos clic en **Approve and deploy**, lo cual permitirá que siga corriendo el workflow.
+![](assets/workshop/FIX_13.PNG)
+
+**3.36.** Al terminar de ejecutarse el workflow, vamos a **CloudFormation**, en la región de **Virginia**, al *Stack* de **prod**, *Stack info* en la parte de *Tags* y podrémos visualizar la nueva versión **1.0.1**:
+
+![](assets/workshop/FIX_14.PNG)
+
+**3.37.** Si checamos el endpoint de **prod**, vemos que se actualizó el cambio:
+
+![](assets/workshop/FIX_15.PNG)
 
 ## Post inicialización del proyecto
 Al terminar de generar el proyecto, por medio de un script se vincula el repo generado con el [repo remoto que creamos en GitHub](#creación-de-repositorio). Por lo tanto ya es posible comenzar a trabajar en él. Pero antes, se recomienda agregar alguna modificación en el archivo template.yaml para desplegar el proyecto Hello world por primera vez y evitar que se tengan problemas relacionados con un primer despliegue fallido.

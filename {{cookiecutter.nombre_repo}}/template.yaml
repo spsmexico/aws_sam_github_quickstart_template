@@ -14,9 +14,6 @@ Parameters:
     Type: String
     Default: dev
     Description: Valor de sufijo para tablas de base de datos
-  ParametersKMSARN:
-    Description: ARN de la llave que descifra los secretos
-    Type: String
 
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
@@ -55,15 +52,3 @@ Resources:
             ParameterName: !Sub sps-plantilla-parametro-${EnvName}
         - DynamoDBCrudPolicy:
             TableName: !Sub sps-catalogo-ejemplo-${DBEnvName}
-        - Statement: # Inline policy
-            - Sid: KMSDescifrar
-              Effect: Allow
-              Action:
-                - 'kms:Decrypt'
-              Resource: !Ref ParametersKMSARN
-        - Statement: # Inline policy
-            - Sid: KMSCifrar
-              Effect: Allow
-              Action:
-                - 'kms:Encrypt'
-              Resource: !Ref ParametersKMSARN

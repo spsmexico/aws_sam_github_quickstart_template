@@ -1,0 +1,83 @@
+---
+Description: Stack de rol de despliegue para GitHub Actions SPS
+AWSTemplateFormatVersion: '2010-09-09'
+
+Parameters:
+
+  Organizacion:
+    Type: String  
+    Description: Nombre de la organización del repositorio
+  Repositorio:
+    Type: String
+    Description: Nombre del repositorio que se utilizará para desplegar
+
+Resources:
+
+  GitHubActionsDeployRole:
+    Type: AWS::IAM::Role
+    Properties: 
+      RoleName: github-actions-deploy-role
+      Description: Rol de despliegue asumido por GitHub Actions
+      AssumeRolePolicyDocument:
+        Statement:
+        - Action: sts:AssumeRoleWithWebIdentity
+          Condition:
+            StringEquals:
+              token.actions.githubusercontent.com:aud: sts.amazonaws.com
+            StringLike:
+              token.actions.githubusercontent.com:sub: !Sub "repo:${Organizacion}/${Repositorio}:*"
+          Effect: Allow
+          Principal:
+            Federated: !Sub arn:aws:iam::${AWS::AccountId}:oidc-provider/token.actions.githubusercontent.com
+        Version: "2012-10-17"
+      MaxSessionDuration: 3600
+      Path: '/'
+      Policies:
+        - PolicyName: IAM-GitHub-Deploy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+            - Effect: Allow
+              Action:
+              - ssm:*
+              - iam:UntagRole
+              - iam:TagRole
+              - iam:UpdateRoleDescription
+              - iam:CreateRole
+              - iam:DeleteRole
+              - iam:AttachRolePolicy
+              - iam:PutRolePolicy
+              - iam:TagPolicy
+              - iam:CreatePolicy
+              - iam:DetachRolePolicy
+              - iam:DeleteRolePolicy
+              - iam:UntagPolicy
+              - iam:UpdateRole
+              - iam:PassRole
+              - cloudfront:UpdateDistribution
+              - application-autoscaling:*
+              Resource: "*"
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonAPIGatewayAdministrator
+        - arn:aws:iam::aws:policy/AWSLambda_FullAccess
+        - arn:aws:iam::aws:policy/CloudWatchFullAccess
+        - arn:aws:iam::aws:policy/AmazonS3FullAccess
+        - arn:aws:iam::aws:policy/AWSCloudFormationFullAccess
+
+      Tags:
+        - Key: "Proyecto"
+          Value: "Workshop-sps"
+
+  IAMOIDCProvider:
+      Type: "AWS::IAM::OIDCProvider"
+      Properties:
+          Url: "https://token.actions.githubusercontent.com"
+          ClientIdList: 
+            - "sts.amazonaws.com"
+          ThumbprintList: 
+            - "6938fd4d98bab03faadb97b34396831e3780aea1"
+            - "1c58a3a8518e8759bf075b76b750d4f2df264fcd"
+          Tags:
+            - Key: "Proyecto"
+              Value: "Workshop-sps"
+
