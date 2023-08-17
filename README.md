@@ -544,7 +544,7 @@ Una vez concluidos los pasos anteriores podemos proseguir a inicializar el proye
 **3.1.** Crearemos una carpeta dónde se alojará el proyecto.  
 **3.2.** Nos moveremos hacia la carpeta donde se alojará el repositorio y ejecutaremos el siguiente comando:
 ```
-cookiecutter https://github.com/spsdevops/aws_sam_github_quickstart_template -c ROAD-110-Workshop-CI-CD-con-Github-Actions-y-SAM
+cookiecutter https://github.com/spsdevops/aws_sam_github_quickstart_template -c demo
 ```
 Ingresaremos los valores que nos pide la plantilla.
 Algunas opciones cuentan con valores default.
@@ -573,8 +573,13 @@ Es el contenedor que construye la aplicación, en esta caso está como default u
 ### *sam_bucket*: Nombre del bucket para SAM. 
 Es el bucket que necesita SAM para realizar los despliegues.
 
-> Nota: 
-
+> Nota: Sigue las siguientes reglas para la nomenclatura:
+- El nombre del bucket puede tener entre 3 y 63 caracteres y puede contener únicamente caracteres en minúsculas, números, puntos y guiones.
+- Cada etiqueta en el nombre del bucket debe empezar por un carácter en minúsculas o un número.
+- El nombre del bucket no puede contener guiones bajos, terminar en guion, puntos suspensivos ni utilizar guiones junto con puntos.
+- El nombre del bucket no puede tener el formato de una dirección IP
+- Amazon S3 admite buckets globales, lo que significa que cada nombre de bucket debe ser único en todas las Cuentas de AWS de todas las Regiones de AWS dentro de una partición. Para más información [sobre buckets](https://docs.aws.amazon.com/es_es/AmazonS3/latest/userguide/UsingBucket.html)
+- 
 ### *DEV_secret_aws_account_id*: DEV_AWS_ACCOUNT_ID. 
 Aquí se deja por default este valor, a menos que se haya especificado uno diferente en la [configuración de secretos por ambiente](#configurar-secretos-por-ambiente)
 
