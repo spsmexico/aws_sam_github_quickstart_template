@@ -9,6 +9,8 @@
     4. [Instalación de GitHub App en la organización](#instalar-app-org)
     5. [Generación de Token para peticiones a API de GitHub](#token-reusable)
 3. [Probando GitHub App](#prueba-gh-app)
+4. [Conclusiones y notas adicionales](#conclusiones)
+
 
 ## Introducción <a name="introduccion"></a>
 Para utilizar una GitHub App para realizar solicitudes de API autenticadas, se debe registrar una GitHub App, almacenar las credenciales de la GitHub App e instalarse.
@@ -144,3 +146,25 @@ Para este caso en particular. Si hacemos cambios en el script que se encuentra e
 Demo:
 
 ![](./assets/github_app/devops_master.gif)
+
+
+
+## Conclusiones y notas adicionales <a name="conclusiones"></a>
+
+La fuente en la que está basada esta documentación es la siguiente:
+https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/making-authenticated-api-requests-with-a-github-app-in-a-github-actions-workflow
+
+1. La GitHub App se instala a nivel organizacional para que pueda ser utilizada por múltiples repositorios que estén en ella.
+Si solo se le da acceso a algunos repositorios, cada que se agregue uno se le tendría que dar acceso para que pueda usar la GitHub App. En este caso a los repositorios "llamadores" que llaman al reusable.
+2. Tiene que configurarse el APP_ID y el APP_SECRET_KEY de la app a nivel de la org.
+Puede configurarse repositorio por repositorio. Pero eso sería más tedioso de administrar.
+3. Se tuvo que habilitar permitir llamar los reusables en en el repositorio master:
+https://stackoverflow.com/questions/72613210/error-parsing-called-workflow-in-github-workflow-was-not-found
+Esto es un escenario normal cuando se utilizan workflows reusables.
+
+Recursos adicionales:
+GET file from repo REST API GitHub: 
+https://docs.github.com/en/rest/repos/contents?apiVersion=2022-11-28#get-repository-content
+
+https://docs.github.com/en/rest/overview/permissions-required-for-github-apps?apiVersion=2022-11-28
+
