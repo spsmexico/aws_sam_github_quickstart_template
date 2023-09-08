@@ -1,10 +1,16 @@
-# Autenticar con una aplicación GitHub
+# Registro e instalación de una GitHub App a nivel organización
 
 Para utilizar una GitHub App para realizar solicitudes de API autenticadas, se debe registrar una GitHub App, almacenar las credenciales de la GitHub App e instalarse.
-Una vez hecho esto, puede usar su aplicación para crear un token de acceso a la instalación, que puede usarse para realizar solicitudes de API autenticadas en un workflow de GitHub Actions. También puede pasar el token de acceso a la instalación a una acción personalizada que requiera un token.
+Una vez hecho esto, se puede usar la GitHub App para crear un token de acceso a la instalación, que puede usarse para realizar solicitudes de API autenticadas desde un workflow de GitHub Actions. También puede pasar el token de acceso a la instalación a una acción personalizada que requiera un token.
 
-Pasos:
-I) Registre una aplicación GitHub. Otorgue a su registro de aplicación GitHub los permisos necesarios para acceder a los recursos deseados. Para obtener más información, consulte "Registrar una aplicación GitHub" y "Elegir permisos para una aplicación GitHub".
+
+Fuente: https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/making-authenticated-api-requests-with-a-github-app-in-a-github-actions-workflow
+
+Para nuestro caso de uso, la idea es desde un workflow de GitHub actions obtener un script ubicado en otro repositorio y ejecutarlo.
+
+## Pasos:
+
+I) Registrar una aplicación GitHub. Otorgue a su registro de aplicación GitHub los permisos necesarios para acceder a los recursos deseados. Para obtener más información, consulte "Registrar una aplicación GitHub" y "Elegir permisos para una aplicación GitHub".
 
 ## Registrar una GitHub App: 
 Fuente: https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/registering-a-github-app
@@ -17,48 +23,52 @@ Fuente: https://docs.github.com/en/apps/creating-github-apps/registering-a-githu
 
 ![](./assets/github_app/2-uninstall.png)
 
-3) A la derecha de la organización, haga clic en "Settings".
+3) A la derecha de la organización, haremos clic en "Settings".
 
 ![](./assets/github_app/3-uninstall.png)
 
-4) En la barra lateral izquierda, haga clic en "Developer settings". Luego en "GitHub Apps":
+4) En la barra lateral izquierda, haga clic en "Developer settings". 
+5) Luego en "GitHub Apps":
 
 ![](./assets/github_app/4-uninstall.png)
 
-5) Haga clic en Nueva aplicación GitHub.
+6) Daremos clic en "New GitHub App".
 
 ![](./assets/github_app/6-install.png)
 
-6) En "Nombre de la aplicación GitHub", ingresa un nombre para tu aplicación. Debes elegir un nombre claro y corto. 
-El nombre de su aplicación (convertido a minúsculas, con espacios reemplazados por - y con caracteres especiales reemplazados) se mostrará en la interfaz de usuario cuando su aplicación realice una acción. Por ejemplo, My APp Näme se mostraría como my-app-name.
+7) En "GitHub App Name", ingresar un nombre para tu aplicación. Se debe elegir un nombre claro y corto. 
+El nombre la GitHub App (convertido a minúsculas, con espacios reemplazados por - y con caracteres especiales reemplazados) se mostrará en la interfaz de usuario cuando su aplicación realice una acción. Por ejemplo, My APp Näme se mostraría como my-app-name.
 
-7) El nombre debe ser único en GitHub. No puede utilizar el mismo nombre que una cuenta de GitHub existente, a menos que sea su propio nombre de usuario o de organización.
+El nombre debe ser único en GitHub. No puede utilizar el mismo nombre que una cuenta de GitHub existente, a menos que sea su propio nombre de usuario o de organización.
 
-Opcionalmente, en "Descripción", escriba una descripción de su aplicación. Los usuarios y organizaciones verán esta descripción cuando instalen su aplicación.
+Opcionalmente, en "Descripción", escribiremos una descripción de su aplicación. Los usuarios y organizaciones verán esta descripción cuando instalen su aplicación.
 
 ![](./assets/github_app/7-install.png)
 
-8) En "URL de la página de inicio", escribiremos la URL completa del sitio web de su aplicación. Si no tiene una URL dedicada y el código de su aplicación está almacenado en un repositorio público, puede usar esa URL del repositorio. O puede utilizar la URL de la organización o usuario propietario de la aplicación.
+8) En "URL de la página de inicio", escribiremos la URL completa del sitio web de la GitHub App.
 En este caso agregaremos la de SPS (la URL debe ser completa, en este caso https://spsolutions.com.mx/):
 
 ![](./assets/github_app/8-install.png)
 
 
-9) Dejaremos marcada la expiración de tokens y desactivaremos el uso de un webhook:
+9) Dejaremos marcada la expiración de tokens. 
+10) Desactivaremos el uso de un webhook:
 
 ![](./assets/github_app/9-install.png)
 
 
-10) En "Permisos", elija los permisos que necesita su aplicación. Para cada permiso, seleccione el menú desplegable y haga clic en Solo lectura, Lectura y escritura o Sin acceso. Debes seleccionar los permisos mínimos necesarios para tu aplicación. Para obtener más información, consulta "Elegir permisos para una aplicación GitHub".
+10) En "Permisos", elegiremos los permisos necesarios para la GitHub App. Debemos seleccionar los permisos mínimos necesarios para tu aplicación. Para mayor información dar clic [aquí](https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/choosing-permissions-for-a-github-app).
+En nuestro caso solo necesitamos los siguientes:
 
+```
 Actions = Read and Write
+
 Contents = Read and Write
-Metadata = Read-only
 
-### Permisos para GitHub App:
-https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/choosing-permissions-for-a-github-app
+Metadata = Read-only (este es obligatorio)
+```
 
-Por último, dejaremos marcado "Only on this account" para que nuestra app sea privada y daremos clic en el botón "Create GitHub App":
+Por último, dejaremos marcado "Only on this account" para que nuestra GitHub App sea privada y daremos clic en el botón "Create GitHub App":
 
 ![](./assets/github_app/10-install.png)
 ---
@@ -78,9 +88,10 @@ Después de haber creado este par de secretos los veremos de la siguiente manera
 
 ![](./assets/github_app/13-install.png)
 
+Nota: los nombres de los secretos pueden cambiar.
 
 ## IV) Instalación de GitHub App en la organización 
-Para ello le conderemos acceso a repositorio al que desee que acceda su flujo de trabajo. Para obtener más información, consulte "[Instalar su propia aplicación GitHub](https://docs.github.com/en/apps/using-github-apps/installing-your-own-github-app#installing-your-private-github-app-on-your-repository)".
+Para ello le concederemos acceso a repositorio al que desee que acceda su flujo de trabajo. Para obtener más información, consultar "[Instalar su propia aplicación GitHub](https://docs.github.com/en/apps/using-github-apps/installing-your-own-github-app#installing-your-private-github-app-on-your-repository)".
 
 En sí, dentro de la consola de la GitHub App daremos clic en "Install App" y luego en "Install":
 
@@ -91,7 +102,7 @@ Le daremos permiso a todos los repositorios, para que puedan hacer uso de la Git
 ![](./assets/github_app/15-install.png)
 
 
-V) Ahora, en el workflow reusable de GitHub Actions donde haremos uso de la GitHub App, crearemos un token de acceso a la instalación, que usaremos para realizar requests a la API de GitHub. Actualmente ya utlizamos una acción prefabricada.
+## V) Ahora, en el workflow reusable de GitHub Actions donde haremos uso de la GitHub App, crearemos un token de acceso a la instalación, que usaremos para realizar requests a la API de GitHub. Actualmente ya utlizamos una acción prefabricada.
 
 En este caso ya lo ajustamos para que use los secretos que previamente creamos a nivel de la organización:
 ```
@@ -112,8 +123,11 @@ https://github.com/spsdevops/DevOps_Master/blob/main/.github/workflows/reusable_
 
 Actualmente tenemos:
 
+```
 1 repositorio "master", el cual contiene un workflow reusable.
+
 2 repositorios "slaves", los cuales llaman el workflow reusable de master.
+```
 Si aplicamos un cambio en el workflow reusable ubicado en el repo de DevOps_master. Los repositorios que lo llaman, también verán ese cambio en el workflow.
 Para este caso en particular. Si hacemos cambios en el script que se encuentra en el workflow de DevOps_master, los otros repositorios también verán reflejado ese cambio, puesto que están obteniendo el script de este repo. 
 
