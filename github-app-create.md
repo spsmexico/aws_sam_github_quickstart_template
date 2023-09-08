@@ -1,5 +1,16 @@
 # Registro e instalación de una GitHub App a nivel organización
 
+# Índice
+1. [Introducción](#introduccion)
+2. [Registro de GitHub App con permisos necesarios para acceder a contenido de otros repositorios](#registro-app-permisos)
+    1. [Registrar una GitHub App](#registro-app)
+    2. [Guardar ID de GitHub App en un secreto de GitHub Actions a nivel de la organización](#id-secreto-app)
+    3. [Generar llave privada de GitHub App y guardarla como secreto a nivel de la organización](#generar-llave-privada)
+    4. [Instalación de GitHub App en la organización](#instalar-app-org)
+    5. [Generación de Token para peticiones a API de GitHub](#token-reusable)
+3. [Probando GitHub App](#prueba-gh-app)
+
+## Introducción <a name="introduccion"></a>
 Para utilizar una GitHub App para realizar solicitudes de API autenticadas, se debe registrar una GitHub App, almacenar las credenciales de la GitHub App e instalarse.
 Una vez hecho esto, se puede usar la GitHub App para crear un token de acceso a la instalación, que puede usarse para realizar solicitudes de API autenticadas desde un workflow de GitHub Actions. También puede pasar el token de acceso a la instalación a una acción personalizada que requiera un token.
 
@@ -8,11 +19,9 @@ Fuente: https://docs.github.com/en/apps/creating-github-apps/authenticating-with
 
 Para nuestro caso de uso, la idea es desde un workflow de GitHub actions obtener un script ubicado en otro repositorio y ejecutarlo.
 
-## Pasos:
+## I) Registro de GitHub App con permisos necesarios para acceder a contenido de otros repositorios <a name="registro-app-permisos"></a>
 
-I) Registrar una aplicación GitHub. Otorgue a su registro de aplicación GitHub los permisos necesarios para acceder a los recursos deseados. Para obtener más información, consulte "Registrar una aplicación GitHub" y "Elegir permisos para una aplicación GitHub".
-
-## Registrar una GitHub App: 
+### Registrar una GitHub App: <a name="registro-app"></a>
 Fuente: https://docs.github.com/en/apps/creating-github-apps/registering-a-github-app/registering-a-github-app
 
 1) En la esquina superior derecha de cualquier página de GitHub, haz clic en tu foto de perfil.
@@ -73,11 +82,12 @@ Por último, dejaremos marcado "Only on this account" para que nuestra GitHub Ap
 ![](./assets/github_app/10-install.png)
 ---
 
-## II) Usaremos el ID de la GitHub App para guardarla como un secreto de GitHub Actions. En este caso a nivel de la organización:
+## II) Usaremos el ID de la GitHub App para guardarla como un secreto de GitHub Actions. En este caso a nivel de la organización: <a name="id-secreto-app"></a>
 
 ![](./assets/github_app/11-install.png)
 
-## III) Generamos una clave privada para la GitHub App. Guarde el contenido del archivo resultante como secreto. (Almacene todo el contenido del archivo, incluidos -----BEGIN RSA PRIVATE KEY----- y -----END RSA PRIVATE KEY-----.) Para obtener más información, consulte ["Administración de claves privadas"](https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/managing-private-keys-for-github-apps).
+## III) Generamos una clave privada para la GitHub App. Guarde el contenido del archivo resultante como secreto. (Almacene todo el contenido del archivo, incluidos -----BEGIN RSA PRIVATE KEY----- y -----END RSA PRIVATE KEY-----.) Para obtener más información, consulte ["Administración de claves privadas"](https://docs.github.com/en/apps/creating-github-apps/authenticating-with-a-github-app/managing-private-keys-for-github-apps). <a name="generar-llave-privada"></a>
+
 Para ello, en la misma consola de la GitHub App, en el fondo de esa página daremos clic en el botón "Generate a private key":
 
 ![](./assets/github_app/12-install.png)
@@ -90,7 +100,7 @@ Después de haber creado este par de secretos los veremos de la siguiente manera
 
 Nota: los nombres de los secretos pueden cambiar.
 
-## IV) Instalación de GitHub App en la organización 
+## IV) Instalación de GitHub App en la organización <a name="instalar-app-org"></a>
 Para ello le concederemos acceso a repositorio al que desee que acceda su flujo de trabajo. Para obtener más información, consultar "[Instalar su propia aplicación GitHub](https://docs.github.com/en/apps/using-github-apps/installing-your-own-github-app#installing-your-private-github-app-on-your-repository)".
 
 En sí, dentro de la consola de la GitHub App daremos clic en "Install App" y luego en "Install":
@@ -102,7 +112,7 @@ Le daremos permiso a todos los repositorios, para que puedan hacer uso de la Git
 ![](./assets/github_app/15-install.png)
 
 
-## V) Ahora, en el workflow reusable de GitHub Actions donde haremos uso de la GitHub App, crearemos un token de acceso a la instalación, que usaremos para realizar requests a la API de GitHub. Actualmente ya utlizamos una acción prefabricada.
+## V) Ahora, en el workflow reusable de GitHub Actions donde haremos uso de la GitHub App, crearemos un token de acceso a la instalación, que usaremos para realizar requests a la API de GitHub. Actualmente ya utlizamos una acción prefabricada. <a name="token-reusable"></a>
 
 En este caso ya lo ajustamos para que use los secretos que previamente creamos a nivel de la organización:
 ```
@@ -119,7 +129,7 @@ https://github.com/spsdevops/DevOps_Master/blob/main/.github/workflows/reusable_
 
 
 
-# Probando el escenario:
+## Probando GitHub App <a name="prueba-gh-app"></a>
 
 Actualmente tenemos:
 
