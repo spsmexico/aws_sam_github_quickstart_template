@@ -10,6 +10,7 @@
     5. [Generación de Token para peticiones a API de GitHub](#token-reusable)
 3. [Probando GitHub App](#prueba-gh-app)
 4. [Conclusiones y notas adicionales](#conclusiones)
+5. [Desinstalación de GitHub App](./github-app-uninstall.md)
 
 
 ## Introducción <a name="introduccion"></a>
